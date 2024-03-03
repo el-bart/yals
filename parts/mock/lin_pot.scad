@@ -13,6 +13,15 @@ module lin_pot_knob()
 }
 
 
+module lin_pot_mount_screws_pos()
+{
+  for(dy=lin_pot_mount_screw_pos)
+    translate([1, dy, lin_pot_size.z/2])
+      rotate([0, 90, 0])
+        children();
+}
+
+
 // knob_pos - 0-100[%]
 module lin_pot(knob_pos=50/*%*/)
 {
@@ -47,11 +56,8 @@ module lin_pot(knob_pos=50/*%*/)
   difference()
   {
     cube(lin_pot_size);
-    // mount screws
-    for(dy=lin_pot_mount_screw_pos)
-      translate([1, dy, lin_pot_size.z/2])
-        rotate([0, 90, 0])
-          cylinder(d=lin_pot_mount_screw_d, h=lin_pot_size.x, $fn=fn(20));
+    lin_pot_mount_screws_pos()
+      cylinder(d=lin_pot_mount_screw_d, h=lin_pot_size.x, $fn=fn(20));
   }
   translate([lin_pot_size.x, k_pos, lin_pot_size.z/2])
     lin_pot_knob();
