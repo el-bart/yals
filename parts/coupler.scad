@@ -1,19 +1,20 @@
 use <m3d/fn.scad>
+include <m3d/math.scad>
+include <detail/config.scad>
 
 module coupler()
 {
-  eps = 0.01;
   // engine shaft
-  e_h = 5;
+  e_h = coupler_engine_in;
   e_d = 2;
   // threaded shaft
-  s_h = 5;
+  s_h = coupler_shaft_in;
   s_d = 3;
 
-  h = e_h+2+s_h;
+  h = coupler_len;
   difference()
   {
-    cylinder(d=6, h=h, $fn=fn(30));
+    cylinder(d=coupler_d, h=h, $fn=fn(30));
     translate([0, 0, -eps])
       cylinder(d=e_d, h=e_h+eps, $fn=fn(60));
     translate([0, 0, h-s_h])
