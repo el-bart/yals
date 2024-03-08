@@ -6,10 +6,10 @@ module coupler()
 {
   // engine shaft
   e_h = coupler_engine_in;
-  e_d = 2;
+  e_d = engine_size_shaft_d;
   // threaded shaft
   s_h = coupler_shaft_in;
-  s_d = 3;
+  s_d = screw_rod_d;
 
   h = coupler_len;
   difference()
