@@ -8,6 +8,8 @@ lin_pot_knob_pos_range = [14, lin_pot_size.y-14];
 // MT83 engine: 12V, on side
 engine_size_d = 32;
 engine_size_len = 19.7;
+engine_size_shaft_h = 8;
+engine_size_shaft_hold_h = 3.5;
 
 // engine-to-shaft coupler
 coupler_d = 6;

@@ -29,7 +29,7 @@ module engine()
     // engine
     cylinder(r=engine_size_d/2, h=engine_size_len, $fn=fn(60));
     // top mount
-    top_size=3.5;
+    top_size=engine_size_shaft_hold_h;
     translate([0, 0, engine_size_len])
       cylinder(r=9.7/2, h=top_size, $fn=fn(25));
     // bottom mount
@@ -38,7 +38,7 @@ module engine()
       cylinder(r=7.5/2, h=bottom_size, $fn=fn(20));
     // main rotor
     translate([0, 0, engine_size_len+top_size])
-      cylinder(r=2/2, h=8, $fn=fn(10));
+      cylinder(r=2/2, h=engine_size_shaft_h, $fn=fn(10));
     // power pads
     pads_size=5.5;
     rotate([0, 0, 14])
