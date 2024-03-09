@@ -23,7 +23,7 @@ module servo_body_lin_pot_pos()
 {
   translate([0, 0, servo_body_bottom_h])
     translate([-lin_pot_knob_size.x/2, 0, -lin_pot_size.z/2]) // mount position
-      translate([-lin_pot_size.x, 0, -lin_pot_size.z/2 + engine_size_d/2]) // axis-centered
+      translate([-lin_pot_size.x, 0, engine_size_d/2 - lin_pot_size.z/2]) // axis-centered
         children();
 }
 
@@ -100,7 +100,7 @@ module servo_body(mocks=true)
           translate([s.x/2, -eps, engine_size_d/2])
           {
             // rod
-            #rotate([-90, 0, 0])
+            rotate([-90, 0, 0])
               cylinder(d=screw_rod_d+1, h=lin_pot_size.y, $fn=fn(40));
             rotate([-90, 0, 0])
               bearing_slot();
@@ -212,7 +212,7 @@ module servo_body(mocks=true)
       servo_body_engine_pos()
         rotate([0, 0, 90])
           servo_body_top_mount(mocks=false);
-  #%if(mocks)
+  %if(mocks)
     servo_body_carriage_pos()
       carriage();
 }

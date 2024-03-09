@@ -37,8 +37,7 @@ bearing_size = [3, 7, 3]; // internal_d, external_d, h
 carriage_magnet_d = 5;
 carriage_magnet_h = 5;
 carriage_wall = 2;
-//carriage_rod_h = carriage_wall + lin_pot_knob_size.z+0.5 + carriage_wall + screw_rod_d/2 + 10;
-carriage_rod_h = carriage_wall + lin_pot_knob_size.z+0.5 + carriage_wall + screw_rod_d/2 + 10;
+carriage_rod_h = engine_size_d/2 - lin_pot_size.z/2;
 carriage_size = [ 10,
                   lin_pot_knob_size.y + 2*carriage_wall,
                   carriage_rod_h + screw_rod_d/2 + carriage_wall + carriage_magnet_h ];
