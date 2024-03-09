@@ -27,6 +27,8 @@ coupler_len = coupler_shaft_in + coupler_spacing + coupler_engine_in;
 servo_body_bottom_h = 2;
 servo_body_wall = 2;
 servo_body_mount_screw_d = 3;
+servo_body_threaded_insert_slot_d = 5;
+servo_body_threaded_insert_slot_h = 6;
 
 // bearing size [mm]
 bearing_size = [3, 7, 3]; // internal_d, external_d, h

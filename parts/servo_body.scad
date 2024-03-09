@@ -161,7 +161,13 @@ module servo_body(mocks=true)
         for(dx=[-1,+1])
           translate([dx*(engine_size_d/2 + servo_body_mount_screw_d/2 + 2*servo_body_wall), 0, 0])
             translate([0, -s.y + engine_size_len/2, -eps])
+            {
+              // main screw shaft
               cylinder(d=servo_body_mount_screw_d+1, h=engine_size_d+servo_body_bottom_h, $fn=fn(50));
+              // threaded insert slot
+              translate([0, 0, servo_body_bottom_h+engine_size_d/2-servo_body_threaded_insert_slot_h])
+                cylinder(d=servo_body_threaded_insert_slot_d, h=servo_body_threaded_insert_slot_h+2*eps, $fn=fn(40));
+            }
       }
     }
 
