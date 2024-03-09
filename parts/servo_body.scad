@@ -114,33 +114,46 @@ module servo_body(mocks=true)
               children();
       }
 
-      translate([-s.x/2, -s.y, 0])
+      module base_engine_mount()
       {
-        difference()
+        translate([-s.x/2, -s.y, 0])
         {
-          union()
+          difference()
           {
-            // base
-            cube(s);
-            // engine mount block
-            translate([0, 0, s.z])
-              cube(sm);
+            union()
+            {
+              // base
+              cube(s);
+              // engine mount block
+              translate([0, 0, s.z])
+                cube(sm);
+            }
+            // main body part
+            engine_pos()
+              cylinder(d=engine_size_d+0.5, h=engine_size_len+2*eps, $fn=fn(50));
           }
-          // main body part
-          engine_pos()
-            cylinder(d=engine_size_d+0.5, h=engine_size_len+2*eps, $fn=fn(50));
+          // bottom fix
+          intersection()
+          {
+            // all sockets
+            engine_pos()
+              rotate([0, 0, 90])
+                engine_mounts_slots(extra_len=1, extra_spacing=-0.5)
+                  cube([1,1,1]);
+            // keep just bottom
+            cube([sm.x, sm.y, servo_body_bottom_h+5]);
+          }
         }
-        // bottom fix
-        intersection()
-        {
-          // all sockets
-          engine_pos()
-            rotate([0, 0, 90])
-              engine_mounts_slots(extra_len=1, extra_spacing=-0.5)
-                cube([1,1,1]);
-          // keep just bottom
-          cube([sm.x, sm.y, servo_body_bottom_h+5]);
-        }
+      }
+
+      difference()
+      {
+        base_engine_mount();
+        // screw holes
+        for(dx=[-1,+1])
+          translate([dx*(engine_size_d/2 + servo_body_mount_screw_d/2 + servo_body_wall), 0, 0])
+            translate([0, -s.y + engine_size_len/2, -eps])
+              cylinder(d=servo_body_mount_screw_d+1, h=engine_size_d+servo_body_bottom_h, $fn=fn(50));
       }
     }
 
