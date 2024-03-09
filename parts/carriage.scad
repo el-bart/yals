@@ -39,9 +39,4 @@ module carriage()
 }
 
 
-intersection()
-{
-  carriage();
-  if(false) // cross-section of the element
-    cube([5, 5, 100]);
-}
+carriage();

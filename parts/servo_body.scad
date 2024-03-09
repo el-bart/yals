@@ -101,7 +101,7 @@ module servo_body(mocks=true)
           {
             // rod
             rotate([-90, 0, 0])
-              cylinder(d=screw_rod_d+1, h=lin_pot_size.y, $fn=fn(40));
+              cylinder(d=screw_rod_d+1, h=s.y+2*eps, $fn=fn(40));
             rotate([-90, 0, 0])
               bearing_slot();
           }
@@ -194,6 +194,10 @@ module servo_body(mocks=true)
 
   main_support();
 
+  %if(mocks)
+    translate([0, 0, servo_body_bottom_h+engine_size_d/2])
+      rotate([-90, 0, 0])
+        cylinder(d=screw_rod_d, h=lin_pot_size.y, $fn=fn(40)); // main rod
   %if(mocks)
     servo_body_lin_pot_pos()
     {
