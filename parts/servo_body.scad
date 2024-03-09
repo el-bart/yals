@@ -1,5 +1,6 @@
 use <mock/engine.scad>
 use <mock/lin_pot.scad>
+use <mock/bearing.scad>
 use <coupler.scad>
 use <m3d/fn.scad>
 include <m3d/math.scad>
@@ -41,7 +42,7 @@ module servo_body(mocks=true)
     lps = lin_pot_size;
     ks = lin_pot_knob_size;
     bh = servo_body_bottom_h;
-    thickness = 4;
+    thickness = 3.9;
     extra_h = 3;
 
     module lin_pot_screw_mounts()
@@ -72,10 +73,37 @@ module servo_body(mocks=true)
       }
     }
 
+    module bearing_support()
+    {
+      s = [lin_pot_knob_size.x, thickness, engine_size_d/2+engine_size_d/4];
+      pos = lin_pot_knob_pos_range + [-s.y-lin_pot_knob_size.y/2, lin_pot_knob_size.y/2];
+
+      module support()
+      {
+        difference()
+        {
+          cube(s);
+          translate([s.x/2, -eps, engine_size_d/2])
+          {
+            // rod
+            rotate([-90, 0, 0])
+              cylinder(d=screw_rod_d+1, h=lin_pot_size.y, $fn=fn(40));
+            rotate([-90, 0, 0])
+              bearing_slot();
+          }
+        }
+      }
+
+      for(dy=pos)
+        translate([-s.x/2, dy, servo_body_bottom_h])
+          support();
+    }
+
     // base
     translate([-lps.x - ks.x/2, 0, 0])
       cube([lps.x + ks.x, lps.y, bh]);
     lin_pot_screw_mounts();
+    bearing_support();
   }
 
   main_support();
