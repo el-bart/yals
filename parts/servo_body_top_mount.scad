@@ -28,6 +28,9 @@ module servo_body_top_mount(mocks=true)
           rotate([-90, 0, 0])
             cylinder(d=servo_body_mount_screw_d+0.5, h=servo_body_wall+2*eps, $fn=fn(50));
     }
+    rotate([0, 0, 90])
+      engine_mounts_slots(extra_len=1, extra_spacing=-0.5)
+        cube([1,1,1]);
   }
 
   intersection()
@@ -44,4 +47,4 @@ module servo_body_top_mount(mocks=true)
 }
 
 
-servo_body_top_mount(false);
+servo_body_top_mount();

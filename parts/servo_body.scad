@@ -141,7 +141,7 @@ module servo_body(mocks=true)
               rotate([0, 0, 90])
                 engine_mounts_slots(extra_len=1, extra_spacing=-0.5)
                   cube([1,1,1]);
-            // keep just bottom
+            // keep just the very  bottom one
             cube([sm.x, sm.y, servo_body_bottom_h+5]);
           }
         }
