@@ -4,6 +4,7 @@ lin_pot_mount_screw_d = 3;
 lin_pot_mount_screw_pos = [4, lin_pot_size.y-4];
 lin_pot_knob_size = [15.3, 5, 1.2];
 lin_pot_knob_pos_range = [14, lin_pot_size.y-14];
+lin_pot_screw_d = 2;
 
 // MT83 engine: 12V, on side
 engine_size_d = 32;
@@ -27,3 +28,7 @@ servo_body_bottom_h = 2;
 
 // bearing size [mm]
 bearing_size = [3, 7, 3]; // internal_d, external_d, h
+
+// carriage
+carriage_wall = 2;
+carriage_size = [10, lin_pot_knob_size.y + 2*carriage_wall, carriage_wall + lin_pot_knob_size.z+2*0.5 + carriage_wall + screw_rod_d + carriage_wall /* + top_size */];
