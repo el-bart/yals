@@ -2,6 +2,7 @@ use <mock/engine.scad>
 use <mock/lin_pot.scad>
 use <mock/bearing.scad>
 use <coupler.scad>
+use <servo_body_top_mount.scad>
 use <m3d/fn.scad>
 include <m3d/math.scad>
 include <detail/config.scad>
@@ -180,6 +181,11 @@ module servo_body(mocks=true)
   %if(mocks)
     servo_body_coupler_pos()
       coupler();
+  %if(mocks)
+    translate([0, -0.5, 0])
+      servo_body_engine_pos()
+        rotate([0, 0, 90])
+          servo_body_top_mount(mocks=false);
 }
 
 
