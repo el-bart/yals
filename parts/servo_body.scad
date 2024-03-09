@@ -3,6 +3,7 @@ use <mock/lin_pot.scad>
 use <mock/bearing.scad>
 use <coupler.scad>
 use <servo_body_top_mount.scad>
+use <carriage.scad>
 use <m3d/fn.scad>
 include <m3d/math.scad>
 include <detail/config.scad>
@@ -32,6 +33,18 @@ module servo_body_coupler_pos()
   translate([0, 0, servo_body_bottom_h])
     translate([0, -coupler_engine_in, engine_size_d/2])
       rotate([-90, 0, 0])
+        children();
+}
+
+
+module servo_body_carriage_pos()
+{
+  knob_center = lin_pot_knob_pos_range[0] + (lin_pot_knob_pos_range[1] - lin_pot_knob_pos_range[0]) / 2;
+  translate([ lin_pot_size.x + lin_pot_knob_size.x/2,
+              knob_center,
+              lin_pot_size.z/2-lin_pot_knob_size.z/2-carriage_wall -0.5/2 ]) // move to final spot
+    translate([-carriage_size.x/2, -carriage_size.y/2, 0]) // center
+      servo_body_lin_pot_pos()
         children();
 }
 
@@ -87,7 +100,7 @@ module servo_body(mocks=true)
           translate([s.x/2, -eps, engine_size_d/2])
           {
             // rod
-            rotate([-90, 0, 0])
+            #rotate([-90, 0, 0])
               cylinder(d=screw_rod_d+1, h=lin_pot_size.y, $fn=fn(40));
             rotate([-90, 0, 0])
               bearing_slot();
@@ -199,6 +212,9 @@ module servo_body(mocks=true)
       servo_body_engine_pos()
         rotate([0, 0, 90])
           servo_body_top_mount(mocks=false);
+  #%if(mocks)
+    servo_body_carriage_pos()
+      carriage();
 }
 
 
