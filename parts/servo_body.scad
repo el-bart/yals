@@ -99,11 +99,57 @@ module servo_body(mocks=true)
           support();
     }
 
+    module engine_support()
+    {
+      s = [ engine_size_d + 2*(2*servo_body_wall+servo_body_mount_screw_d),
+            engine_size_len + engine_size_shaft_d + engine_size_shaft_h + coupler_spacing,
+            servo_body_bottom_h];
+      sm = [s.x, engine_size_len, engine_size_d/2];
+
+      module engine_pos()
+      {
+        translate([0, 0, s.z])
+          translate([sm.x/2, -eps, engine_size_d/2])
+            rotate([-90, 0, 0])
+              children();
+      }
+
+      translate([-s.x/2, -s.y, 0])
+      {
+        difference()
+        {
+          union()
+          {
+            // base
+            cube(s);
+            // engine mount block
+            translate([0, 0, s.z])
+              cube(sm);
+          }
+          // main body part
+          engine_pos()
+            cylinder(d=engine_size_d+1, h=engine_size_len+2*eps, $fn=fn(50));
+        }
+        // bottom fix
+        intersection()
+        {
+          // all sockets
+          engine_pos()
+            rotate([0, 0, 90])
+              engine_mounts_slots(extra_len=1, extra_spacing=-0.5)
+                cube([1,1,1]);
+          // keep just bottom
+          #cube([sm.x, sm.y, servo_body_bottom_h+5]);
+        }
+      }
+    }
+
     // base
     translate([-lps.x - ks.x/2, 0, 0])
       cube([lps.x + ks.x, lps.y, bh]);
     lin_pot_screw_mounts();
     bearing_support();
+    engine_support();
   }
 
   main_support();
