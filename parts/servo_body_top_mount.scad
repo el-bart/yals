@@ -14,8 +14,8 @@ module servo_body_top_mount(mocks=true)
     {
       union()
       {
-        cylinder(d=engine_size_d+servo_body_wall+0.5, h=engine_size_len, $fn=fn(50));
-        s = [span, servo_body_wall, engine_size_len];
+        cylinder(d=engine_size_d+2*servo_body_wall+0.5, h=engine_size_len, $fn=fn(50));
+        s = [span, 2*servo_body_wall, engine_size_len];
         translate([-s.x/2, -s.y/2, 0])
           cube(s);
       }
