@@ -6,7 +6,7 @@ include <detail/config.scad>
 
 module servo_body_top_mount(mocks=true)
 {
-  span = engine_size_d + 2*(2*servo_body_wall+servo_body_mount_screw_d);
+  span = engine_size_d + 2*(3*servo_body_wall+servo_body_mount_screw_d);
 
   module body()
   {
@@ -28,6 +28,7 @@ module servo_body_top_mount(mocks=true)
           rotate([-90, 0, 0])
             cylinder(d=servo_body_mount_screw_d+0.5, h=servo_body_wall+2*eps, $fn=fn(50));
     }
+    // engine supports
     rotate([0, 0, 90])
       engine_mounts_slots(extra_len=1, extra_spacing=-0.5)
         cube([1,1,1]);
@@ -36,6 +37,7 @@ module servo_body_top_mount(mocks=true)
   intersection()
   {
     body();
+    // take half of it only
     s = [span+2*eps, engine_size_d+servo_body_wall, engine_size_len+eps];
     translate([-s.x/2, 0, 0])
       cube(s);

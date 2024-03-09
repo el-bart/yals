@@ -102,7 +102,7 @@ module servo_body(mocks=true)
 
     module engine_support()
     {
-      s = [ engine_size_d + 2*(2*servo_body_wall+servo_body_mount_screw_d),
+      s = [ engine_size_d + 2*(3*servo_body_wall+servo_body_mount_screw_d),
             engine_size_len + engine_size_shaft_d + engine_size_shaft_h + coupler_spacing,
             servo_body_bottom_h];
       sm = [s.x, engine_size_len, engine_size_d/2];
@@ -128,6 +128,13 @@ module servo_body(mocks=true)
               // engine mount block
               translate([0, 0, s.z])
                 cube(sm);
+              // block to prevent engine from slipping off
+              {
+                bs = [5, 5, 5];
+                translate([s.x/2, engine_size_len+0.75, 0])
+                  translate([-bs.x/2, 0, servo_body_bottom_h])
+                    cube(bs);
+              }
             }
             // main body part
             engine_pos()
@@ -152,7 +159,7 @@ module servo_body(mocks=true)
         base_engine_mount();
         // screw holes
         for(dx=[-1,+1])
-          translate([dx*(engine_size_d/2 + servo_body_mount_screw_d/2 + servo_body_wall), 0, 0])
+          translate([dx*(engine_size_d/2 + servo_body_mount_screw_d/2 + 2*servo_body_wall), 0, 0])
             translate([0, -s.y + engine_size_len/2, -eps])
               cylinder(d=servo_body_mount_screw_d+1, h=engine_size_d+servo_body_bottom_h, $fn=fn(50));
       }
