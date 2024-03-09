@@ -128,7 +128,7 @@ module servo_body(mocks=true)
           }
           // main body part
           engine_pos()
-            cylinder(d=engine_size_d+1, h=engine_size_len+2*eps, $fn=fn(50));
+            cylinder(d=engine_size_d+0.5, h=engine_size_len+2*eps, $fn=fn(50));
         }
         // bottom fix
         intersection()
@@ -139,7 +139,7 @@ module servo_body(mocks=true)
               engine_mounts_slots(extra_len=1, extra_spacing=-0.5)
                 cube([1,1,1]);
           // keep just bottom
-          #cube([sm.x, sm.y, servo_body_bottom_h+5]);
+          cube([sm.x, sm.y, servo_body_bottom_h+5]);
         }
       }
     }
