@@ -40,3 +40,5 @@ carriage_rod_h = engine_size_d/2 - lin_pot_size.z/2;
 carriage_size = [ 10,
                   lin_pot_knob_size.y + 2*carriage_wall,
                   carriage_rod_h + screw_rod_d/2 + carriage_wall + carriage_magnet_h ];
+carriage_threaded_insert_slot_d = 5;
+carriage_threaded_insert_slot_h = 6;
