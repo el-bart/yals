@@ -83,7 +83,7 @@ module servo_body(mocks=true)
           translate([-eps+lin_pot_size.x, dy, lin_pot_size.z/2])
             servo_body_lin_pot_pos()
               rotate([0, 90, 0])
-                cylinder(d=lin_pot_screw_d+0.5, h=thickness+2*eps, $fn=fn(50));
+                cylinder(d=lin_pot_mount_screw_d+0.5, h=thickness+2*eps, $fn=fn(50));
       }
     }
 
