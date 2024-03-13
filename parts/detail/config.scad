@@ -28,6 +28,7 @@ servo_body_wall = 2;
 servo_body_mount_screw_d = 3;
 servo_body_threaded_insert_slot_d = 5;
 servo_body_threaded_insert_slot_h = 6;
+servo_body_extra_space_len = 3;
 
 // bearing size [mm]
 bearing_size = [3, 7, 3]; // internal_d, external_d, h
