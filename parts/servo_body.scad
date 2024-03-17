@@ -68,8 +68,23 @@ module servo_body(mocks=true)
           s = [thickness, lin_pot_knob_pos_range[0]-lin_pot_knob_size.y/2, lin_pot_size.z];
           e = [0, 0, extra_h];
           se = s + e;
+
+          module phased_cube(size, phase)
+          {
+            translate([0, size.y, 0])
+              rotate([90, 0, 0])
+                linear_extrude(size.y)
+                  polygon([
+                    [0, 0],
+                    [0, size.z],
+                    [size.x - phase[0], size.z],
+                    [size.x,            size.z - phase[1]],
+                    [size.x, 0],
+                  ]);
+          }
+
           translate(-e)
-            cube(se);
+            phased_cube(size=se, phase=[2/3*se.x, se.x]);
         }
         for(dy=[0, lin_pot_knob_pos_range[1]+ks.y/2])
           translate([lin_pot_size.x, dy, 0])
