@@ -66,8 +66,10 @@ module servo_body(mocks=true)
         module lin_pot_screw_mount()
         {
           s = [thickness, lin_pot_knob_pos_range[0]-lin_pot_knob_size.y/2, lin_pot_size.z];
-          translate([0, 0, -extra_h])
-            cube(s + [0, 0, extra_h]);
+          e = [0, 0, extra_h];
+          se = s + e;
+          translate(-e)
+            cube(se);
         }
         for(dy=[0, lin_pot_knob_pos_range[1]+ks.y/2])
           translate([lin_pot_size.x, dy, 0])
