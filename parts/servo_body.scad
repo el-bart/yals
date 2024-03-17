@@ -125,9 +125,18 @@ module servo_body(mocks=true)
         }
       }
 
-      for(dy=pos)
-        translate([-s.x/2, dy, servo_body_bottom_h])
-          support();
+      translate([-s.x/2, 0, servo_body_bottom_h])
+      {
+        // supports
+        for(dy=pos)
+          translate([0, dy, 0])
+            support();
+        // stiffners
+        ss = [thickness, pos[1]-pos[0], thickness];
+        for(dx=[0, s.x-ss.x])
+          translate([dx, pos[0], 0])
+            cube(ss);
+      }
     }
 
     module engine_support()
