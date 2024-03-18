@@ -3,7 +3,7 @@
 ## 3D model
 * update model from coupler to universal joint
 * add end-stops (or otherwise guarantee never going out of bounds, as it stalls engine and permanently locks it, requiring manual intervention)
-* redesign to use MT78 engine instead
+* redesign to use MT44 engine instead
 
 ## electronics
 * choose µC

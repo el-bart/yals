@@ -15,6 +15,5 @@ it is however too power-hungry, especially at stall.
 johnson 10435 is far too weak for this application.
 it is rejected.
 
-MT44 and MT78 were performing very similar.
-however MT44 is almost 2.5x more expensive.
-therefor MT78 is the winner.
+MT44 and MT78 were performing similar, but MT44 is consuming 25% less power.
+therefor MT44 is the winner.
