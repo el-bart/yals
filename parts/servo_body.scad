@@ -146,65 +146,13 @@ module servo_body(mocks=true)
 
     module engine_support()
     {
-      s = [ engine_size_d + 2*(3*servo_body_wall+servo_body_mount_screw_d),
-            engine_size_len + engine_size_shaft_d + engine_size_shaft_h + universal_joint_center_spacing + servo_body_extra_space_len,
-            servo_body_bottom_h];
-      sm = [s.x, engine_size_len, engine_size_d/2];
-
-      module engine_pos()
-      {
-        translate([0, 0, s.z])
-          translate([sm.x/2, -eps, engine_size_d/2])
-            rotate([-90, 0, 0])
-              children();
-      }
-
-      module base_engine_mount()
-      {
-        translate([-s.x/2, -s.y, 0])
-        {
-          difference()
-          {
-            union()
-            {
-              // base
-              cube(s);
-              // engine mount block
-              translate([0, 0, s.z])
-                cube(sm);
-              // block to prevent engine from slipping off
-              {
-                bs = [5, 5, 5];
-                translate([s.x/2, engine_size_len+0.75, 0])
-                  translate([-bs.x/2, 0, servo_body_bottom_h])
-                    cube(bs);
-              }
-            }
-            // main body part
-            engine_pos()
-              cylinder(d=engine_size_d+0.5, h=engine_size_len+2*eps, $fn=fn(50));
-          }
-        }
-      }
-
-      difference()
-      {
-        base_engine_mount();
-        // TODO
-        // screw holes
-        /*
-        for(dx=[-1,+1])
-          translate([dx*(engine_size_d/2 + servo_body_mount_screw_d/2 + 2*servo_body_wall), 0, 0])
-            translate([0, -s.y + engine_size_len/2, -eps])
-            {
-              // main screw shaft
-              cylinder(d=servo_body_mount_screw_d+1, h=engine_size_d+servo_body_bottom_h, $fn=fn(50));
-              // threaded insert slot
-              translate([0, 0, servo_body_bottom_h+engine_size_d/2-servo_body_threaded_insert_slot_h])
-                cylinder(d=servo_body_threaded_insert_slot_d, h=servo_body_threaded_insert_slot_h+2*eps, $fn=fn(40));
-            }
-        */
-      }
+      wall = 2;
+      es = [ engine_box_size.x, engine_box_size.z, engine_box_size.y ];
+      s = [ 10,
+            engine_size_total_len + universal_joint_center_spacing + wall,
+            servo_body_bottom_h ];
+      translate(-[s.x/2, s.y, 0])
+        cube(s);
     }
 
     // base
