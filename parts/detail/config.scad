@@ -31,16 +31,10 @@ universal_joint_d = 7;
 universal_joint_shaft_d = 3;
 universal_joint_wall = 1;
 assert( universal_joint_shaft_d + 2*universal_joint_wall <= universal_joint_d );
+universal_joint_center_spacing = universal_joint_part_joint_h - universal_joint_part_bottom_h; // distance to be kept from the center of the joint
 
 // screw row
 screw_rod_d = 3;
-
-// engine-to-shaft coupler
-coupler_d = 6;
-coupler_shaft_in = 5;
-coupler_engine_in = 5;
-coupler_spacing = 2;
-coupler_len = coupler_shaft_in + coupler_spacing + coupler_engine_in;
 
 // servo body
 servo_body_bottom_h = 2;
