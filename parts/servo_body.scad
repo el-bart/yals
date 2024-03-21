@@ -210,33 +210,15 @@ module servo_body(mocks=true)
         difference()
         {
           support_block();
-          for(dy=[-1,+1])
+          #for(dy=[-1,+1])
             translate([ dy*(sb.x/2-servo_body_threaded_insert_slot_d/2-wall),
-                        -sb.y + es.y/2,
+                        -sb.y + wall + es.y/2,
                         base_to_axis_h+eps ])
               threaded_insert_slot(h=base_to_axis_h);
         }
       }
 
       base_engine_mount();
-      /*
--      difference()
--      {
--        base_engine_mount();
--        // TODO
--        // screw holes
--        /*
--        for(dx=[-1,+1])
--          translate([dx*(engine_size_d/2 + servo_body_mount_screw_d/2 + 2*servo_body_wall), 0, 0])
--            translate([0, -s.y + engine_size_len/2, -eps])
--            {
--              // main screw shaft
--              cylinder(d=servo_body_mount_screw_d+1, h=engine_size_d+servo_body_bottom_h, $fn=fn(50));
--              // threaded insert slot
--              translate([0, 0, servo_body_bottom_h+engine_size_d/2-servo_body_threaded_insert_slot_h])
--                cylinder(d=servo_body_threaded_insert_slot_d, h=servo_body_threaded_insert_slot_h+2*eps, $fn=fn(40));
--            }
--        */
     }
 
     // base
@@ -266,11 +248,11 @@ module servo_body(mocks=true)
   %if(mocks)
     servo_body_universal_joint_pos()
       universal_joint();
-  %if(mocks && false) // TODO: enabled when reworked
-    translate([0, -0.5, 0])
+  %if(mocks)
+    translate([0, -eps, 0])
       servo_body_engine_pos()
-        rotate([0, 0, 90])
-          servo_body_top_mount(mocks=false);
+        rotate([90, 0, 0])
+          servo_body_top_mount();
   %if(mocks)
     servo_body_carriage_pos()
       carriage();
