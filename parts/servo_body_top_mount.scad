@@ -4,7 +4,7 @@ include <m3d/math.scad>
 include <detail/config.scad>
 
 
-module spaced_engine_slot(dy=0, spacing=0.25)
+module spaced_engine_slot(dy=0, spacing=servo_body_engine_mount_spacing_r)
 {
   rotate([-90, 0, 0])
     linear_extrude(engine_box_size.z + dy)
@@ -25,7 +25,7 @@ module servo_body_top_mount()
   {
     module block()
     {
-      spaced_engine_slot(dy=0, spacing=wall);
+      spaced_engine_slot(dy=0, spacing=wall+servo_body_engine_mount_spacing_r);
       translate([-base_size.x/2, 0, 0])
         cube(base_size);
     }
@@ -35,9 +35,9 @@ module servo_body_top_mount()
       block();
       // hollow body
       translate([0, -eps, 0])
-        spaced_engine_slot(dy=2*eps, spacing=0);
+        spaced_engine_slot(dy=2*eps);
       // remove bottom part
-      cut = [es.x + 2*wall, lenght+2*eps, es.z];
+      cut = [2*(es.x + 2*wall), lenght+2*eps, es.z];
       translate(-[cut.x/2, eps, cut.z])
         cube(cut);
     }

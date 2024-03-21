@@ -179,7 +179,7 @@ module servo_body(mocks=true)
 
           translate(-[sb.x/2, sb.y, 0])
           {
-            delta_y = 0.25;
+            delta_y = servo_body_engine_mount_spacing_h;
             // base
             cube(sb);
             // elements on top
@@ -210,7 +210,7 @@ module servo_body(mocks=true)
         difference()
         {
           support_block();
-          #for(dy=[-1,+1])
+          for(dy=[-1,+1])
             translate([ dy*(sb.x/2-servo_body_threaded_insert_slot_d/2-wall),
                         -sb.y + wall + es.y/2,
                         base_to_axis_h+eps ])
