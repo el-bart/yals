@@ -4,62 +4,53 @@ include <m3d/math.scad>
 include <detail/config.scad>
 
 
-module spaced_engine_slot(dy)
+module spaced_engine_slot(dy=0, spacing=0.25)
 {
-  spacing = 0.25;
   rotate([-90, 0, 0])
     linear_extrude(engine_box_size.z + dy)
       offset(r=spacing)
         engine_dc_mt44_crosssection_2d($fn=fn(100));
 }
 
-spaced_engine_slot(dy=0.42);
-
 
 module servo_body_top_mount(mocks=true)
 {
-/*
-  span = engine_size_d + 2*(3*servo_body_wall+servo_body_mount_screw_d);
+  wall = servo_body_wall;
+  lenght = engine_box_size.z;
+  es = [ engine_box_size.x, engine_box_size.z, engine_box_size.y ];
+  base_size = [ es.x+2*(2*wall+servo_body_threaded_insert_slot_d), es.y, wall ];
+  screw_d = servo_body_mount_screw_d + 0.5;
 
-  module body()
+  module core()
   {
+    module block()
+    {
+      spaced_engine_slot(dy=0, spacing=wall);
+      translate([-base_size.x/2, 0, 0])
+        cube(base_size);
+    }
+
     difference()
     {
-      union()
-      {
-        cylinder(d=engine_size_d+2*servo_body_wall+0.5, h=engine_size_len, $fn=fn(50));
-        s = [span, 2*servo_body_wall, engine_size_len];
-        translate([-s.x/2, -s.y/2, 0])
-          cube(s);
-      }
-      // center cut
-      translate([0, 0, -eps])
-        cylinder(d=engine_size_d+0.5, h=engine_size_len+2*eps, $fn=fn(50));
-      // screw holes
-      for(dx=[-1, +1])
-        translate([dx*(span/2-servo_body_mount_screw_d/2-servo_body_wall), -eps, engine_size_len/2])
-          rotate([-90, 0, 0])
-            cylinder(d=servo_body_mount_screw_d+0.5, h=servo_body_wall+2*eps, $fn=fn(50));
+      block();
+      // hollow body
+      translate([0, -eps, 0])
+        spaced_engine_slot(dy=2*eps, spacing=0);
+      // remove bottom part
+      cut = [es.x + 2*wall, lenght+2*eps, es.z];
+      translate(-[cut.x/2, eps, cut.z])
+        cube(cut);
     }
-    // engine supports
-    rotate([0, 0, 90])
-      engine_mounts_slots(extra_len=1, extra_spacing=-0.5)
-        cube([1,1,1]);
   }
 
-  intersection()
+  difference()
   {
-    body();
-    // take half of it only
-    s = [span+2*eps, engine_size_d+servo_body_wall, engine_size_len+eps];
-    translate([-s.x/2, 0, 0])
-      cube(s);
+    core();
+    // screw holes
+    for(dx=[-1,+1])
+      translate([dx*(base_size.x/2 - screw_d/2 - wall), lenght/2, -eps])
+        cylinder(d=screw_d, h=wall+2*eps, $fn=fn(50));
   }
-
-  %if(mocks)
-    rotate([0, 0, 90])
-      engine();
-*/
 }
 
 
