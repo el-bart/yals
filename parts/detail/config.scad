@@ -10,9 +10,6 @@ lin_pot_knob_size = [15.3, 5, 1.2];
 lin_pot_knob_dist_from_edge = ( lin_pot_size.y - lin_pot_travel ) / 2;
 lin_pot_knob_pos_range = [lin_pot_knob_dist_from_edge, lin_pot_size.y - lin_pot_knob_dist_from_edge];
 
-// MT83 engine: 12V, on side
-engine_size_d = 32;
-
 // MT44 engine - mock sizes taken from m3d
 engine_box_size = engine_dc_mt44_box_size;
 engine_size_shaft_d = engine_dc_mt44_shaft_d;
