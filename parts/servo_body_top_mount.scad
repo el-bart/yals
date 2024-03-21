@@ -13,7 +13,7 @@ module spaced_engine_slot(dy=0, spacing=0.25)
 }
 
 
-module servo_body_top_mount(mocks=true)
+module servo_body_top_mount()
 {
   wall = servo_body_wall;
   lenght = engine_box_size.z;
