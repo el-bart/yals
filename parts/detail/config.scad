@@ -36,8 +36,8 @@ servo_body_wall = 2;
 servo_body_mount_screw_d = 3;
 servo_body_threaded_insert_slot_d = 5;
 servo_body_threaded_insert_slot_h = 6;
-servo_body_engine_mount_spacing_r = 0.25;
-servo_body_engine_mount_spacing_h = 0.25;
+servo_body_engine_mount_spacing_r = 0.25; // around the engine
+servo_body_engine_mount_spacing_h = 0.25; // before and after engine (dy)
 
 // bearing size [mm]
 bearing_size = [3, 7, 3]; // [ internal_d, external_d, h ]
