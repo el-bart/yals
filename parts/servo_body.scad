@@ -117,7 +117,7 @@ module servo_body(mocks=true)
 
       module support()
       {
-        #difference()
+        difference()
         {
           cube(s);
           translate([s.x/2, -eps, base_to_axis_h-servo_body_bottom_h])
