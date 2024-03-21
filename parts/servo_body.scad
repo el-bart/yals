@@ -1,21 +1,32 @@
 use <mock/engine.scad>
 use <mock/lin_pot.scad>
 use <mock/bearing.scad>
-use <coupler.scad>
+use <mock/universal_joint.scad>
 use <servo_body_top_mount.scad>
 use <carriage.scad>
 use <m3d/fn.scad>
+use <m3d/engine/dc/mt44.scad>
 include <m3d/math.scad>
 include <detail/config.scad>
+
+module engine()
+{
+  engine_dc_mt44();
+}
+
+module engine_crosssecion_2d()
+{
+  engine_dc_mt44_crosssection_2d();
+}
+
 
 module servo_body_engine_pos()
 {
   translate([0, 0, servo_body_bottom_h]) // space for bototm core block
     translate([0, -engine_size_shaft_h-engine_size_shaft_hold_h-servo_body_extra_space_len, 0])
       translate([0, -engine_size_len, engine_size_d/2]) // axis-centered
-        rotate([0, 90, 0])
-          rotate([-90, 0, 0])
-            children();
+        rotate([-90, 0, 0])
+          children();
 }
 
 
@@ -28,10 +39,10 @@ module servo_body_lin_pot_pos()
 }
 
 
-module servo_body_coupler_pos()
+module servo_body_universal_joint_pos()
 {
   translate([0, 0, servo_body_bottom_h])
-    translate([0, -coupler_engine_in-servo_body_extra_space_len, engine_size_d/2])
+    translate([0, -universal_joint_full_len/2, engine_size_d/2])
       rotate([-90, 0, 0])
         children();
 }
@@ -142,7 +153,7 @@ module servo_body(mocks=true)
     module engine_support()
     {
       s = [ engine_size_d + 2*(3*servo_body_wall+servo_body_mount_screw_d),
-            engine_size_len + engine_size_shaft_d + engine_size_shaft_h + coupler_spacing + servo_body_extra_space_len,
+            engine_size_len + engine_size_shaft_d + engine_size_shaft_h + universal_joint_center_spacing + servo_body_extra_space_len,
             servo_body_bottom_h];
       sm = [s.x, engine_size_len, engine_size_d/2];
 
@@ -235,9 +246,9 @@ module servo_body(mocks=true)
     servo_body_engine_pos()
       engine();
   %if(mocks)
-    servo_body_coupler_pos()
-      coupler();
-  %if(mocks)
+    servo_body_universal_joint_pos()
+      universal_joint();
+  %if(mocks && false) // TODO: enabled when reworked
     translate([0, -0.5, 0])
       servo_body_engine_pos()
         rotate([0, 0, 90])
