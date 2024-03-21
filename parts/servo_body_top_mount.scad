@@ -1,4 +1,3 @@
-use <mock/engine.scad>
 use <m3d/fn.scad>
 include <m3d/math.scad>
 include <detail/config.scad>
@@ -6,6 +5,7 @@ include <detail/config.scad>
 
 module servo_body_top_mount(mocks=true)
 {
+/*
   span = engine_size_d + 2*(3*servo_body_wall+servo_body_mount_screw_d);
 
   module body()
@@ -46,6 +46,7 @@ module servo_body_top_mount(mocks=true)
   %if(mocks)
     rotate([0, 0, 90])
       engine();
+*/
 }
 
 
