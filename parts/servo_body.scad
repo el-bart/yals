@@ -32,17 +32,16 @@ module servo_body_lin_pot_pos()
 {
   translate([0, 0, servo_body_bottom_h])
     translate([-lin_pot_knob_size.x/2, 0, -lin_pot_size.z/2]) // mount position
-      translate([-lin_pot_size.x, 0, engine_size_d/2 - lin_pot_size.z/2]) // axis-centered
+      translate([-lin_pot_size.x, 0, lin_pot_size.z/2]) // axis-centered
         children();
 }
 
 
 module servo_body_universal_joint_pos()
 {
-  translate([0, 0, servo_body_bottom_h])
-    translate([0, -universal_joint_full_len/2, engine_size_d/2])
-      rotate([-90, 0, 0])
-        children();
+  translate([0, -universal_joint_full_len/2, base_to_axis_h])
+    rotate([-90, 0, 0])
+      children();
 }
 
 

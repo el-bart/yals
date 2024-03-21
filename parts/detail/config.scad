@@ -60,4 +60,4 @@ carriage_threaded_insert_slot_d = 5;
 carriage_threaded_insert_slot_h = 6;
 
 // combined, utility metrics
-base_to_axis_h = engine_size_d/2 + servo_body_bottom_h; // TODO: should not be expressed by the old engine size!
+base_to_axis_h = servo_body_bottom_h + lin_pot_size.z;
