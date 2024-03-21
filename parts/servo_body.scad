@@ -22,11 +22,9 @@ module engine_crosssecion_2d()
 
 module servo_body_engine_pos()
 {
-  translate([0, 0, servo_body_bottom_h]) // space for bototm core block
-    translate([0, -engine_size_shaft_h-engine_size_shaft_hold_h-servo_body_extra_space_len, 0])
-      translate([0, -engine_size_len, engine_size_d/2]) // axis-centered
-        rotate([-90, 0, 0])
-          children();
+  translate([0, -engine_size_total_len - universal_joint_center_spacing, base_to_axis_h]) // axis-centered
+    rotate([-90, 0, 0])
+      children();
 }
 
 
@@ -232,9 +230,9 @@ module servo_body(mocks=true)
   main_support();
 
   %if(mocks)
-    translate([0, 0, servo_body_bottom_h+engine_size_d/2])
+    translate([0, universal_joint_center_spacing, base_to_axis_h])
       rotate([-90, 0, 0])
-        cylinder(d=screw_rod_d, h=lin_pot_size.y, $fn=fn(40)); // main rod
+        cylinder(d=screw_rod_d, h=lin_pot_size.y-universal_joint_center_spacing, $fn=fn(40)); // main rod
   %if(mocks)
     servo_body_lin_pot_pos()
     {

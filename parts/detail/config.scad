@@ -18,9 +18,10 @@ engine_size_len = 19.7;
 engine_size_shaft_hold_h = 3.5;
 
 // MT44 engine - mock sizes taken from m3d
-//engine_box_size = engine_dc_mt44_box_size;
+engine_box_size = engine_dc_mt44_box_size;
 engine_size_shaft_d = engine_dc_mt44_shaft_d;
 engine_size_shaft_h = engine_dc_mt44_shaft_h + engine_dc_mt44_bearing_top_h;
+engine_size_total_len = engine_box_size.z + engine_size_shaft_h;
 
 // universal joint
 universal_joint_part_bottom_h = 2.8;
@@ -57,3 +58,6 @@ carriage_size = [ 10,
                   carriage_rod_h + screw_rod_d/2 + carriage_wall + carriage_magnet_h ];
 carriage_threaded_insert_slot_d = 5;
 carriage_threaded_insert_slot_h = 6;
+
+// combined, utility metrics
+base_to_axis_h = engine_size_d/2 + servo_body_bottom_h; // TODO: should not be expressed by the old engine size!
