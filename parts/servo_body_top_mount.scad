@@ -1,6 +1,19 @@
 use <m3d/fn.scad>
+use <m3d/engine/dc/mt44.scad>
 include <m3d/math.scad>
 include <detail/config.scad>
+
+
+module spaced_engine_slot(dy)
+{
+  spacing = 0.25;
+  rotate([-90, 0, 0])
+    linear_extrude(engine_box_size.z + dy)
+      offset(r=spacing)
+        engine_dc_mt44_crosssection_2d($fn=fn(100));
+}
+
+spaced_engine_slot(dy=0.42);
 
 
 module servo_body_top_mount(mocks=true)

@@ -146,13 +146,97 @@ module servo_body(mocks=true)
 
     module engine_support()
     {
-      wall = 2;
+      wall = servo_body_wall;
       es = [ engine_box_size.x, engine_box_size.z, engine_box_size.y ];
-      s = [ 10,
-            engine_size_total_len + universal_joint_center_spacing + wall,
-            servo_body_bottom_h ];
-      translate(-[s.x/2, s.y, 0])
-        cube(s);
+      screw_mount_space = wall + servo_body_threaded_insert_slot_d + wall;
+      sb = [ es.x + 2*screw_mount_space,
+             engine_size_total_len + universal_joint_center_spacing + wall,
+             servo_body_bottom_h ];
+
+      module base_engine_mount()
+      {
+        to_eng_base = base_to_axis_h - servo_body_bottom_h - es.z/2;
+        eng_sup = [ sb.x, es.y, base_to_axis_h - servo_body_bottom_h ];
+
+        module support_block()
+        {
+          module core()
+          {
+            // engine block holder
+            translate([0, wall, 0 ])
+            {
+              cube(eng_sup);
+            }
+            // engine-blocking elements
+            union()
+            {
+              sblk = wall*[1,1,0] + [0, 0, to_eng_base+wall];
+              for(dy=[0, wall + es.y])
+                translate([sb.x/2-sblk.x/2, dy, 0])
+                  cube(sblk);
+            }
+          }
+
+          translate(-[sb.x/2, sb.y, 0])
+          {
+            delta_y = 0.25;
+            // base
+            cube(sb);
+            // elements on top
+            translate([0, 0, servo_body_bottom_h])
+            {
+              difference()
+              {
+                core();
+                translate([sb.x/2, wall-delta_y, base_to_axis_h-servo_body_bottom_h])
+                  spaced_engine_slot(dy=2*delta_y);
+              }
+            }
+          }
+        }
+
+        module threaded_insert_slot(h)
+        {
+          rotate([180, 0, 0])
+          {
+            cylinder(d=servo_body_threaded_insert_slot_d,
+                     h=servo_body_threaded_insert_slot_h,
+                     $fn=fn(20));
+            translate([0, 0, servo_body_threaded_insert_slot_h-eps])
+              cylinder(d=servo_body_mount_screw_d+0.5, h=h+eps, $fn=fn(40));
+          }
+        }
+
+        difference()
+        {
+          support_block();
+          for(dy=[-1,+1])
+            translate([ dy*(sb.x/2-servo_body_threaded_insert_slot_d/2-wall),
+                        -sb.y + es.y/2,
+                        base_to_axis_h+eps ])
+              threaded_insert_slot(h=base_to_axis_h);
+        }
+      }
+
+      base_engine_mount();
+      /*
+-      difference()
+-      {
+-        base_engine_mount();
+-        // TODO
+-        // screw holes
+-        /*
+-        for(dx=[-1,+1])
+-          translate([dx*(engine_size_d/2 + servo_body_mount_screw_d/2 + 2*servo_body_wall), 0, 0])
+-            translate([0, -s.y + engine_size_len/2, -eps])
+-            {
+-              // main screw shaft
+-              cylinder(d=servo_body_mount_screw_d+1, h=engine_size_d+servo_body_bottom_h, $fn=fn(50));
+-              // threaded insert slot
+-              translate([0, 0, servo_body_bottom_h+engine_size_d/2-servo_body_threaded_insert_slot_h])
+-                cylinder(d=servo_body_threaded_insert_slot_d, h=servo_body_threaded_insert_slot_h+2*eps, $fn=fn(40));
+-            }
+-        */
     }
 
     // base
