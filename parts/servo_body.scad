@@ -64,7 +64,7 @@ module servo_body(mocks=true)
     lps = lin_pot_size;
     ks = lin_pot_knob_size;
     bh = servo_body_bottom_h;
-    thickness = 3.9;
+    thickness = 3.5;
     extra_h = 3;
 
     module lin_pot_screw_mounts()
@@ -140,7 +140,7 @@ module servo_body(mocks=true)
           translate([0, dy, 0])
             support();
         // stiffners
-        ss = [thickness, pos[1]-pos[0], thickness];
+        ss = [thickness, pos[1]-pos[0], thickness/2];
         for(dx=[0, s.x-ss.x])
           translate([dx, pos[0], 0])
             cube(ss);
