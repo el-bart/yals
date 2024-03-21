@@ -45,16 +45,18 @@ servo_body_engine_mount_spacing_h = 0.25;
 // bearing size [mm]
 bearing_size = [3, 7, 3]; // [ internal_d, external_d, h ]
 
+// combined, utility metrics
+base_to_axis_h = servo_body_bottom_h + lin_pot_size.z;
+
 // carriage
 carriage_magnet_d = 5;
 carriage_magnet_h = 5;
 carriage_wall = 2;
-carriage_rod_h = engine_size_d/2 - lin_pot_size.z/2;
+carriage_knob_slot_spacing = 0.5;
+carriage_rod_h = carriage_wall + (carriage_knob_slot_spacing + lin_pot_knob_size.z)/2 + // center to potentiometer's knob center
+                 base_to_axis_h - servo_body_bottom_h - lin_pot_size.z/2;               // move to height of the rod
 carriage_size = [ 10,
                   lin_pot_knob_size.y + 2*carriage_wall,
                   carriage_rod_h + screw_rod_d/2 + carriage_wall + carriage_magnet_h ];
 carriage_threaded_insert_slot_d = 5;
 carriage_threaded_insert_slot_h = 6;
-
-// combined, utility metrics
-base_to_axis_h = servo_body_bottom_h + lin_pot_size.z;

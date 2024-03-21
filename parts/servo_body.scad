@@ -49,7 +49,7 @@ module servo_body_carriage_pos()
   knob_center = lin_pot_knob_pos_range[0] + (lin_pot_knob_pos_range[1] - lin_pot_knob_pos_range[0]) / 2;
   translate([ lin_pot_size.x + lin_pot_knob_size.x/2,
               knob_center,
-              lin_pot_size.z/2-lin_pot_knob_size.z/2-carriage_wall -0.5/2 ]) // move to final spot
+              lin_pot_size.z/2 - lin_pot_knob_size.z/2 - carriage_wall - carriage_knob_slot_spacing/2 ]) // move to final spot
     translate([-carriage_size.x/2, -carriage_size.y/2, 0]) // center
       servo_body_lin_pot_pos()
         children();

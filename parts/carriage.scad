@@ -11,7 +11,7 @@ module carriage()
   ti_d = carriage_threaded_insert_slot_d;
   ti_h = carriage_threaded_insert_slot_h;
 
-  ks = lin_pot_knob_size + 0.5*[0,1,1];
+  ks = lin_pot_knob_size + carriage_knob_slot_spacing*[0,1,1];
   rod_pod = [s.x/2, 0, carriage_rod_h];
 
   difference()
