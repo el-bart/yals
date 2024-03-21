@@ -65,7 +65,6 @@ module servo_body(mocks=true)
     ks = lin_pot_knob_size;
     bh = servo_body_bottom_h;
     thickness = 3.5;
-    extra_h = 3;
 
     module lin_pot_screw_mounts()
     {
@@ -74,8 +73,6 @@ module servo_body(mocks=true)
         module lin_pot_screw_mount()
         {
           s = [thickness, lin_pot_knob_pos_range[0]-lin_pot_knob_size.y/2, lin_pot_size.z];
-          e = [0, 0, extra_h];
-          se = s + e;
 
           module phased_cube(size, phase)
           {
@@ -91,9 +88,9 @@ module servo_body(mocks=true)
                   ]);
           }
 
-          translate(-e)
-            phased_cube(size=se, phase=[2/3*se.x, se.x]);
+          phased_cube(size=s, phase=[2/3*s.x, s.x]);
         }
+
         for(dy=[0, lin_pot_knob_pos_range[1]+ks.y/2])
           translate([lin_pot_size.x, dy, 0])
             servo_body_lin_pot_pos()
@@ -114,15 +111,16 @@ module servo_body(mocks=true)
 
     module bearing_support()
     {
-      s = [lin_pot_knob_size.x, thickness, engine_size_d/2+engine_size_d/4];
+      h = base_to_axis_h - servo_body_bottom_h + bearing_size[1]/2 + thickness;
+      s = [lin_pot_knob_size.x, thickness, h];
       pos = lin_pot_knob_pos_range + [-s.y-lin_pot_knob_size.y/2, lin_pot_knob_size.y/2];
 
       module support()
       {
-        difference()
+        #difference()
         {
           cube(s);
-          translate([s.x/2, -eps, engine_size_d/2])
+          translate([s.x/2, -eps, base_to_axis_h-servo_body_bottom_h])
           {
             // rod
             rotate([-90, 0, 0])

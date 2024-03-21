@@ -46,7 +46,7 @@ servo_body_threaded_insert_slot_h = 6;
 servo_body_extra_space_len = 3;
 
 // bearing size [mm]
-bearing_size = [3, 7, 3]; // internal_d, external_d, h
+bearing_size = [3, 7, 3]; // [ internal_d, external_d, h ]
 
 // carriage
 carriage_magnet_d = 5;
