@@ -34,10 +34,10 @@ screw_rod_d = 3;
 servo_body_bottom_h = 2;
 servo_body_wall = 2;
 servo_body_mount_screw_d = 3;
-servo_body_threaded_insert_slot_d = 5;
-servo_body_threaded_insert_slot_h = 6;
-servo_body_engine_mount_spacing_r = 0.25; // around the engine
-servo_body_engine_mount_spacing_h = 0.25; // before and after engine (dy)
+servo_body_threaded_insert_slot_d = 4.6;
+servo_body_threaded_insert_slot_h = 5.7;
+servo_body_engine_mount_spacing_r = 0.15; // around the engine
+servo_body_engine_mount_spacing_h = 0.15; // before and after engine (dy)
 
 // bearing size [mm]
 bearing_size = [3, 7, 3]; // [ internal_d, external_d, h ]
@@ -55,5 +55,5 @@ carriage_rod_h = carriage_wall + (carriage_knob_slot_spacing + lin_pot_knob_size
 carriage_size = [ 10,
                   lin_pot_knob_size.y + 2*carriage_wall,
                   carriage_rod_h + screw_rod_d/2 + carriage_wall + carriage_magnet_h ];
-carriage_threaded_insert_slot_d = 5;
-carriage_threaded_insert_slot_h = 6;
+carriage_threaded_insert_slot_d = 4.6;
+carriage_threaded_insert_slot_h = 5.7;
