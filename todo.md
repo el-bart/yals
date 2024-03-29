@@ -13,7 +13,7 @@
   * monitor Vcc
   * monitor power consumption
 * design PCB
-* design I/O [rptpcp;
+* design I/O protocol
 
 ## software
 * servo control SW
