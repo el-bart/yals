@@ -1,0 +1,34 @@
+#!/bin/bash
+set -eu -o pipefail
+app_dir=$(dirname "$(readlink -e "$0")")
+vcs_root=$( { git rev-parse --show-toplevel | xargs dirname ; } 2>/dev/null || dirname "$app_dir")
+image="$(sed "s%^$vcs_root/%%" <<< "$app_dir" | tr '/.' '_' | tr '[:upper:]' '[:lower:]')_sdk"
+
+docker build -t "$image" "$app_dir/docker/"
+
+docker_run_flags=()
+if tty -s
+then
+  docker_run_flags+=("-it")
+fi
+
+if [ "${KICAD_SDK_USE_PERSISTENT_HOME:-false}" == "true" ]
+then
+  mkdir -p "$app_dir/home"
+  docker_run_flags+=("-e" "HOME=/mnt/home")
+else
+  docker_run_flags+=("-e" "HOME=/tmp")
+fi
+
+docker run \
+  "${docker_run_flags[@]}" \
+  --rm \
+  --network=none \
+  -e QT_X11_NO_MITSHM=1 \
+  -e DISPLAY \
+  -v "/tmp/.X11-unix:/tmp/.X11-unix:ro" \
+  -u "$(id -u):$(id -g)" \
+  -v "$app_dir:/mnt" \
+  -w "/mnt" \
+  "$image" \
+  "$@"

@@ -1,0 +1,4 @@
+#!/bin/bash
+set -eu -o pipefail
+export KICAD_SDK_USE_PERSISTENT_HOME=true
+exec ./sdk kicad "$@"

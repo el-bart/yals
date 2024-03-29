@@ -1,0 +1,21 @@
+# kicad
+*.net
+*-bak
+*-cache.lib
+fp-info-cache
+_autosave-*
+*.bck
+*-backups
+~*
+\#*\#
+
+# gerber files
+*.gbr
+*.drl
+*.gbrjob
+
+# BOM
+*.csv
+
+build/*
+home/*

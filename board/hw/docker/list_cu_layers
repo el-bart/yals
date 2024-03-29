@@ -1,0 +1,18 @@
+#!/usr/bin/env python3
+import sys
+import pcbnew
+
+if len(sys.argv) != 1+1:
+    sys.stderr.write("{} <my_board.kicad_pcb>\n".format(sys.argv[0]))
+    sys.exit(2)
+
+board_name = sys.argv[1]
+board = pcbnew.LoadBoard(board_name)
+enabled_layers = board.GetEnabledLayers()
+
+layer_ids = list(enabled_layers.Seq())
+
+for layer_id in layer_ids:
+    layer_name = board.GetLayerName(layer_id)
+    if layer_name.endswith(".Cu"):
+        print(layer_name)

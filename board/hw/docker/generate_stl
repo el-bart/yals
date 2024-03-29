@@ -1,0 +1,26 @@
+#!/bin/bash
+set -eu -o pipefail
+
+if [ $# -ne 2 ]
+then
+  echo "$0 <my/board.kicad_pcb> </output/file.stl>" >&2
+  exit 2
+fi
+
+pcb=$1
+stl=$2
+shift 2
+step="${stl%.stl}.step"
+
+kicad-cli pcb export step \
+  --subst-models \
+  --force \
+  --output "$step" \
+  "$pcb" \
+  > "$step.log" 2>&1 || { cat "$step.log" ; exit 3 ; }
+
+prusa-slicer \
+  --export-stl \
+  --output "$stl" \
+  "$step" \
+  > "$stl.log" 2>&1 || { cat "$stl.log" ; exit 3 ; }
