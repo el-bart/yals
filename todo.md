@@ -5,7 +5,7 @@
   - this should be doable with potentiometer and moving slow ("calibration phase"?)
 
 ## electronics
-* choose µC
+* design I/O protocol
 * choose I/O protocol:
   * request position
   * receive position
@@ -13,7 +13,11 @@
   * monitor Vcc
   * monitor power consumption
 * design PCB
-* design I/O protocol
+  * add power measuring capability (up to 1A?)
+    * sense resistor?
+    * small sense resistor + OpAmp?
+  * add voltage measuring capability (12V)
+  * DRV8220 - design package
 
 ## software
 * servo control SW
