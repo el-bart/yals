@@ -477,6 +477,10 @@
     [
       "2a492668-7486-4f4c-801e-63d1e5f9110f",
       "power"
+    ],
+    [
+      "e7d03af2-c113-440c-81a4-7c3f8aeef75a",
+      "engine ctrl"
     ]
   ],
   "text_variables": {}
