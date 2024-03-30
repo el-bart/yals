@@ -8,6 +8,7 @@ _autosave-*
 *-backups
 ~*
 \#*\#
+*.bak
 
 # gerber files
 *.gbr
