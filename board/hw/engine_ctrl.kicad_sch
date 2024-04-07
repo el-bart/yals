@@ -664,7 +664,7 @@
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid dd79edc8-c248-415f-9a42-f7503a9ffff0)
   )
-  (text "gain is set to 30.3\ni.e. 0.1V in R6 gives 3V on output"
+  (text "gain is set to 31.3\ni.e. 0.1V in R6 gives 3.13V on output"
     (at 68.58 99.06 0)
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid fe2ca717-fd76-45ef-be21-4d10e0e2df41)
