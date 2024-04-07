@@ -5,13 +5,6 @@
   - this should be doable with potentiometer and moving slow ("calibration phase"?)
 
 ## electronics
-* design I/O protocol
-* choose I/O protocol:
-  * request position
-  * receive position
-  * ping
-  * monitor Vcc
-  * monitor power consumption
 * design PCB
   * add power measuring capability (up to 1A?)
     * sense resistor?
@@ -23,3 +16,9 @@
 * servo control SW
 * control loop
 * client library to use servo
+* design I/O protocol:
+  * request position
+  * receive position
+  * ping
+  * monitor Vcc
+  * monitor power consumption
