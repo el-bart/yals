@@ -5,7 +5,6 @@
   - this should be doable with potentiometer and moving slow ("calibration phase"?)
 
 ## electronics
-* design PCB
 
 ## software
 * servo control SW
