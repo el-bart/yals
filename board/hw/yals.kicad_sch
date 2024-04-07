@@ -105,6 +105,10 @@
     (stroke (width 0) (type default))
     (uuid 3ef24d25-5a92-4d06-8d9c-7a3ec9294129)
   )
+  (wire (pts (xy 151.13 104.775) (xy 162.56 104.775))
+    (stroke (width 0) (type default))
+    (uuid 58c4e0e5-604a-47fe-b6ef-9511ff1dff6c)
+  )
   (wire (pts (xy 151.13 97.79) (xy 162.56 97.79))
     (stroke (width 0) (type default))
     (uuid c349d644-49a6-4b42-8d3d-ab639177096b)
@@ -265,6 +269,10 @@
     (pin "eng_IN2" input (at 162.56 97.79 180)
       (effects (font (size 1.27 1.27)) (justify left))
       (uuid 34e62fac-c104-47c6-ab51-cfca7b8c4f39)
+    )
+    (pin "eng_current_feedback" output (at 162.56 104.775 180)
+      (effects (font (size 1.27 1.27)) (justify left))
+      (uuid 0dce74f7-6c99-49cc-a360-b59448b6eb3f)
     )
     (instances
       (project "yals"

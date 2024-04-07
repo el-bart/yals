@@ -6,9 +6,6 @@
 
 ## electronics
 * design PCB
-  * add power measuring capability (up to 1A?)
-    * sense resistor?
-    * small sense resistor + OpAmp?
 
 ## software
 * servo control SW
