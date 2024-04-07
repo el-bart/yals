@@ -9,8 +9,6 @@
   * add power measuring capability (up to 1A?)
     * sense resistor?
     * small sense resistor + OpAmp?
-  * add voltage measuring capability (12V)
-  * DRV8220 - design package
 
 ## software
 * servo control SW

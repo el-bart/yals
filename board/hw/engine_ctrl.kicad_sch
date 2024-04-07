@@ -393,6 +393,17 @@
     (uuid e27e2b54-c6f3-40c2-9c7b-d9e5c78f2f0b)
   )
 
+  (text "12V nominal, but here assumingfully\ncharged battery can go up to 15V"
+    (at 116.84 179.07 0)
+    (effects (font (size 1.27 1.27)) (justify left bottom))
+    (uuid 79e770be-095d-4be8-852a-03656715eedf)
+  )
+  (text "potentiometer is used to detect position of the servo\nwhole PCB holds down to it, which is being screwed\nto the servo printed body"
+    (at 118.745 140.335 0)
+    (effects (font (size 1.27 1.27)) (justify left bottom))
+    (uuid dd79edc8-c248-415f-9a42-f7503a9ffff0)
+  )
+
   (hierarchical_label "eng_IN2" (shape input) (at 93.98 90.17 180) (fields_autoplaced)
     (effects (font (size 1.27 1.27)) (justify right))
     (uuid 18e7a5ec-0ac3-4662-ad11-c14d3f5db81a)
@@ -441,7 +452,7 @@
     (property "Reference" "R5" (at 111.76 180.34 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Value" "100k" (at 111.76 182.88 0)
+    (property "Value" "20k" (at 111.76 182.88 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Footprint" "Resistor_SMD:R_0603_1608Metric" (at 107.442 181.61 90)
