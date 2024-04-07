@@ -1,6 +1,7 @@
 use <mock/lin_pot.scad>
 use <mock/bearing.scad>
 use <mock/universal_joint.scad>
+use <mock/pcb.scad>
 use <servo_body_top_mount.scad>
 use <carriage.scad>
 use <m3d/fn.scad>
@@ -33,6 +34,14 @@ module servo_body_lin_pot_pos()
     translate([-lin_pot_knob_size.x/2, 0, -lin_pot_size.z/2]) // mount position
       translate([-lin_pot_size.x, 0, lin_pot_size.z/2]) // axis-centered
         children();
+}
+
+
+module servo_body_pcb_pos()
+{
+  translate([-5, -14.3, -servo_body_bottom_h+1])
+    servo_body_lin_pot_pos()
+      children();
 }
 
 
@@ -234,7 +243,9 @@ module servo_body(mocks=true)
   %if(mocks)
     translate([0, universal_joint_center_spacing, base_to_axis_h])
       rotate([-90, 0, 0])
-        cylinder(d=screw_rod_d, h=lin_pot_size.y-universal_joint_center_spacing, $fn=fn(40)); // main rod
+        cylinder(d=screw_rod_d,
+                 h=lin_pot_size.y-universal_joint_center_spacing,
+                 $fn=fn(40)); // main rod
   %if(mocks)
     servo_body_lin_pot_pos()
     {
@@ -256,6 +267,9 @@ module servo_body(mocks=true)
   %if(mocks)
     servo_body_carriage_pos()
       carriage();
+  %if(mocks)
+    servo_body_pcb_pos()
+      pcb();
 }
 
 
