@@ -1,0 +1,69 @@
+#!/bin/bash
+set -eu -o pipefail
+shopt -s nullglob
+
+app=$(basename "$0")
+app_dir=$(dirname "$(readlink -e "$0")")
+vcs_root=$(cd "$app_dir" && git rev-parse --show-toplevel 2>/dev/null || echo "$app_dir")
+vcs_root_parent=$(dirname "$vcs_root")
+image="$(sed "s%^$vcs_root_parent/%%" <<< "$app_dir" | tr '/.\- &' '_' | tr '[:upper:]' '[:lower:]')_rp2040_sdk"
+
+
+#
+# BUILDING
+#
+flags=()
+if docker image ls --format="{{json .}}" | jq -r .Repository | grep --quiet "^$image$"
+then
+  # the image exists - don't be verbose when using cache (most likely)
+  flags+=(--quiet)
+fi
+flags+=(--tag "$image")
+flags+=("$app_dir/sdk/")
+
+docker build "${flags[@]}"
+
+
+#
+# RUNNING
+#
+flags=()
+
+if tty -s > /dev/null
+then
+  flags+=(-it)
+fi
+flags+=(--rm)
+
+flags+=(-u "$(id -u):$(id -g)")
+
+# make sure to forward current directory 'as is'
+flags+=(-v "$vcs_root:$vcs_root")
+flags+=(-w "$PWD")
+# also add as a common path, so that builds can easily be made reproducible
+flags+=(-v "$vcs_root:/mnt")
+
+# forward programmer device
+picoprog=$(lsusb -d 2e8a:000c | grep 2e8a:000c | tr -d : | awk '{ print $2, $4 }' | sed -e 's#^#/dev/bus/usb #' | tr ' ' / || true)
+if [ -e "$picoprog" ]
+then
+  echo "$app: found $picoprog picoprog device"
+  flags+=(--device "$picoprog")
+  flags+=(--group-add "$(stat -c %g "$picoprog")")
+else
+  echo "$app: failed to find picoprog - skipping" >&2
+fi
+
+# forwarding USB serial port (if present)
+for serial in /dev/serial/by-id/usb-Raspberry_Pi_Picoprobe_*CMSIS-DAP_*
+do
+  dev=$(readlink -e "$serial")
+  echo "$app: found $dev serial port"
+  flags+=(--device "$dev")
+  flags+=(--group-add "$(stat -c %g "$dev")")
+done
+
+# use local network so that 'gdb' exposed ports will work
+flags+=(--network=host)
+
+exec docker run "${flags[@]}" "$image" "$@"
