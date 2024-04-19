@@ -10,6 +10,7 @@
   * add board version
 * pull-up `picorun` to Vcc
 * add 3.3V in next to SWD (for ease of programming w/o external power supply)
+* consider switching to hand-soldering pads for elements
 
 ## software
 * prepare build for rp2040
