@@ -64,7 +64,8 @@
         "starved_thermal|129540000|92710000|e4f86233-ac06-4a8e-bac0-640c2be0010e|bdabbdf6-3ac1-4f9b-97c0-bf23c033aa75|B.Cu",
         "starved_thermal|178308000|87425000|e4f86233-ac06-4a8e-bac0-640c2be0010e|120ef637-aea2-4d78-902b-dcccc8d10ffe|F.Cu",
         "starved_thermal|191719200|91943000|e4f86233-ac06-4a8e-bac0-640c2be0010e|a07e979a-e53d-41dd-bee8-27b183182b34|B.Cu",
-        "starved_thermal|93980000|85090000|e4f86233-ac06-4a8e-bac0-640c2be0010e|6faac6ce-bbc8-4536-809a-912f332bc82b|B.Cu"
+        "starved_thermal|93980000|85090000|e4f86233-ac06-4a8e-bac0-640c2be0010e|6faac6ce-bbc8-4536-809a-912f332bc82b|B.Cu",
+        "text_height|131622800|91948000|a71b7f71-6f38-4c68-b6e2-7ab71ff0468b|00000000-0000-0000-0000-000000000000"
       ],
       "meta": {
         "version": 2
