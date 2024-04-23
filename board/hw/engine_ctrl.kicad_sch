@@ -799,7 +799,7 @@
     (property "Reference" "R5" (at 111.76 180.34 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Value" "20k" (at 111.76 182.88 0)
+    (property "Value" "22k" (at 111.76 182.88 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Footprint" "Resistor_SMD:R_0603_1608Metric" (at 107.442 181.61 90)
