@@ -1,4 +1,5 @@
 #!/bin/bash
 set -eux -o pipefail
-./rp2040_sdk make -C build/XXXX/pico-examples/build/ -j$(nproc)
-./rp2040_sdk rp2040_flash build/XXXX/blink.elf
+./rp2040_sdk cmake -G Ninja -S . -B build/
+./rp2040_sdk ninja -C build/
+./rp2040_sdk rp2040_flash build/blink.elf
