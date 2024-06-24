@@ -51,3 +51,8 @@ add_executable(mtest_blink mtest/blink.cpp)
 target_link_libraries(mtest_blink pico_stdlib)
 # create map/bin/hex/uf2 file etc.
 pico_add_extra_outputs(mtest_blink)
+
+add_executable(mtest_serial mtest/serial.cpp)
+target_link_libraries(mtest_serial pico_stdlib)
+# create map/bin/hex/uf2 file etc.
+pico_add_extra_outputs(mtest_serial)
