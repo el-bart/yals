@@ -19,19 +19,16 @@ endif()
 
 project(yals C CXX ASM)
 
-#include_directories(/opt/pico/pico-sdk/src/rp2_common/hardware_clocks/include/)             
-#include_directories(/opt/pico/pico-sdk/src/rp2040/hardware_structs/include/)                
-#list(APPEND PICO_CONFIG_HEADER_FILES /home/el-bart/prjs/yals/board/sw/yals_board.h)     
-
+# onboard's quartz
 add_definitions(-DXOSC_KHZ=8000)
 
-# $ /opt/pico/pico-sdk/src/rp2_common/hardware_clocks/scripts/vcocalc.py --input 8 125
-#Requested: 125.0 MHz
-#Achieved: 125.0 MHz
+#$ /opt/pico/pico-sdk/src/rp2_common/hardware_clocks/scripts/vcocalc.py --input 8 80
+#Requested: 80.0 MHz
+#Achieved: 80.0 MHz
 #REFDIV: 1
-#FBDIV: 125 (VCO = 1000.0 MHz)
-#PD1: 4
-#PD2: 2
+#FBDIV: 200 (VCO = 1600.0 MHz)
+#PD1: 5
+#PD2: 4
 add_definitions(-DSYS_CLK_KHZ=80000)
 add_definitions(-DPLL_SYS_VCO_FREQ_KHZ=1600000)
 add_definitions(-DPLL_SYS_POSTDIV1=5)
