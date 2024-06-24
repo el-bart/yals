@@ -2,4 +2,4 @@
 set -eux -o pipefail
 ./rp2040_sdk cmake -G Ninja -S . -B build/
 ./rp2040_sdk ninja -C build/
-./rp2040_sdk rp2040_flash build/blink.elf
+./rp2040_sdk rp2040_flash build/mtest_blink.elf

@@ -21,7 +21,7 @@ project(yals C CXX ASM)
 
 pico_sdk_init()
 
-add_executable(blink blink.cpp)
-target_link_libraries(blink pico_stdlib)
+add_executable(mtest_blink mtest/blink.cpp)
+target_link_libraries(mtest_blink pico_stdlib)
 # create map/bin/hex/uf2 file etc.
-pico_add_extra_outputs(blink)
+pico_add_extra_outputs(mtest_blink)
