@@ -2,7 +2,7 @@
 set -eu -o pipefail
 
 app=$(basename "$0")
-arch=$(uname -m | sed 's/^x86_64$/amd64/')
+arch=$(uname -m | sed -e 's/^x86_64$/amd64/' -e 's/^aarch64$/arm64/')
 
 if [ $# -ne 1 ]
 then
@@ -35,7 +35,7 @@ function download_one # <1:url> <2:package>
     local p_v=$(echo "${package}_${version_prefix}.${patch_v}")
     local p_v_re=$(echo "$p_v" | sed 's#\.#\\.#g')
     local name=$(echo "$list" | grep "$p_v_re" | tail -1)
-    wget "$url/${name}"
+    wget -O "$name" "$url/${name}"
     if ! [ -f "$name" ]
     then
       echo "$app: failed to download '$package' from '$url' (looking for '$name')" >&2
@@ -44,11 +44,12 @@ function download_one # <1:url> <2:package>
   )
 }
 
-download_one "https://ftp.debian.org/debian/pool/main/k/kicad"            "kicad"
-download_one "https://ftp.debian.org/debian/pool/main/k/kicad"            "kicad-libraries"
-download_one "https://ftp.debian.org/debian/pool/main/k/kicad-footprints" "kicad-footprints"
-download_one "https://ftp.debian.org/debian/pool/main/k/kicad-packages3d" "kicad-packages3d"
-download_one "https://ftp.debian.org/debian/pool/main/k/kicad-symbols"    "kicad-symbols"
-download_one "https://ftp.debian.org/debian/pool/main/k/kicad-templates"  "kicad-templates"
+url_base="https://snapshot.debian.org/archive/debian/20240312T000000Z/pool/main/k"
+download_one "$url_base/kicad"            "kicad"
+download_one "$url_base/kicad"            "kicad-libraries"
+download_one "$url_base/kicad-footprints" "kicad-footprints"
+download_one "$url_base/kicad-packages3d" "kicad-packages3d"
+download_one "$url_base/kicad-symbols"    "kicad-symbols"
+download_one "$url_base/kicad-templates"  "kicad-templates"
 echo "$app: all downloads were successful"
 ls -alh kicad*.deb

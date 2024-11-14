@@ -1,6 +1,7 @@
 # kicad
 *.net
 *-bak
+*.bak
 *-cache.lib
 fp-info-cache
 _autosave-*
@@ -8,7 +9,6 @@ _autosave-*
 *-backups
 ~*
 \#*\#
-*.bak
 
 # gerber files
 *.gbr
