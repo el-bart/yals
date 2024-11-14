@@ -9,7 +9,8 @@ endif
 IN_SCADS := $(wildcard *.scad)
 IN_OBJS  := $(wildcard *.obj)
 IN_STLS  := $(wildcard *.stl)
-TARGETS  := $(IN_SCADS:.scad=) $(IN_STLS:.stl=) $(IN_OBJS:.obj=)
+IN_3MFS  := $(wildcard *.3mf)
+TARGETS  := $(IN_SCADS:.scad=) $(IN_STLS:.stl=) $(IN_OBJS:.obj=) $(IN_3MFS:.3mf=)
 
 .PHONY: all
 all: $(TARGETS) time
@@ -57,6 +58,15 @@ build/%.stl: %.obj Makefile
 	$(SILENT)mkdir -p "build"
 	$(SILENT)assimp export "$<" "$@" > "$@.log" 2>&1 || { cat "$@.log" ; exit 2 ; }
 
+build/%.stl: %.3mf Makefile
+	$(SILENT)echo "CONVERT $<"
+	$(SILENT)mkdir -p "build"
+	$(SILENT)prusa-slicer \
+			--export-stl \
+			--output "$@" \
+			"$<" \
+			> "$@.log" 2>&1 || { cat "$@.log" ; exit 2 ; }
+
 build/$(PRINTER_3D)/$(FILAMENT)/$(MODE)/%.ini: \
 		config/printer/$(PRINTER_3D)/printer.ini \
 		config/printer/$(PRINTER_3D)/filament/$(FILAMENT)/filament.ini \
@@ -82,11 +92,15 @@ build/$(PRINTER_3D)/$(FILAMENT)/$(MODE)/%.gcode: \
 			"$<" \
 			> "$@.log" 2>&1 || { cat "$@.log" ; exit 2 ; }
 
-# 'gcoder' is a part of 'printrun' package (http://www.pronterface.com) / apt install printrun
-# note that script is not executable, so you may want to have a wrapper script to run it
 %.time: %.gcode
 	$(SILENT)echo "TIME $(notdir $<) ($(PRINTER_3D)/$(FILAMENT)/$(MODE))"
-	$(SILENT)gcoder "$<" > "$@" 2>&1 || { cat "$@" ; rm -f "$@" ; exit 2 ; }
+	$(SILENT)grep \
+			-e '^; filament used ' \
+			-e '^; filament cost ' \
+			-e '^; estimated .*printing time ' \
+			"$<" \
+			| sed 's/^; //' \
+			> "$@"
 
 include $(wildcard build/*.d)
 
@@ -95,7 +109,7 @@ endif
 
 .PHONY: time
 time: $(TARGETS)
-	$(SILENT)find build/ -type f -name '*.time' -exec tail -n 1 {} +
+	$(SILENT)find build/ -type f -name '*.time' -exec grep -H '^estimated printing time ' {} + | sort
 
 .PHONY: clean
 clean:
