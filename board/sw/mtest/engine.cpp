@@ -1,7 +1,7 @@
 #include <initializer_list>
 #include "pico/stdlib.h"
 
-auto constexpr delay = 2'000;
+auto constexpr delay = 250;
 constexpr uint ENG_IN_1 = 2;
 constexpr uint ENG_IN_2 = 3;
 
