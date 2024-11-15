@@ -13,8 +13,6 @@
 * consider switching to hand-soldering pads for elements
 
 ## software
-* prepare build for rp2040
-* let build know 8MHz quartz is in use
 * servo control SW
 * control loop
 * client library to use servo
