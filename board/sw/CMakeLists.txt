@@ -22,12 +22,14 @@ project(yals C CXX ASM)
 include(clocks.cmake)
 pico_sdk_init()
 
-add_executable(mtest_blink mtest/blink.cpp)
-target_link_libraries(mtest_blink pico_stdlib)
-# create map/bin/hex/uf2 file etc.
-pico_add_extra_outputs(mtest_blink)
+function (mtest name)
+  set(mtname "mtest_${name}")
+  add_executable("${mtname}" "mtest/${name}.cpp")
+  target_link_libraries("${mtname}" pico_stdlib)
+  # create map/bin/hex/uf2 file etc.
+  pico_add_extra_outputs("${mtname}")
+endfunction()
 
-add_executable(mtest_serial mtest/serial.cpp)
-target_link_libraries(mtest_serial pico_stdlib)
-# create map/bin/hex/uf2 file etc.
-pico_add_extra_outputs(mtest_serial)
+mtest(blink)
+mtest(serial)
+mtest(engine)
