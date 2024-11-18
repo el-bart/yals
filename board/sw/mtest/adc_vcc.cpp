@@ -13,7 +13,6 @@ int main()
   adc_gpio_init(ADC_PIN);
   adc_select_input(ADC_N);
 
-
   auto uart = uart0;
   constexpr auto uart_pin_tx = 0;
   constexpr auto uart_pin_rx = 1;
