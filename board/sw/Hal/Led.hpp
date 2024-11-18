@@ -1,5 +1,5 @@
 #pragma once
-#include "Hal/Sim.hpp"
+#include "Hal/Impl/Led.hpp"
 
 namespace Hal
 {
@@ -7,11 +7,6 @@ namespace Hal
 struct Led
 {
   Led() = default;
-
-  Led(Led const&) = delete;
-  Led& operator=(Led const&) = delete;
-  Led(Led &&) = delete;
-  Led& operator=(Led &&) = delete;
 
   void set(const bool status)
   {
@@ -33,14 +28,12 @@ struct Led
 private:
   void apply() const
   {
-    if(not status_)
-      sim().led_brightness_ = 0;
-    else
-      sim().led_brightness_ = brightness_ / 255.0f;
+    impl_.apply(status_, brightness_);
   }
 
   bool status_{false};
   uint8_t brightness_{255};
+  Impl::Led impl_;
 };
 
 }

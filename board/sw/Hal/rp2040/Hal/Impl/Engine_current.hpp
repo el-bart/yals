@@ -2,7 +2,7 @@
 #include "hardware/adc.h"
 #include "pico/stdlib.h"
 
-namespace Hal
+namespace Hal::Impl
 {
 
 struct Engine_current

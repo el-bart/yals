@@ -4,7 +4,7 @@ target_link_libraries(hal hardware_adc)
 target_link_libraries(hal hardware_pwm)
 
 function (add_mtest name)
-  add_binary("Hal_${name}.mtest" "Hal/${name}.mtest.cpp")
+  add_binary("Hal_${name}.mtest" "Hal/Impl/${name}.mtest.cpp")
 endfunction()
 
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/")

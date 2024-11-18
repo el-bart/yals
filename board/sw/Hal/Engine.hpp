@@ -1,5 +1,5 @@
 #pragma once
-#include "Hal/Sim.hpp"
+#include "Hal/Impl/Engine.hpp"
 
 namespace Hal
 {
@@ -14,11 +14,6 @@ struct Engine
   };
 
   Engine() = default;
-
-  Engine(Engine const&) = delete;
-  Engine& operator=(Engine const&) = delete;
-  Engine(Engine &&) = delete;
-  Engine& operator=(Engine &&) = delete;
 
   void direction(const Direction dir)
   {
@@ -40,18 +35,19 @@ struct Engine
   }
 
 private:
-  void apply() const
+  void apply()
   {
     switch(dir_)
     {
-      case Direction::Off:    sim().engine_force_ = 0;        break;
-      case Direction::Left:   sim().engine_force_ = +force_;  break;
-      case Direction::Right:  sim().engine_force_ = -force_;  break;
+      case Direction::Off:   return impl_.apply( 0,      0);
+      case Direction::Left:  return impl_.apply(-1, force_);
+      case Direction::Right: return impl_.apply(+1, force_);
     }
   }
 
   Direction dir_{Direction::Off};
   uint16_t force_{0};
+  Impl::Engine impl_;
 };
 
 }

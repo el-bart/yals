@@ -1,5 +1,5 @@
-#include <initializer_list>
 #include "Hal/Engine.hpp"
+#include <initializer_list>
 
 auto constexpr delay = 2000;
 

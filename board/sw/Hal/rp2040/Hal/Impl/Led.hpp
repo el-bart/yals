@@ -2,7 +2,7 @@
 #include "pico/stdlib.h"
 #include "hardware/pwm.h"
 
-namespace Hal
+namespace Hal::Impl
 {
 
 struct Led
@@ -29,36 +29,17 @@ struct Led
   Led(Led &&) = delete;
   Led& operator=(Led &&) = delete;
 
-  void set(const bool status)
+  void apply(bool status, uint8_t brightness) const
   {
-    status_ = status;
-    apply();
-  }
-
-  void toggle()
-  {
-    set(not status_);
-  }
-
-  void brightness(const uint8_t b)
-  {
-    brightness_ = b;
-    apply();
-  }
-
-private:
-  void apply() const
-  {
-    auto const b = status_ ? brightness_ : 0u;
+    auto const b = status ? brightness : 0u;
     pwm_set_gpio_level(pin, b);
   }
 
+private:
   static constexpr uint pin = 4;
 
   const unsigned int slice_num_;
   pwm_config config_{};
-  bool status_{false};
-  uint8_t brightness_{255};
 };
 
 }

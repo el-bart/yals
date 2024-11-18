@@ -1,20 +1,11 @@
 #pragma once
-#include "hardware/pwm.h"
-#include "pico/stdlib.h"
 #include <initializer_list>
 
-namespace Hal
+namespace Hal::Impl
 {
 
 struct Engine
 {
-  enum Direction
-  {
-    Off,
-    Left,
-    Right
-  };
-
   Engine():
     slice_num_{ pwm_gpio_to_slice_num(pin_pos) }
   {
@@ -42,44 +33,22 @@ struct Engine
   Engine(Engine &&) = delete;
   Engine& operator=(Engine &&) = delete;
 
-  void direction(const Direction dir)
+  void apply(int dir, uint16_t force) const
   {
-    dir_ = dir;
-    apply();
-  }
-
-  void force(const uint16_t f)
-  {
-    force_ = f;
-    apply();
-  }
-
-  void set(const Direction dir, const uint16_t f)
-  {
-    dir_ = dir;
-    force_ = f;
-    apply();
+    if(dir==0)
+      return pwm_set_both_levels(slice_num_, 0, 0);
+    if(dir<0)
+      return pwm_set_both_levels(slice_num_, force, 0);
+    if(dir>0)
+      return pwm_set_both_levels(slice_num_, 0, force);
   }
 
 private:
-  void apply() const
-  {
-    switch(dir_)
-    {
-      case Direction::Off:   return pwm_set_both_levels(slice_num_, 0,      0     );
-      case Direction::Left:  return pwm_set_both_levels(slice_num_, 0,      force_);
-      case Direction::Right: return pwm_set_both_levels(slice_num_, force_, 0     );
-    }
-  }
-
-
   static constexpr uint pin_pos = 2;    // out 1 == ENG+
   static constexpr uint pin_neg = 3;    // out 2 == ENG-
 
   pwm_config config_{};
   unsigned int slice_num_{};
-  Direction dir_{Direction::Off};
-  uint16_t force_{0};
 };
 
 }

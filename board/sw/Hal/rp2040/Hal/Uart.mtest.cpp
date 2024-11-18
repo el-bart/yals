@@ -1,4 +1,3 @@
-#include "hardware/uart.h"
 #include "Hal/Uart.hpp"
 #include <cstdio>
 

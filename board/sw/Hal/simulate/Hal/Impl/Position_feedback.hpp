@@ -1,7 +1,7 @@
 #pragma once
 #include "Hal/Sim.hpp"
 
-namespace Hal
+namespace Hal::Impl
 {
 
 struct Position_feedback

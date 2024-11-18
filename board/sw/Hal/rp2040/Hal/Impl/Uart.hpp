@@ -5,7 +5,7 @@
 #include <optional>
 #include <cstring>
 
-namespace Hal
+namespace Hal::Impl
 {
 
 struct Uart
@@ -21,19 +21,6 @@ struct Uart
   Uart& operator=(Uart const&) = delete;
   Uart(Uart &&) = delete;
   Uart& operator=(Uart &&) = delete;
-
-  size_t tx(char const* str)
-  {
-    return tx(reinterpret_cast<uint8_t const*>(str), strlen(str));
-  }
-
-  size_t tx(uint8_t const* buf, size_t size)
-  {
-    for(size_t i=0; i<size; ++i)
-      if(not tx(buf[i]))
-        return i;
-    return size;
-  }
 
   bool tx(uint8_t b)
   {
