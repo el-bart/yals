@@ -10,8 +10,11 @@ f=$1
 shift 1
 
 clear
+(
 set -x
 time ./rp2040_sdk ninja -C build
+ls -alh "$f"
 time scp "$f" rp-prog:/tmp/
 time ssh rp-prog rp2040_flash "/tmp/$(basename "$f")"
+)
 echo OK
