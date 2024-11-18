@@ -21,7 +21,7 @@ struct Sim
   }
 
   int32_t engine_force_{0}; // -/+ is dir, abs value is a force (16-bit)
-  float amps_{0};           // engien current [A]
+  float amps_{0};           // engine current [A]
   float led_brightness_{0}; // 0..1 of power
   float position_{0};       // 0..1 of scale
   std::queue<uint8_t> rx_;  // RX queue
