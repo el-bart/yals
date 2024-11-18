@@ -1,4 +1,6 @@
 #pragma once
+#include "hardware/pwm.h"
+#include "pico/stdlib.h"
 #include <initializer_list>
 
 namespace Hal::Impl
