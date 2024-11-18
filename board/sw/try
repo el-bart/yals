@@ -1,0 +1,17 @@
+#!/bin/bash
+set -eu -o pipefail
+
+if [ $# -ne 1 ]
+then
+  echo "$0 <file.elf>" >&2
+  exit 2
+fi
+f=$1
+shift 1
+
+clear
+set -x
+time ./rp2040_sdk ninja -C build
+time scp "$f" rp-prog:/tmp/
+time ssh rp-prog rp2040_flash "/tmp/$(basename "$f")"
+echo OK
