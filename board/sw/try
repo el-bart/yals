@@ -33,6 +33,7 @@ clear
     time ./rp2040_sdk cmake -DYALS_HAL="rp2040" -DCMAKE_BUILD_TYPE=Release -G Ninja -S . -B "$build"
   fi
   time ./rp2040_sdk ninja -C "$build"
+  find "$build" -name '*.elf'
 )
 [ -n "$f" ] || exit 0
 
