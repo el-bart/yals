@@ -16,6 +16,8 @@ struct Sim
 
   void reset()
   {
+    Sim tmp;
+    std::swap(*this, tmp);
   }
 
   int32_t engine_force_{0}; // -/+ is dir, abs value is a force (16-bit)
