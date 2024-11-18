@@ -12,9 +12,29 @@ esac
 
 clear
 
+if false			
+then					
 (
   set -x
-  time ./rp2040_sdk ninja -C build
+  build="build/simulate"
+  if ! [ -d "$build" ]
+  then
+    mkdir -p "$build"
+    cmake -DYALS_HAL="simulate" -DCMAKE_BUILD_TYPE=Debug -G Ninja -S . -B "$build"
+  fi
+  time ninja -C "$build"
+)
+fi						
+
+(
+  set -x
+  build="build/rp2040"
+  if ! [ -d "$build" ]
+  then
+    mkdir -p "$build"
+    time ./rp2040_sdk cmake -DYALS_HAL="rp2040" -DCMAKE_BUILD_TYPE=Release -G Ninja -S . -B "$build"
+  fi
+  time ./rp2040_sdk ninja -C "$build"
 )
 [ -n "$f" ] || exit 0
 
