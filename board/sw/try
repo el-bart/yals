@@ -12,8 +12,6 @@ esac
 
 clear
 
-if false			
-then					
 (
   set -x
   build="build/simulate"
@@ -24,7 +22,6 @@ then
   fi
   time ninja -C "$build"
 )
-fi						
 
 (
   set -x
