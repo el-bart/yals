@@ -1,23 +1,21 @@
 #include <initializer_list>
-#include "pico/stdlib.h"
+#include "Hal/Engine.hpp"
 
-auto constexpr delay = 250;
-constexpr uint ENG_IN_1 = 2;
-constexpr uint ENG_IN_2 = 3;
+auto constexpr delay = 2000;
+
+using E = Hal::Engine;
 
 int main()
 {
-  gpio_init(ENG_IN_1);
-  gpio_set_dir(ENG_IN_1, GPIO_OUT);
-  gpio_init(ENG_IN_2);
-  gpio_set_dir(ENG_IN_2, GPIO_OUT);
-
-  while (true)
-    for(auto e1: {0, 1})
-      for(auto e2: {0, 1})
+  E eng;
+  while(true)
+    for(auto d: { E::Direction::Left, E::Direction::Off, E::Direction::Right, E::Direction::Off })
+      for(auto f: { 0.00, /*0.20,*/ 0.40, 0.50, 0.60, 0.80, 1.00 })
       {
-        gpio_put(ENG_IN_1, e1);
-        gpio_put(ENG_IN_2, e2);
+        eng.force( f * 65536);
+        eng.direction(d);
         sleep_ms(delay);
+        if( d == E::Direction::Off )
+          break;
       }
 }
