@@ -1,7 +1,6 @@
-#include <stdio.h>
 #include "Hal/Position_feedback.hpp"
 #include "Hal/Uart.hpp"
-
+#include <cstdio>
 
 int main()
 {
