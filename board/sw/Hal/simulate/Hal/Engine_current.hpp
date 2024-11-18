@@ -15,7 +15,6 @@ struct Engine_current
 
   float amps()
   {
-    sim().update();
     return sim().amps_;
   }
 };
