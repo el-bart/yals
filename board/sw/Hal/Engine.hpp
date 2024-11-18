@@ -9,8 +9,8 @@ struct Engine
   enum Direction
   {
     Off,
-    Left,
-    Right
+    Left,   // towards the engine mount
+    Right   // away from the engine mount
   };
 
   Engine() = default;
