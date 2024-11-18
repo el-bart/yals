@@ -28,17 +28,24 @@ set(HAL_LIBS ${HAL_LIBS} pico_stdlib)
 set(HAL_LIBS ${HAL_LIBS} hardware_adc)
 set(HAL_LIBS ${HAL_LIBS} hardware_pwm)
 
-function (mtest name)
-  set(mtname "mtest_${name}")
-  add_executable("${mtname}" "mtest/${name}.cpp")
-  target_link_libraries("${mtname}" ${HAL_LIBS} ${ARGN})
+
+function (add_binary name)
+  add_executable("${name}" ${ARGN})
+  target_link_libraries("${name}" ${HAL_LIBS})
   # create map/bin/hex/uf2 file etc.
-  pico_add_extra_outputs("${mtname}")
+  pico_add_extra_outputs("${name}")
 endfunction()
 
-mtest(blink)
-mtest(serial)
-mtest(engine)
-mtest(adc_vcc)
-mtest(adc_eng_current)
-mtest(adc_pos_feedback)
+add_binary(servo_ctrl servo_ctrl.cpp)
+
+
+function (add_mtest name)
+  add_binary("mtest_${name}" "mtest/${name}.cpp")
+endfunction()
+
+add_mtest(blink)
+add_mtest(serial)
+add_mtest(engine)
+add_mtest(adc_vcc)
+add_mtest(adc_eng_current)
+add_mtest(adc_pos_feedback)
