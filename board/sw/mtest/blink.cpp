@@ -1,4 +1,5 @@
 #include "Hal/Led.hpp"
+#include <initializer_list>
 
 int main()
 {
@@ -6,7 +7,7 @@ int main()
   Hal::Led led;
 
   while (true)
-    for(auto b=0u; b<=256; b+=20);
+    for(auto b=5u; b<256u; b+=25u)
     {
       led.brightness(b);
       led.set(true);
