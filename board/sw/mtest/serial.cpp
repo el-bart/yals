@@ -1,7 +1,5 @@
-#include "pico/stdlib.h"
 #include "hardware/uart.h"
 #include "Hal/Uart.hpp"
-#include <cstring>
 #include <cstdio>
 
 void write_long(Hal::Uart& uart, char const* str)
