@@ -1,27 +1,47 @@
-#include <stdio.h>
 #include "pico/stdlib.h"
 #include "hardware/uart.h"
+#include "Hal/Uart.hpp"
+#include <cstring>
+#include <cstdio>
+
+void write_long(Hal::Uart& uart, char const* str)
+{
+  auto left=str;
+  while(*left!=0)
+    left += uart.tx(left);
+}
 
 int main()
 {
-  auto uart = uart0;
-  const auto uart_pin_tx = 0;
-  const auto uart_pin_rx = 1;
-  const auto uart_baud = 115200;
-  uart_init(uart, uart_baud);
-  gpio_set_function(uart_pin_tx, GPIO_FUNC_UART);
-  gpio_set_function(uart_pin_rx, GPIO_FUNC_UART);
+  Hal::Uart uart;
 
-  stdio_init_all();
-  printf("--------------------\n"); // standard I/O
+  write_long(uart,
+      ">>\r\n"
+      ">> HELLO USART!\r\n"
+      ">>\r\n"
+      ">> this text is too long to feet into a single\r\n"
+      ">> write, this will be split. you should not be\r\n"
+      ">> able to tell the difference.\r\n"
+      ">>\r\n"
+      );
 
   for(auto n=0u; ; ++n)
   {
-    char buf[64];
-    snprintf(buf, sizeof(buf), "hello, serial #%u!\n", n);
-    uart_puts(uart, buf);   // explicit output
+    {
+      char buf[64];
+      snprintf(buf, sizeof(buf), "hello, serial #%u!\r\n", n);
+      uart.tx(buf);
+    }
 
-    auto const c = uart_getc(uart);
-    printf("got '%c' character\n", c);
+    auto const oc = uart.rx();
+    sleep_ms(500);
+    if(not oc)
+      continue;
+    else
+    {
+      char buf[64];
+      snprintf(buf, sizeof(buf), "got c=%d\r\n", int{*oc});
+      uart.tx(buf);
+    }
   }
 }
