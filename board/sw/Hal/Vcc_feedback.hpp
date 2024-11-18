@@ -18,7 +18,7 @@ struct Vcc_feedback
   Vcc_feedback(Vcc_feedback &&) = delete;
   Vcc_feedback& operator=(Vcc_feedback &&) = delete;
 
-  float read_volts()
+  float volts()
   {
     adc_select_input(adc_n);
     auto const sample = adc_read();

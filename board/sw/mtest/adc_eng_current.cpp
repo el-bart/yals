@@ -14,7 +14,7 @@ int main()
 
   while(true)
   {
-    const auto amps = ec.read_amps();
+    const auto amps = ec.amps();
 
     char buf[32];
     snprintf(buf, sizeof(buf), "I=%f\r\n", amps);

@@ -18,7 +18,7 @@ struct Engine_current
   Engine_current(Engine_current &&) = delete;
   Engine_current& operator=(Engine_current &&) = delete;
 
-  float read_amps()
+  float amps()
   {
     adc_select_input(adc_n);
     auto const sample = adc_read();

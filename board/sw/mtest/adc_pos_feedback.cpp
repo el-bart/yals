@@ -11,7 +11,7 @@ int main()
 
   while(true)
   {
-    auto const percent = pf.read_percent();
+    auto const percent = pf.percent();
     char buf[16];
     snprintf(buf, sizeof(buf), "p=%f%%\r\n", percent);
     uart.tx(buf);

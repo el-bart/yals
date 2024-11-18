@@ -18,7 +18,7 @@ struct Position_feedback
   Position_feedback(Position_feedback &&) = delete;
   Position_feedback& operator=(Position_feedback &&) = delete;
 
-  float read_percent()
+  float percent()
   {
     adc_select_input(adc_n);
     auto const sample = adc_read();
