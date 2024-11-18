@@ -14,6 +14,10 @@ struct Sim
     update_pos(dt_sec);
   }
 
+  void reset()
+  {
+  }
+
   int32_t engine_force_{0}; // -/+ is dir, abs value is a force (16-bit)
   float amps_{0};           // engien current [A]
   float led_brightness_{0}; // 0..1 of power
@@ -28,15 +32,16 @@ private:
     amps_ = 0.01;
     if( engine_force_ == 0 )
       return;
-    amps_ += abs(engine_force_) / 65535.0f * 0.5f
+    amps_ += abs(engine_force_) / 65535.0f * 0.5f;
   }
 
   void update_pos(float dt_sec)
   {
     const auto f = engine_force_ / 65535.0f;
-    const auto full_travell_sec = 2.0f;
-    const auto delta = f / full_travel_time * dt_sec;
-    position_ = std::clamp(position + delta, 0.0f, 1.0f);
+    constexpr auto full_travel_sec = 2.0f;
+    const auto distance = f / full_travel_sec;
+    const auto delta = distance * dt_sec;
+    position_ = std::clamp(position_ + delta, 0.0f, 1.0f);
   }
 };
 

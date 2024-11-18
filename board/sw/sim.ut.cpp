@@ -1,11 +1,13 @@
 #include "catch2/catch.hpp"
+#include "Hal/all.hpp"
 
 namespace
 {
 
-TEST_CASE("test1")
+TEST_CASE("Hal::sim() is global")
 {
-  REQUIRE(1 == 1);
+  Hal::sim().amps_ = 13;
+  REQUIRE(Hal::sim().amps_ == 13);
 }
 
 }
