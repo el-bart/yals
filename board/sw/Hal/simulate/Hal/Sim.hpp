@@ -51,7 +51,7 @@ private:
 };
 
 
-Sim& sim()
+inline Sim& sim()
 {
   static Sim s;
   return s;
