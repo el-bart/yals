@@ -5,7 +5,7 @@ struct Context final
 {
   struct Setpoints final
   {
-    // TODO: these shall be read from EEPROM
+    // TODO: min/max pos shall be read from EEPROM
     float min_pos_{0};      // 0..100
     float max_pos_{100};    // 0..100
     float position_{};      // 0..100
