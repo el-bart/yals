@@ -49,14 +49,14 @@ struct Buffer final
     size_ = new_size;
   }
 
-  static constexpr uint8_t max_size = max_buffer_size;
-  uint8_t size_{0};
+  static constexpr size_t max_size = max_buffer_size;
+  size_t size_{0};
   std::array<uint8_t, max_size> data_;
 
 private:
-  uint8_t leading_eols_count() const
+  size_t leading_eols_count() const
   {
-    uint8_t c = 0;
+    size_t c = 0;
     for(; c<size_; ++c)
       if( not is_eol(data_[c]) )
         return c;
