@@ -84,21 +84,21 @@ protocol version is binary `0000` here.
   * `0x00` is next to the engine (min left)
   * `0xff` is far away (max right)
 #### reply
-* ID: `0`.
+* ID: `1`.
 * 1 byte confirming position set (i.e. the same as request)
 
 ### read servo position
 #### request
-* ID: `1`.
+* ID: `2`.
 #### reply
-* ID: `1`.
+* ID: `3`.
 * 1 byte representing current servo position
 
 ### read status information
 #### request
-* ID: `2`.
+* ID: `4`.
 #### reply
-* ID: `2`.
+* ID: `5`.
 * 2B of Vcc in mA
 * 2B engine current in mA
 * 1B of current servo position
@@ -106,8 +106,36 @@ protocol version is binary `0000` here.
 
 ### set LED brightness
 #### request
-* ID: `3`.
+* ID: `6`.
 * 1B brightness setting (0..255 mapped to 0..100%)
 #### reply
-* ID: `3`.
+* ID: `7`.
 * 1B brightness setting (0..255 mapped to 0..100%)
+
+
+### read persistent settings
+#### request
+* ID: `8`.
+#### reply
+* ID: `9`.
+* 1B LED brightness (0..255)
+* 1B servo min position
+* 1B servo max position
+
+### set min position
+will move servo, if current position is below new min.
+#### request
+* ID: `10`.
+* 1B servo min position
+#### reply
+* ID: `11`.
+* 1B servo min position (may differ from requested, if value was not valid - e.g. greater than max position)
+
+### set max position
+will move servo, if current position is above new max.
+#### request
+* ID: `12`.
+* 1B servo max position
+#### reply
+* ID: `13`.
+* 1B servo max position (may differ from requested, if value was not valid - e.g. less than min position)
