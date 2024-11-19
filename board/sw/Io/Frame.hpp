@@ -40,6 +40,45 @@ struct Frame
 };
 
 
+namespace detail
+{
+struct HexByte
+{
+  char high_{};
+  char low_{};
+};
+
+inline bool operator==(HexByte const a, HexByte const b) { return a.high_ == b.high_ && a.low_ == b.low_; }
+inline bool operator!=(HexByte const a, HexByte const b) { return not ( a == b ); }
+
+inline auto to_hex(uint8_t b)
+{
+  return HexByte{};
+}
+
+inline std::optional<uint8_t> byte_from_hex(char c)
+{
+  if('0' <= c && c <='9')
+    return c - '0';
+  if('a' <= c && c <='f')
+    return 10 + c - 'a';
+  if('A' <= c && c <='F')
+    return 10 + c - 'A';
+  return {};
+}
+
+inline std::optional<uint8_t> to_byte(HexByte hb)
+{
+  auto const h = byte_from_hex(hb.high_);
+  auto const l = byte_from_hex(hb.low_);
+  if(not h || not l)
+    return {};
+  uint8_t const v = ( *h << 4 ) | *l;
+  return v;
+}
+} // unnamed namespace
+
+
 inline std::optional<Mtu> encode(Frame const& f)
 {
   (void)f;
