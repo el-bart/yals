@@ -1,16 +1,12 @@
 #pragma once
+#include "Io/Mtu.hpp"
+#include "Io/Buffer.hpp"
+#include "Io/const.hpp"
 #include <optional>
 #include <array>
 
 namespace Io
 {
-
-struct Mtu
-{
-  static constexpr auto max_size = 1 + 2 + 2*16 + 2 + 1;
-  uint8_t size_{0};
-  std::array<uint8_t, max_size> data_;
-};
 
 struct Frame
 {
@@ -20,22 +16,39 @@ struct Frame
     uint8_t size_{0};
   };
 
+  bool payload_add_byte(uint8_t b)
+  {
+    if(header_.size_ == max_size)
+      return false;
+    payload_[header_.size_] = b;
+    ++header_.size_;
+    return true;
+  }
+
+  static constexpr uint8_t max_size = max_frame_size;
   Header header_;
-  std::array<uint8_t, 16> payload_{};
-  uint8_t checksum_{};
+  std::array<uint8_t, max_size> payload_{};
 };
 
 
-Mtu encode(Frame const& f) const
+inline std::optional<Mtu> encode(Frame const& f)
 {
   (void)f;
-  return Mtu{}; // TODO
+  return {};    // TODO
 }
 
-std::optional<Frame> decode(Mtu const& mtu)
+inline std::optional<Frame> decode(Mtu& m)
 {
-  (void)mtu;
   return {};    // TODO
+}
+
+
+inline uint8_t checksum(Frame const& f)
+{
+  uint8_t c = 0x00;
+  for(auto i=0u; i<f.header_.size_; ++i)
+    c ^= f.payload_[i];
+  return c;
 }
 
 }

@@ -21,6 +21,7 @@ if ("${YALS_HAL}" STREQUAL "simulate")
   add_binary(uts main.ut.cpp
     sim.ut.cpp
     Io/Buffer.ut.cpp
+    Io/Mtu.ut.cpp
     Io/Frame.ut.cpp
   )
   target_link_libraries(uts hal)
