@@ -1,6 +1,6 @@
-#pragma
+#pragma once
 
 namespace Io
 {
-inline is_eol(char c) { return c=='\n' || c=='\r'; }
+inline auto is_eol(char c) { return c=='\n' || c=='\r'; }
 }
