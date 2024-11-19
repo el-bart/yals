@@ -252,7 +252,6 @@ TEST_CASE("process(): Set_LED_brightness")
 
 TEST_CASE("process(): Set_max_servo_position")
 {
-  return;       
   SECTION("parsing with correct checksum")
   {
     Handler h;
