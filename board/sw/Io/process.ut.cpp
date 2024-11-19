@@ -57,13 +57,13 @@ struct Handler
   Set_min_servo_position::Reply handle(Set_min_servo_position::Request const& req)
   {
     calls_["Set_min_servo_position"] += 1;
-    return {};    // TODO
+    return {};
   }
 
   Set_servo_position::Reply handle(Set_servo_position::Request const& req)
   {
     calls_["Set_servo_position"] += 1;
-    return {};    // TODO
+    return {};
   }
 
   std::map<std::string, unsigned> calls_;
@@ -284,6 +284,25 @@ TEST_CASE("process(): Set_min_servo_position")
   {
     ErrorHandler h;
     CHECK( process_test("<321", h) == "-Eset_min_servo_positionE" );
+  }
+}
+
+
+TEST_CASE("process(): Set_servo_position")
+{
+  SECTION("parsing with correct checksum")
+  {
+    Handler h;
+    REQUIRE( h.calls_.empty() );
+    CHECK( process_test("@678", h) == "+" );
+    CHECK( h.calls_.size() == 1 );
+    CHECK( h.calls_["Set_servo_position"] == 1 );
+  }
+
+  SECTION("parsing with error handler")
+  {
+    ErrorHandler h;
+    CHECK( process_test("@678", h) == "-Eset_servo_positionE" );
   }
 }
 

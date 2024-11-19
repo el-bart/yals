@@ -58,6 +58,7 @@ auto dispatch(Line const& line, H&& h)
     case '*': return run_handler(h, line, Set_LED_brightness::decode, Set_LED_brightness::encode);
     case '>': return run_handler(h, line, Set_max_servo_position::decode, Set_max_servo_position::encode);
     case '<': return run_handler(h, line, Set_min_servo_position::decode, Set_min_servo_position::encode);
+    case '@': return run_handler(h, line, Set_servo_position::decode, Set_servo_position::encode);
   }
 
   return detail::error_line("unknown cmd");
