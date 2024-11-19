@@ -20,6 +20,7 @@ if ("${YALS_HAL}" STREQUAL "simulate")
   enable_testing()
   add_binary(uts main.ut.cpp
     sim.ut.cpp
+    Io/Frame.ut.cpp
   )
   target_link_libraries(uts hal)
   target_link_libraries(uts servo_lib)
