@@ -69,7 +69,7 @@ TEST_CASE("Io::extract_line()")
 
   SECTION("attempting extraction on buffer where no EOL is within max line length drops one byte")
   {
-    for(auto i=0; i<Line::max_size; ++i)
+    for(auto i=0u; i<Line::max_size; ++i)
       b.dive_add('a' + i);
     b.dive_add('!');
     REQUIRE( b.size_ == Line::max_size + 1 );
@@ -80,7 +80,7 @@ TEST_CASE("Io::extract_line()")
 
   SECTION("extraction won't happen for a too long line")
   {
-    for(auto i=0; i<Line::max_size; ++i)
+    for(auto i=0u; i<Line::max_size; ++i)
       b.dive_add('a' + i);
     b.dive_add('x');
     b.dive_add('\n');

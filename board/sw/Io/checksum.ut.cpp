@@ -44,19 +44,19 @@ TEST_CASE("Io::add_checksum()")
 
   SECTION("cannot add checksum when it would result in too long line")
   {
-    for(auto i = 0; i < Line::max_size - 1; ++i)
+    for(auto i = 0u; i < Line::max_size - 1u; ++i)
       line.add_byte('a' + i);
-    REQUIRE(line.size_ == Line::max_size - 1);
+    REQUIRE(line.size_ == Line::max_size - 1u);
 
     CHECK( not add_checksum(line) );
-    CHECK(line.size_ == Line::max_size - 1);
+    CHECK(line.size_ == Line::max_size - 1u);
   }
 
   SECTION("can add checksum when it will fit into a line")
   {
-    for(auto i = 0; i < Line::max_size - 2; ++i)
+    for(auto i = 0u; i < Line::max_size - 2u; ++i)
       line.add_byte('a' + i);
-    REQUIRE(line.size_ == Line::max_size - 2);
+    REQUIRE(line.size_ == Line::max_size - 2u);
 
     CHECK( add_checksum(line) );
     CHECK(line.size_ == Line::max_size);

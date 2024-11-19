@@ -7,6 +7,9 @@ include("Hal/${YALS_HAL}/common_pre.cmake")
 project(yals C CXX ASM)
 include("Hal/${YALS_HAL}/common_post.cmake")
 
+add_compile_options(-Werror)
+add_compile_options(-Wall)
+
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/Hal/${YALS_HAL}/")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/")
 

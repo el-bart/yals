@@ -52,7 +52,6 @@ struct Handler
 auto mk_cmd(std::string_view str)
 {
   Line line;
-  uint8_t checksum = 0x00;
   for(auto i=0u; i<str.size(); ++i)
     line.data_[i] = str[i];
   add_checksum(line);
@@ -61,7 +60,7 @@ auto mk_cmd(std::string_view str)
 
 TEST_CASE("test basic lines")
 {
-
+  (void)mk_cmd;
 }
 
 
