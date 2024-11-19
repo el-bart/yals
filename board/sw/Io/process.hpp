@@ -55,6 +55,7 @@ auto dispatch(Line const& line, H&& h)
     case '!': return run_handler(h, line, Get_servo_position::decode, Get_servo_position::encode);
     case '#': return run_handler(h, line, Get_telemetry::decode, Get_telemetry::encode);
     case '~': return run_handler(h, line, Ping::decode, Ping::encode);
+    case '*': return run_handler(h, line, Set_LED_brightness::decode, Set_LED_brightness::encode);
   }
 
   return detail::error_line("unknown cmd");
@@ -69,7 +70,8 @@ Line process(Line line, H&& h)
 
   if( not checksum_valid(line) )
     return detail::error_line_with_checksum("invalid checksum");
-  line.size_ -= 2u;     // trim checksum
+  line.size_ -= 2u;                 // trim checksum
+  line.data_[line.size_] = '\0';    // ensure it's null-terminated, so that it can be used with string parsers, too
 
   auto out = detail::dispatch(line, h);
   add_checksum(out);

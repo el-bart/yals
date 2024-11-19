@@ -39,13 +39,13 @@ struct Handler
   Ping::Reply handle(Ping::Request const& req)
   {
     calls_["Ping"] += 1;
-    return {};    // TODO
+    return {};
   }
 
   Set_LED_brightness::Reply handle(Set_LED_brightness::Request const& req)
   {
     calls_["Set_LED_brightness"] += 1;
-    return {};    // TODO
+    return {};
   }
 
   Set_max_servo_position::Reply handle(Set_max_servo_position::Request const& req)
@@ -227,6 +227,25 @@ TEST_CASE("process(): Ping")
   {
     ErrorHandler h;
     CHECK( process_test("~", h) == "-EpingE" );
+  }
+}
+
+
+TEST_CASE("process(): Set_LED_brightness")
+{
+  SECTION("parsing with correct checksum")
+  {
+    Handler h;
+    REQUIRE( h.calls_.empty() );
+    CHECK( process_test("*97", h) == "+" );
+    CHECK( h.calls_.size() == 1 );
+    CHECK( h.calls_["Set_LED_brightness"] == 1 );
+  }
+
+  SECTION("parsing with error handler")
+  {
+    ErrorHandler h;
+    CHECK( process_test("*97", h) == "-Eset_led_brightnessE" );
   }
 }
 

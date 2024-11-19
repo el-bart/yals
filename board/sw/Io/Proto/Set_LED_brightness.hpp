@@ -19,12 +19,24 @@ struct Reply
 
 inline std::optional<Request> decode(Line const& line)
 {
-  return {};    // TODO
+  if(line.size_ != 3)
+    return {};
+  if(line.data_[0] != '*')
+    return {};
+  Request r;
+  if( sscanf(reinterpret_cast<char const*>(line.data_.data()), "%02u", &r.brightness_) != 2 )
+  if(r.brightness_ > 99)
+    return {};
+  return r;
 }
 
 inline Line encode(Reply const& r)
 {
-  return {};    // TODO
+  if(r.err_)
+    return err_line(r.err_);
+  Line line;
+  line.size_ = snprintf(reinterpret_cast<char*>(line.data_.data()), Line::max_size, "+");
+  return line;
 }
 
 }
