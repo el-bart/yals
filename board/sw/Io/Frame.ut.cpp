@@ -25,15 +25,15 @@ TEST_CASE("Io::checksum() calculation")
 {
   Frame f;
   uint8_t c = 0x00;
-  CHECK( checksum(f) == c );
+  CHECK( f.checksum() == c );
 
   c ^= 0x42;
   REQUIRE( f.payload_add_byte(0x42) );
-  CHECK( checksum(f) == c );
+  CHECK( f.checksum() == c );
 
   c ^= 0x62;
   REQUIRE( f.payload_add_byte(0x62) );
-  CHECK( checksum(f) == c );
+  CHECK( f.checksum() == c );
 }
 
 

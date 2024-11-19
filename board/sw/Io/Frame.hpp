@@ -26,6 +26,14 @@ struct Frame
     return true;
   }
 
+  uint8_t checksum() const
+  {
+    uint8_t c = 0x00;
+    for(auto i=0u; i<header_.size_; ++i)
+      c ^= payload_[i];
+    return c;
+  }
+
   static constexpr uint8_t max_size = max_frame_size;
   Header header_;
   std::array<uint8_t, max_size> payload_{};
@@ -38,18 +46,9 @@ inline std::optional<Mtu> encode(Frame const& f)
   return {};    // TODO
 }
 
-inline std::optional<Frame> decode(Mtu& m)
+inline std::optional<Frame> decode(Mtu const& m)
 {
   return {};    // TODO
-}
-
-
-inline uint8_t checksum(Frame const& f)
-{
-  uint8_t c = 0x00;
-  for(auto i=0u; i<f.header_.size_; ++i)
-    c ^= f.payload_[i];
-  return c;
 }
 
 }
