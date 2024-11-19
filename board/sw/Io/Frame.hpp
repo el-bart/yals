@@ -52,11 +52,7 @@ inline bool operator==(HexByte const a, HexByte const b) { return a.high_ == b.h
 inline bool operator!=(HexByte const a, HexByte const b) { return not ( a == b ); }
 
 inline auto halfbyte_to_hex(uint8_t b) { return "0123456789abcdef"[ b & 0x0f ]; }
-
-inline auto to_hex(uint8_t b)
-{
-  return HexByte{ .high_ = halfbyte_to_hex(b>>4), .low_ = halfbyte_to_hex(b&0x0f) };
-}
+inline auto to_hex(uint8_t b) { return HexByte{ .high_ = halfbyte_to_hex(b>>4), .low_ = halfbyte_to_hex(b&0x0f) }; }
 
 inline std::optional<uint8_t> hex_to_byte(char c)
 {
