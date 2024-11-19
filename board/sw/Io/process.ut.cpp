@@ -268,4 +268,23 @@ TEST_CASE("process(): Set_max_servo_position")
   }
 }
 
+
+TEST_CASE("process(): Set_min_servo_position")
+{
+  SECTION("parsing with correct checksum")
+  {
+    Handler h;
+    REQUIRE( h.calls_.empty() );
+    CHECK( process_test("<321", h) == "+" );
+    CHECK( h.calls_.size() == 1 );
+    CHECK( h.calls_["Set_min_servo_position"] == 1 );
+  }
+
+  SECTION("parsing with error handler")
+  {
+    ErrorHandler h;
+    CHECK( process_test("<321", h) == "-Eset_min_servo_positionE" );
+  }
+}
+
 }
