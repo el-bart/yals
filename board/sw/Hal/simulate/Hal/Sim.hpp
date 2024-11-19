@@ -1,6 +1,9 @@
 #pragma once
 #include <initializer_list>
 #include <queue>
+#include <algorithm>
+#include <cstdlib>
+#include <cinttypes>
 
 namespace Hal
 {
