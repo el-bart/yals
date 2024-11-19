@@ -1,4 +1,5 @@
 #pragma once
+#include "Io/const.hpp"
 #include <optional>
 #include <array>
 
@@ -46,7 +47,7 @@ struct Buffer final
     size_ = new_size;
   }
 
-  static constexpr uint8_t max_size = 128;
+  static constexpr uint8_t max_size = max_buffer_size;
   uint8_t size_{0};
   std::array<uint8_t, max_size> data_;
 
