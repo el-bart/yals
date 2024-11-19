@@ -30,7 +30,10 @@ struct Handler
   Get_telemetry::Reply handle(Get_telemetry::Request const& req)
   {
     calls_["Get_telemetry"] += 1;
-    return {};    // TODO
+    return {
+      .eng_current_mA_ = 1234,
+      .vcc_voltage_mV_ = 56789
+    };
   }
 
   Ping::Reply handle(Ping::Request const& req)
@@ -186,6 +189,25 @@ TEST_CASE("process(): Get_servo_position")
   {
     ErrorHandler h;
     CHECK( process_test("!", h) == "-Eget_servo_positionE" );
+  }
+}
+
+
+TEST_CASE("process(): Get_telemetry")
+{
+  SECTION("parsing with correct checksum")
+  {
+    Handler h;
+    REQUIRE( h.calls_.empty() );
+    CHECK( process_test("#", h) == "+I1234U56789" );
+    CHECK( h.calls_.size() == 1 );
+    CHECK( h.calls_["Get_telemetry"] == 1 );
+  }
+
+  SECTION("parsing with error handler")
+  {
+    ErrorHandler h;
+    CHECK( process_test("#", h) == "-Eget_telemetryE" );
   }
 }
 
