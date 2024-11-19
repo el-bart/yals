@@ -5,16 +5,16 @@ struct Context final
 {
   struct Setpoints final
   {
-    float min_pos_{};       // 0..100
-    float max_pos_{};       // 0..100
-    float position_{};      // 0..100
+    float min_pos_{0};      // 0..100
+    float max_pos_{100};    // 0..100
+    float position_{50};    // 0..100
   };
 
   struct Last_reads final
   {
     float vcc_V_{};
     float engine_current_A_{};
-    float position_percent_{};
+    float position_percent_{};      // 0..100
   };
 
   Hal::All hal_;
