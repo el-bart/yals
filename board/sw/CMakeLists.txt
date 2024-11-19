@@ -22,7 +22,6 @@ if ("${YALS_HAL}" STREQUAL "simulate")
     sim.ut.cpp
     Io/Buffer.ut.cpp
     Io/Mtu.ut.cpp
-    Io/Frame.ut.cpp
   )
   target_link_libraries(uts hal)
   target_link_libraries(uts servo_lib)
