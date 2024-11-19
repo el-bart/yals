@@ -14,13 +14,52 @@
 namespace Io
 {
 
-template<typename F>
-std::optional<Line> process(Line const& line, F&& f)
+namespace detail
+{
+template<size_t N>
+auto error_line(char const (&str)[N])
+{
+  static_assert( 1u + N-1u + 2u <= Line::max_size, "error message will not fit the buffer" );
+  Line err;
+  err.add_byte('-');
+  for(auto i=0u; i<N-1u; ++i)
+    err.add_byte( str[i] );
+  return err;
+}
+
+template<size_t N>
+auto error_line_with_checksum(char const (&str)[N])
+{
+  auto err = error_line(str);
+  add_checksum(err);
+  return err;
+}
+
+template<typename H>
+auto dispatch(Line line, H&& h)
+{
+  switch(line.data_[0])
+  {
+    case '?': return Proto::Get_persistent_config::encode( h.handle( Proto::Get_persistent_config::decode(line) ) );
+  }
+
+  return detail::error_line("unknown cmd");
+}
+}
+
+template<typename H>
+Line process(Line line, H&& h)
 {
   if(line.size_ < 3u) // definitely not valid
-    return{};
-  // TODO
-  return {};
+    return detail::error_line_with_checksum("too short");
+
+  if( not checksum_valid(line) )
+    return detail::error_line_with_checksum("invalid checksum");
+  line.size_ -= 2u;     // trim checksum
+
+  auto out = detail::dispatch(line, h);
+  add_checksum(out);
+  return out;
 }
 
 }
