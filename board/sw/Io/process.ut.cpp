@@ -211,4 +211,23 @@ TEST_CASE("process(): Get_telemetry")
   }
 }
 
+
+TEST_CASE("process(): Ping")
+{
+  SECTION("parsing with correct checksum")
+  {
+    Handler h;
+    REQUIRE( h.calls_.empty() );
+    CHECK( process_test("~", h) == "+YALS" );
+    CHECK( h.calls_.size() == 1 );
+    CHECK( h.calls_["Ping"] == 1 );
+  }
+
+  SECTION("parsing with error handler")
+  {
+    ErrorHandler h;
+    CHECK( process_test("~", h) == "-EpingE" );
+  }
+}
+
 }

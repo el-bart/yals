@@ -54,6 +54,7 @@ auto dispatch(Line const& line, H&& h)
     case '?': return run_handler(h, line, Get_persistent_config::decode, Get_persistent_config::encode);
     case '!': return run_handler(h, line, Get_servo_position::decode, Get_servo_position::encode);
     case '#': return run_handler(h, line, Get_telemetry::decode, Get_telemetry::encode);
+    case '~': return run_handler(h, line, Ping::decode, Ping::encode);
   }
 
   return detail::error_line("unknown cmd");

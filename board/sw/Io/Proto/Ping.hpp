@@ -17,12 +17,20 @@ struct Reply
 
 inline std::optional<Request> decode(Line const& line)
 {
-  return {};    // TODO
+  if(line.size_ != 1)
+    return {};
+  if(line.data_[0] != '~')
+    return {};
+  return Request{};
 }
 
 inline Line encode(Reply const& r)
 {
-  return {};    // TODO
+  if(r.err_)
+    return err_line(r.err_);
+  Line line;
+  line.size_ = snprintf(reinterpret_cast<char*>(line.data_.data()), Line::max_size, "+YALS");
+  return line;
 }
 
 }
