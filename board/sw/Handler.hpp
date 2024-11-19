@@ -13,7 +13,7 @@ struct Handler final
   Handler(Handler&&) = delete;
   Handler& operator=(Handler&&) = delete;
 
-  Get_persistent_config::Reply handle(Get_persistent_config::Request const& req)
+  Io::Proto::Get_persistent_config::Reply handle(Io::Proto::Get_persistent_config::Request const& req)
   {
     // TODO
     return {
@@ -23,13 +23,13 @@ struct Handler final
     };
   }
 
-  Get_servo_position::Reply handle(Get_servo_position::Request const& req)
+  Io::Proto::Get_servo_position::Reply handle(Io::Proto::Get_servo_position::Request const& req)
   {
     // TODO
     return { .pos_{73} };
   }
 
-  Get_telemetry::Reply handle(Get_telemetry::Request const& req)
+  Io::Proto::Get_telemetry::Reply handle(Io::Proto::Get_telemetry::Request const& req)
   {
     // TODO
     return {
@@ -38,31 +38,31 @@ struct Handler final
     };
   }
 
-  Ping::Reply handle(Ping::Request const& req)
+  Io::Proto::Ping::Reply handle(Io::Proto::Ping::Request const& req)
   {
     // TODO
     return {};
   }
 
-  Set_LED_brightness::Reply handle(Set_LED_brightness::Request const& req)
+  Io::Proto::Set_LED_brightness::Reply handle(Io::Proto::Set_LED_brightness::Request const& req)
   {
     // TODO
     return {};
   }
 
-  Set_max_servo_position::Reply handle(Set_max_servo_position::Request const& req)
+  Io::Proto::Set_max_servo_position::Reply handle(Io::Proto::Set_max_servo_position::Request const& req)
   {
     // TODO
     return {};
   }
 
-  Set_min_servo_position::Reply handle(Set_min_servo_position::Request const& req)
+  Io::Proto::Set_min_servo_position::Reply handle(Io::Proto::Set_min_servo_position::Request const& req)
   {
     // TODO
     return {};
   }
 
-  Set_servo_position::Reply handle(Set_servo_position::Request const& req)
+  Io::Proto::Set_servo_position::Reply handle(Io::Proto::Set_servo_position::Request const& req)
   {
     // TODO
     return {};

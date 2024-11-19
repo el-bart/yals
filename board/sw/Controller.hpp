@@ -11,5 +11,5 @@ struct Controller final
 
 private:
   Context ctx_;
-  Handler handler_{ctx};
+  Handler handler_{ctx_};
 };
