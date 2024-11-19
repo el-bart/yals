@@ -82,11 +82,12 @@ TEST_CASE("Io::extract_line()")
   {
     for(auto i=0; i<Line::max_size; ++i)
       b.dive_add('a' + i);
+    b.dive_add('x');
     b.dive_add('\n');
-    REQUIRE( b.size_ == Line::max_size + 1 );
+    REQUIRE( b.size_ == Line::max_size + 2 );
 
     REQUIRE( not extract_line(b) );
-    CHECK( b.size_ == Line::max_size );
+    CHECK( b.size_ == Line::max_size + 1 );
 
     auto const line = extract_line(b);
     REQUIRE(line);

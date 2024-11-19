@@ -22,7 +22,7 @@ inline std::optional<Line> extract_line(Buffer& b)
   b.consume_leading_eols();
   if(b.size_ < 2u)  // at least 1 byte and and '\n' must be present here
     return {};
-  auto const range = std::min(b.size_, Line::max_size /*+ 1u*/);
+  auto const range = std::min(b.size_, Line::max_size + 1u);
   for(auto i = 0u; i < range; ++i)
     if( is_eol(b.data_[i]) )
     {
