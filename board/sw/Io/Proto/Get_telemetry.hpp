@@ -1,0 +1,17 @@
+#pragma once
+
+namespace Io::Proto::Get_telemetry
+{
+
+struct Request { };
+
+struct Reply
+{
+  // OK
+  unsigned eng_current_mA_{};
+  unsigned vcc_voltage_mV_{};
+  // error
+  char const* err_{nullptr};
+};
+
+}
