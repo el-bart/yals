@@ -1,6 +1,7 @@
 #pragma once
 #include "Io/Buffer.hpp"
 #include "Io/const.hpp"
+#include "Io/utils.hpp"
 #include <optional>
 #include <array>
 #include <cassert>
@@ -10,40 +11,30 @@ namespace Io
 
 struct Line
 {
-  static constexpr uint8_t max_size = max_line_size;
-  uint8_t size_{0};
+  static constexpr size_t max_size = max_line_size;
+  size_t size_{0};
   std::array<uint8_t, max_size> data_;
 };
 
 
-namespace detail
-{
-inline std::optional<Line> to_line(Buffer const& b, uint8_t eol_pos)
-{
-  if(b.size_ <= eol_pos)
-    return {};
-  if(eol_pos < 1u)  // not even 1 byte - dropping
-    return {};
-  assert(b.data_[eol_pos] == '\n');
-  return line;
-}
-}
-
-
 inline std::optional<Line> extract_line(Buffer& b)
 {
+  b.consume_leading_eols();
   if(b.size_ < 2u)  // at least 1 byte and and '\n' must be present here
     return {};
-  for(auto eol_pos = 0u; eol_pos < b.size_; ++eol_pos)
-    if(b.data_[i] == '\n')
+  auto const range = std::min(b.size_, Line::max_size /*+ 1u*/);
+  for(auto i = 0u; i < range; ++i)
+    if( is_eol(b.data_[i]) )
     {
+      auto const eol_pos = i;
       Line line;
-      std::copy(b.data_.begin() + 1u, b.data_.begin() + eol_pos, line.data_.begin());
-      line.size_ = eol_pos - 1u;
-      auto const line = detail::to_line(b, i);
-      b.trim_by(i + 1u);
+      std::copy(b.data_.begin(), b.data_.begin() + eol_pos, line.data_.begin());
+      line.size_ = eol_pos;
+      b.trim_by(eol_pos + 1u);
       return line;
     }
+  if(Line::max_size <= b.size_)
+    b.trim_by(1);
   return {};
 }
 
