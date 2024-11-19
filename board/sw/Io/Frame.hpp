@@ -8,6 +8,7 @@
 namespace Io
 {
 
+// logical representation of a frame (with binary data)
 struct Frame
 {
   struct Header
