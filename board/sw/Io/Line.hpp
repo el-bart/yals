@@ -11,6 +11,27 @@ namespace Io
 
 struct Line
 {
+  template<typename ...Args>
+  bool add_byte(uint8_t b1, uint8_t b2, Args... args)
+  {
+    if( add_byte(b1) )
+      if( add_byte(b2) )
+        if( add_byte(args...) )
+          return true;
+    return false;
+  }
+
+  bool add_byte(uint8_t b)
+  {
+    if(size_ == max_size)
+      return false;
+    data_[size_] = b;
+    ++size_;
+    return true;
+  }
+
+  bool add_byte() { return true; }
+
   static constexpr size_t max_size = max_line_size;
   size_t size_{0};
   std::array<uint8_t, max_size> data_;
