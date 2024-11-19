@@ -4,6 +4,8 @@ communication protocol definition, used to communicate with the YALS device.
 it consists of 1-line commands and responses and ends with checksum.
 line ends with a new-line character (`\n` or `\r`).
 
+consecutive new-line characters are ignored.
+
 despite of being ASCII-printable, for ease of parsing, each command is fixed-width.
 this means that values might need to be `0`-padded.
 
