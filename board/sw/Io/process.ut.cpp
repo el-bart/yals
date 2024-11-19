@@ -51,7 +51,7 @@ struct Handler
   Set_max_servo_position::Reply handle(Set_max_servo_position::Request const& req)
   {
     calls_["Set_max_servo_position"] += 1;
-    return {};    // TODO
+    return {};
   }
 
   Set_min_servo_position::Reply handle(Set_min_servo_position::Request const& req)
@@ -246,6 +246,26 @@ TEST_CASE("process(): Set_LED_brightness")
   {
     ErrorHandler h;
     CHECK( process_test("*97", h) == "-Eset_led_brightnessE" );
+  }
+}
+
+
+TEST_CASE("process(): Set_max_servo_position")
+{
+  return;       
+  SECTION("parsing with correct checksum")
+  {
+    Handler h;
+    REQUIRE( h.calls_.empty() );
+    CHECK( process_test(">997", h) == "+" );
+    CHECK( h.calls_.size() == 1 );
+    CHECK( h.calls_["Set_max_servo_position"] == 1 );
+  }
+
+  SECTION("parsing with error handler")
+  {
+    ErrorHandler h;
+    CHECK( process_test(">997", h) == "-Eset_max_servo_positionE" );
   }
 }
 

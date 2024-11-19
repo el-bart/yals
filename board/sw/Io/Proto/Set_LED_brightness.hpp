@@ -23,11 +23,10 @@ inline std::optional<Request> decode(Line const& line)
     return {};
   if(line.data_[0] != '*')
     return {};
-  Request r;
-  if( sscanf(reinterpret_cast<char const*>(line.data_.data()), "%02u", &r.brightness_) != 2 )
-  if(r.brightness_ > 99)
+  auto const br = read_number( line.data_.data() + 1u, 2u );
+  if(not br)
     return {};
-  return r;
+  return Request{ .brightness_ = *br };
 }
 
 inline Line encode(Reply const& r)
