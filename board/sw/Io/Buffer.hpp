@@ -6,6 +6,7 @@
 namespace Io
 {
 
+// byte-buffer, as received from (or to be sent via) serial port
 struct Buffer final
 {
   template<typename ...Args>
