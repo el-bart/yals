@@ -22,12 +22,13 @@ add_library(servo_lib STATIC
 if ("${YALS_HAL}" STREQUAL "simulate")
   enable_testing()
   add_binary(uts main.ut.cpp
-    sim.ut.cpp
+    Controller.ut.cpp
     Io/Buffer.ut.cpp
     Io/Line.ut.cpp
-    Io/process.ut.cpp
-    Io/checksum.ut.cpp
     Io/Proto/common.ut.cpp
+    Io/checksum.ut.cpp
+    Io/process.ut.cpp
+    sim.ut.cpp
   )
   target_link_libraries(uts hal)
   target_link_libraries(uts servo_lib)
