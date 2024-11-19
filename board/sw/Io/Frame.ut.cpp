@@ -48,12 +48,55 @@ TEST_CASE("Io::detail::to_byte")
   CHECK( *to_byte( HexByte{'e', '0'} ) == 0xe0 );
   CHECK( *to_byte( HexByte{'f', '0'} ) == 0xf0 );
   // upper case
-  CHECK( *to_byte( HexByte{'A', 'B'} ) == 0xAB );
-  CHECK( *to_byte( HexByte{'C', 'D'} ) == 0xCD );
-  CHECK( *to_byte( HexByte{'E', 'F'} ) == 0xEF );
+  CHECK( *to_byte( HexByte{'A', 'B'} ) == 0xab );
+  CHECK( *to_byte( HexByte{'C', 'D'} ) == 0xcd );
+  CHECK( *to_byte( HexByte{'E', 'F'} ) == 0xef );
   // invalid
   CHECK( not to_byte( HexByte{'x', '0'} ) );
   CHECK( not to_byte( HexByte{'0', 'Q'} ) );
+  // misc
+  CHECK( *to_byte( HexByte{'f', 'F'} ) == 0xff );
+}
+
+
+TEST_CASE("Io::detail::to_hex")
+{
+  // low
+  CHECK( to_hex( 0x00 ) == HexByte{'0', '0'} );
+  CHECK( to_hex( 0x01 ) == HexByte{'0', '1'} );
+  CHECK( to_hex( 0x02 ) == HexByte{'0', '2'} );
+  CHECK( to_hex( 0x03 ) == HexByte{'0', '3'} );
+  CHECK( to_hex( 0x04 ) == HexByte{'0', '4'} );
+  CHECK( to_hex( 0x05 ) == HexByte{'0', '5'} );
+  CHECK( to_hex( 0x06 ) == HexByte{'0', '6'} );
+  CHECK( to_hex( 0x07 ) == HexByte{'0', '7'} );
+  CHECK( to_hex( 0x08 ) == HexByte{'0', '8'} );
+  CHECK( to_hex( 0x09 ) == HexByte{'0', '9'} );
+  CHECK( to_hex( 0x0a ) == HexByte{'0', 'a'} );
+  CHECK( to_hex( 0x0b ) == HexByte{'0', 'b'} );
+  CHECK( to_hex( 0x0c ) == HexByte{'0', 'c'} );
+  CHECK( to_hex( 0x0d ) == HexByte{'0', 'd'} );
+  CHECK( to_hex( 0x0e ) == HexByte{'0', 'e'} );
+  CHECK( to_hex( 0x0f ) == HexByte{'0', 'f'} );
+  // high
+  CHECK( to_hex( 0x00 ) == HexByte{'0', '0'} );
+  CHECK( to_hex( 0x10 ) == HexByte{'1', '0'} );
+  CHECK( to_hex( 0x20 ) == HexByte{'2', '0'} );
+  CHECK( to_hex( 0x30 ) == HexByte{'3', '0'} );
+  CHECK( to_hex( 0x40 ) == HexByte{'4', '0'} );
+  CHECK( to_hex( 0x50 ) == HexByte{'5', '0'} );
+  CHECK( to_hex( 0x60 ) == HexByte{'6', '0'} );
+  CHECK( to_hex( 0x70 ) == HexByte{'7', '0'} );
+  CHECK( to_hex( 0x80 ) == HexByte{'8', '0'} );
+  CHECK( to_hex( 0x90 ) == HexByte{'9', '0'} );
+  CHECK( to_hex( 0xa0 ) == HexByte{'a', '0'} );
+  CHECK( to_hex( 0xb0 ) == HexByte{'b', '0'} );
+  CHECK( to_hex( 0xc0 ) == HexByte{'c', '0'} );
+  CHECK( to_hex( 0xd0 ) == HexByte{'d', '0'} );
+  CHECK( to_hex( 0xe0 ) == HexByte{'e', '0'} );
+  CHECK( to_hex( 0xf0 ) == HexByte{'f', '0'} );
+  // misc
+  CHECK( to_hex( 0xff ) == HexByte{'f', 'f'} );
 }
 
 
