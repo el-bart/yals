@@ -1,5 +1,6 @@
 #pragma once
 #include "Io/Line.hpp"
+#include "Io/checksum.hpp"
 #include "Io/Proto/Get_persistent_config.hpp"
 #include "Io/Proto/Get_servo_position.hpp"
 #include "Io/Proto/Get_telemetry.hpp"
