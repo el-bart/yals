@@ -1,5 +1,6 @@
 #pragma once
 #include "Io/Line.hpp"
+#include "Io/Proto/common.hpp"
 
 namespace Io::Proto::Get_servo_position
 {

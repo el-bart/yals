@@ -67,6 +67,34 @@ struct Handler
 };
 
 
+struct ErrorHandler
+{
+  Get_persistent_config::Reply handle(Get_persistent_config::Request const& req)
+  { return { .err_ = "Eget_persistent_configE" }; }
+
+  Get_servo_position::Reply handle(Get_servo_position::Request const& req)
+  { return { .err_ = "Eget_servo_positionE" }; }
+
+  Get_telemetry::Reply handle(Get_telemetry::Request const& req)
+  { return { .err_ = "Eget_telemetryE" }; }
+
+  Ping::Reply handle(Ping::Request const& req)
+  { return { .err_ = "EpingE" }; }
+
+  Set_LED_brightness::Reply handle(Set_LED_brightness::Request const& req)
+  { return { .err_ = "Eset_led_brightnessE" }; }
+
+  Set_max_servo_position::Reply handle(Set_max_servo_position::Request const& req)
+  { return { .err_ = "Eset_max_servo_positionE" }; }
+
+  Set_min_servo_position::Reply handle(Set_min_servo_position::Request const& req)
+  { return { .err_ = "Eset_min_servo_positionE" }; }
+
+  Set_servo_position::Reply handle(Set_servo_position::Request const& req)
+  { return { .err_ = "Eset_servo_positionE" }; }
+};
+
+
 auto mk_cmd(std::string_view str, bool append_checksum = true)
 {
   Line line;
@@ -126,14 +154,19 @@ TEST_CASE("process(): invalid line")
 
 TEST_CASE("process(): Get_persistent_config")
 {
-  Handler h;
-  REQUIRE( h.calls_.empty() );
-
   SECTION("parsing with correct checksum")
   {
+    Handler h;
+    REQUIRE( h.calls_.empty() );
     CHECK( process_test("?", h) == "+<042>142*66" );
     CHECK( h.calls_.size() == 1 );
     CHECK( h.calls_["Get_persistent_config"] == 1 );
+  }
+
+  SECTION("parsing with error handler")
+  {
+    ErrorHandler h;
+    CHECK( process_test("?", h) == "-Eget_persistent_configE" );
   }
 }
 

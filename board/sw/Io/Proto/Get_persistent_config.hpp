@@ -1,5 +1,6 @@
 #pragma once
 #include "Io/Line.hpp"
+#include "Io/Proto/common.hpp"
 
 namespace Io::Proto::Get_persistent_config
 {
@@ -18,11 +19,17 @@ struct Reply
 
 inline std::optional<Request> decode(Line const& line)
 {
-  return {};
+  if(line.size_ != 1)
+    return {};
+  if(line.data_[0] != '?')
+    return {};
+  return Request{};
 }
 
 inline Line encode(Reply const& r)
 {
+  if(r.err_)
+    return err_line(r.err_);
   return {};    // TODO
 }
 

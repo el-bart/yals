@@ -35,12 +35,23 @@ auto error_line_with_checksum(char const (&str)[N])
   return err;
 }
 
-template<typename H>
-auto dispatch(Line line, H&& h)
+template<typename Dec, typename Enc, typename H>
+auto run_handler(H&& h, Line const& line, Dec&& dec, Enc&& enc)
 {
+  auto const req = dec(line);
+  if(not req)
+    return detail::error_line("cmd err");
+  return enc( h.handle(*req) );
+}
+
+template<typename H>
+auto dispatch(Line const& line, H&& h)
+{
+  using namespace Proto;
+
   switch(line.data_[0])
   {
-    case '?': return Proto::Get_persistent_config::encode( h.handle( Proto::Get_persistent_config::decode(line) ) );
+    case '?': return run_handler(h, line, Get_persistent_config::decode, Get_persistent_config::encode);
   }
 
   return detail::error_line("unknown cmd");
