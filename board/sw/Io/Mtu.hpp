@@ -3,6 +3,7 @@
 #include "Io/const.hpp"
 #include <optional>
 #include <array>
+#include <cassert>
 
 namespace Io
 {
@@ -17,11 +18,18 @@ struct Mtu
 
 namespace detail
 {
-inline std::optional<Mtu> to_mtu(Buffer& b, uint8_t eom_pos)
+inline std::optional<Mtu> to_mtu(Buffer const& b, uint8_t eom_pos)
 {
-  if(b.data_[0] != '!')
+  if(b.size_ <= eom_pos)
     return {};
-  return {};
+  if(eom_pos < 2u)  // not even 1 byte - dropping
+    return {};
+  assert(b.data_[0] == '!');
+  assert(b.data_[eom_pos] == '\n');
+  Mtu mtu;
+  std::copy(b.data_.begin() + 1u, b.data_.begin() + eom_pos, mtu.data_.begin());
+  mtu.size_ = eom_pos - 1u;
+  return mtu;
 }
 }
 
@@ -29,14 +37,13 @@ inline std::optional<Mtu> to_mtu(Buffer& b, uint8_t eom_pos)
 inline std::optional<Mtu> extract_mtu(Buffer& b)
 {
   b.consume_leading_garbage();
-  if(b.size_ < 1+2+1) // minimal valid frame size
+  if(b.size_ < 2u)  // at least '!' and '\n' must be present here
     return {};
-  uint8_t eom_pos = 0;
-  for(auto i=0u; i<b.size_; ++i, ++eom_pos)
+  for(auto i=1u; i<b.size_; ++i)
     if(b.data_[i] == '\n')
     {
-      auto const mtu = detail::to_mtu(b, eom_pos);
-      b.trim_by(eom_pos);
+      auto const mtu = detail::to_mtu(b, i);
+      b.trim_by(i + 1u);
       return mtu;
     }
   return {};
