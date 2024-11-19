@@ -22,12 +22,11 @@ frame ends with a single `\n` character.
 header is 1 byte long.
 it's constructed as:
 ```
-1vvrssss
+vvrrssss
 ```
 where:
-* `1` is a fixed bit set to `1` (indicating 1st byte of a frame)
 * `vv` is 2 bit field representing version (`00` atm)
-* `r` is 1 bit reserved field
+* `rr` is 2 bit reserved field
 * `ssss`is 4 bit payload size in user data bytes +1 (i.e. `0000` == 1B, `1111` == 16B)
 
 
