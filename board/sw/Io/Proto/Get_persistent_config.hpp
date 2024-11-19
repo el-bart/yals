@@ -1,6 +1,7 @@
 #pragma once
 #include "Io/Line.hpp"
 #include "Io/Proto/common.hpp"
+#include <cstdio>
 
 namespace Io::Proto::Get_persistent_config
 {
@@ -30,7 +31,9 @@ inline Line encode(Reply const& r)
 {
   if(r.err_)
     return err_line(r.err_);
-  return {};    // TODO
+  Line line;
+  line.size_ = snprintf(reinterpret_cast<char*>(line.data_.data()), Line::max_size, "+<%03d>%03d*%02d", r.min_pos_, r.max_pos_, r.LED_brightness_);
+  return line;
 }
 
 }
