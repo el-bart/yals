@@ -34,10 +34,12 @@ this is mostly for debugging purposes - it should never be used in production!
 where:
 * `XX` is hex-encoded checksum (or literal `XX` - meaning unset)
 #### reply
-* OK: `+msg\n` where:
+* OK: `+msgXX\n` where:
   * `msg` is a string containing basic device info (name, version, etc.). 30B max.
-* error: `-msg\n` where:
+  * `XX` is hex-encoded checksum
+* error: `-msgXX\n` where:
   * `msg` is an error description string. 30B max.
+  * `XX` is hex-encoded checksum
 
 ### set servo position
 #### request
@@ -48,9 +50,11 @@ where:
 * `nnn` is servo position in 000..999 range
 * `XX` is hex-encoded checksum (or literal `XX` - meaning unset)
 #### reply
-* OK: `+\n`
-* error: `-msg\n` where:
+* OK: `+XX\n`
+  * `XX` is hex-encoded checksum
+* error: `-msgXX\n` where:
   * `msg` is a string containing basic device info (name, version, etc.). 30B max.
+  * `XX` is hex-encoded checksum
 
 ### get servo position
 #### request
@@ -60,10 +64,12 @@ where:
 where:
 * `XX` is hex-encoded checksum (or literal `XX` - meaning unset)
 #### reply
-* OK: `+nnn\n` where:
+* OK: `+nnnXX\n` where:
   * `nnn` is a current 000..999 servo position
-* error: `-msg\n` where:
+  * `XX` is hex-encoded checksum
+* error: `-msgXX\n` where:
   * `msg` is a string containing basic device info (name, version, etc.). 30B max.
+  * `XX` is hex-encoded checksum
 
 ### set min servo position
 #### request
@@ -74,9 +80,11 @@ where:
 * `nnn` is 000...999 position
 * `XX` is hex-encoded checksum (or literal `XX` - meaning unset)
 #### reply
-* OK: `+\n`
-* error: `-msg\n` where:
+* OK: `+XX\n`
+  * `XX` is hex-encoded checksum
+* error: `-msgXX\n` where:
   * `msg` is a string containing basic device info (name, version, etc.). 30B max.
+  * `XX` is hex-encoded checksum
 
 ### set max servo position
 #### request
@@ -87,9 +95,11 @@ where:
 * `nnn` is 000...999 position
 * `XX` is hex-encoded checksum (or literal `XX` - meaning unset)
 #### reply
-* OK: `+\n`
-* error: `-msg\n` where:
+* OK: `+XX\n`
+  * `XX` is hex-encoded checksum
+* error: `-msgXX\n` where:
   * `msg` is a string containing basic device info (name, version, etc.). 30B max.
+  * `XX` is hex-encoded checksum
 
 ### set LED brightness
 #### request
@@ -100,9 +110,11 @@ where:
 * `nn` is 00...99 LED brightness
 * `XX` is hex-encoded checksum (or literal `XX` - meaning unset)
 #### reply
-* OK: `+\n`
-* error: `-msg\n` where:
+* OK: `+XX\n`
+  * `XX` is hex-encoded checksum
+* error: `-msgXX\n` where:
   * `msg` is a string containing basic device info (name, version, etc.). 30B max.
+  * `XX` is hex-encoded checksum
 
 ### get telemetry
 #### request
@@ -112,11 +124,13 @@ where:
 where:
 * `XX` is hex-encoded checksum (or literal `XX` - meaning unset)
 #### reply
-* OK: `+IiiiiUuuuuu\n` where:
+* OK: `+IiiiiUuuuuuXX\n` where:
   * `iiii` is current engine current in `mA` (0000..9999); e.g. `1234` is 1.234 A.
   * `uuuuu` is current main voltage in `mV` (00000..99999); e.g. `12345` is 12.345 V.
-* error: `-msg\n` where:
+  * `XX` is hex-encoded checksum
+* error: `-msgXX\n` where:
   * `msg` is a string containing basic device info (name, version, etc.). 30B max.
+  * `XX` is hex-encoded checksum
 
 ### get persistent configuration
 #### request
@@ -126,9 +140,11 @@ where:
 where:
 * `XX` is hex-encoded checksum (or literal `XX` - meaning unset)
 #### reply
-* OK: `+<mmm>MMM*bb\n` where:
+* OK: `+<mmm>MMM*bbXX\n` where:
   * `mmm` is 000..999 servo min position
   * `MMM` is 000..999 servo max position
   * `bb` is 00..99 LED brightness
-* error: `-msg\n` where:
+  * `XX` is hex-encoded checksum
+* error: `-msgXX\n` where:
   * `msg` is a string containing basic device info (name, version, etc.). 30B max.
+  * `XX` is hex-encoded checksum
