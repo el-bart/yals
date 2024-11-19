@@ -1,147 +1,132 @@
 # protocol definition
 
 communication protocol definition, used to communicate with the YALS device.
-it consists of multiple layers, namely:
-- frame (sends data as bytes, in a pre-defined packages)
-- payload (actual data)
+it consists of 1-line commands and responses and ends with checksum.
+line ends with a new-line character (`\n` or `\r`).
+
+despite of being ASCII-printable, for ease of parsing, each command is fixed-width.
+this means that values might need to be `0`-padded.
 
 
-## frame layer
-
-each frame has a header, payload and checksum.
-if checksum does not match, payload is dropped.
-
-each byte of binary frame (header, payload, checksum) is encoded in ASCII-hex.
-
-frame starts with a single `!` character.
-frame ends with a single `\n` character.
-
-
-### header
-
-header is 1 byte long.
-it's constructed as:
-```
-vvrrssss
-```
-where:
-* `vv` is 2 bit field representing version (`00` atm)
-* `rr` is 2 bit reserved field
-* `ssss`is 4 bit payload size in user data bytes +1 (i.e. `0000` == 1B, `1111` == 16B)
-
-
-### frame payload
-
-each byte of payload transmitted in hex-encoded (i.e. 2 ASCII bytes), lower-case.
-
-
-### checksum
+## checksum
 
 checksum is calculated as a bit XOR of all bytes of the source frame.
-checksum is hex-encoded
+checksum is hex-encoded.
+
+example checksum of 3 bytes of data (here as hex): `0xFF 0x42 0x10`  is equal to:
+`0xFF ^ 0x42 ^ 0x10`.
+note that new-line characters are not part of checksum.
+
+checksum is optional.
+a literal string `XX` can be used to indicate it's not set and should not be checked.
+this is mostly for debugging purposes - it should never be used in production!
 
 
-### example
-for example to encode 3 bytes of user data: `0xFF 0x42 0x10`.
-thus payload size is defined as `2` (i.e. 3 bytes).
-binary value of header therefor is:
-```
-1000 0010
-```
-this makes for frame look like:
-```
-!82ff42102f\n
-```
-where `\n` is EOL character.
+## protocol
 
-example program that generates such a sequence:
+### ping
+#### request
 ```
-#include <cstdio>
-#include <cstdint>
-int main()
-{
-  uint8_t h = 0x82;
-  uint8_t p[] = { 0xff, 0x42, 0x10 };
-  uint8_t c = h ^ p[0] ^ p[1] ^ p[2];
-  printf("!%02x%02x%02x%02x%02x\n", h, p[0], p[1], p[2], c);
-}
+~XX\n
 ```
-
-
-## payload layer
-
-this section defines higher-level protocol for communicating with YALS, in a form of logical frames.
-i.e. here only payload of the frame is covered, by it's now split into fields.
-
-first byte of each payload is 2-bit protocol version and 6-bit request/reply ID, i.e.:
-```
-vviiiiii
-```
-protocol version is binary `00` here.
-for example frame id `11111` and version `00` would yield byte:
-```
-0011111
-```
+where:
+* `XX` is hex-encoded checksum (or literal `XX` - meaning unset)
+#### reply
+* OK: `+msg\n` where:
+  * `msg` is a string containing basic device info (name, version, etc.). 32B max.
+* error: `-msg\n` where:
+  * `msg` is an error description string. 32B max.
 
 ### set servo position
 #### request
-* ID: `0`.
-* 1 byte servo position, where:
-  * `0x00` is next to the engine (min left)
-  * `0xff` is far away (max right)
+```
+@nnnXX\n
+```
+where:
+* `nnn` is servo position in 000..999 range
+* `XX` is hex-encoded checksum (or literal `XX` - meaning unset)
 #### reply
-* ID: `1`.
-* 1 byte confirming position set (i.e. the same as request)
+* OK: `+\n`
+* error: `-msg\n` where:
+  * `msg` is a string containing basic device info (name, version, etc.). 32B max.
 
-### read servo position
+### get servo position
 #### request
-* ID: `2`.
+```
+?@XX\n
+```
+where:
+* `XX` is hex-encoded checksum (or literal `XX` - meaning unset)
 #### reply
-* ID: `3`.
-* 1 byte representing current servo position
+* OK: `+nnn\n` where:
+  * `nnn` is a current 000..999 servo position
+* error: `-msg\n` where:
+  * `msg` is a string containing basic device info (name, version, etc.). 32B max.
 
-### read status information
+### set min servo position
 #### request
-* ID: `4`.
+```
+<nnnXX\n
+```
+where:
+* `nnn` is 000...999 position
+* `XX` is hex-encoded checksum (or literal `XX` - meaning unset)
 #### reply
-* ID: `5`.
-* 2B of Vcc in mA
-* 2B engine current in mA
-* 1B of current servo position
+* OK: `+\n`
+* error: `-msg\n` where:
+  * `msg` is a string containing basic device info (name, version, etc.). 32B max.
 
+### set max servo position
+#### request
+```
+>nnnXX\n
+```
+where:
+* `nnn` is 000...999 position
+* `XX` is hex-encoded checksum (or literal `XX` - meaning unset)
+#### reply
+* OK: `+\n`
+* error: `-msg\n` where:
+  * `msg` is a string containing basic device info (name, version, etc.). 32B max.
 
 ### set LED brightness
 #### request
-* ID: `6`.
-* 1B brightness setting (0..255 mapped to 0..100%)
+```
+*nnXX\n
+```
+where:
+* `nn` is 00...99 LED brightness
+* `XX` is hex-encoded checksum (or literal `XX` - meaning unset)
 #### reply
-* ID: `7`.
-* 1B brightness setting (0..255 mapped to 0..100%)
+* OK: `+\n`
+* error: `-msg\n` where:
+  * `msg` is a string containing basic device info (name, version, etc.). 32B max.
 
-
-### read persistent settings
+### get telemetry
 #### request
-* ID: `8`.
+```
+?tXX\n
+```
+where:
+* `XX` is hex-encoded checksum (or literal `XX` - meaning unset)
 #### reply
-* ID: `9`.
-* 1B LED brightness (0..255)
-* 1B servo min position
-* 1B servo max position
+* OK: `+IiiiiUuuuuu\n` where:
+  * `iiii` is current engine current in `mA` (0000..9999); e.g. `1234` is 1.234 A.
+  * `uuuuu` is current main voltage in `mV` (00000..99999); e.g. `12345` is 12.345 V.
+* error: `-msg\n` where:
+  * `msg` is a string containing basic device info (name, version, etc.). 32B max.
 
-### set min position
-will move servo, if current position is below new min.
+### get persistent configuration
 #### request
-* ID: `10`.
-* 1B servo min position
+```
+?cXX\n
+```
+where:
+* `XX` is hex-encoded checksum (or literal `XX` - meaning unset)
 #### reply
-* ID: `11`.
-* 1B servo min position (may differ from requested, if value was not valid - e.g. greater than max position)
-
-### set max position
-will move servo, if current position is above new max.
-#### request
-* ID: `12`.
-* 1B servo max position
-#### reply
-* ID: `13`.
-* 1B servo max position (may differ from requested, if value was not valid - e.g. less than min position)
+* OK: `+<mmm>MMM*bb\n` where:
+  * `mmm` is 000..999 servo min position
+  * `MMM` is 000..999 servo max position
+  * `bb` is 00..99 LED brightness
+* error: `-msg\n` where:
+  * `msg` is a string containing basic device info (name, version, etc.). 32B max.
