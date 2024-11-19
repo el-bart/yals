@@ -13,19 +13,22 @@ TEST_CASE("Io::Buffer")
 
   SECTION("empty input trimming")
   {
-    b.consume_leading_garbage();
+    b.consume_leading_eols();
     CHECK(b.size_ == 0u);
   }
 
-  SECTION("dropping all non-frame-start bytes")
+  SECTION("dropping all leading EOLs")
   {
-    b.size_ = 4;
-    b.data_[0] = 'a';
-    b.data_[1] = 'b';
-    b.data_[2] = 'c';
+    b.size_ = 5;
+    b.data_[0] = '\n';
+    b.data_[1] = '\r';
+    b.data_[2] = '\n';
     b.data_[3] = 'd';
-    b.consume_leading_garbage();
-    CHECK(b.size_ == 0u);
+    b.data_[4] = 'e';
+    b.consume_leading_eols();
+    REQUIRE(b.size_ == 2u);
+    CHECK(b.data_[0] == 'd');
+    CHECK(b.data_[1] == 'e');
   }
 
   SECTION("trimming start bytes")

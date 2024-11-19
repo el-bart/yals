@@ -1,5 +1,6 @@
 #pragma once
 #include "Io/const.hpp"
+#include "Io/utils.hpp"
 #include <optional>
 #include <array>
 
@@ -27,12 +28,12 @@ struct Buffer final
 
   void dive_add() { }
 
-  void consume_leading_garbage()
+  void consume_leading_eols()
   {
     if(size_ == 0u)
       return;
-    auto const gs = leading_garbage_size();
-    trim_by(gs);
+    auto const count = leading_eols_count();
+    trim_by(count);
   }
 
   void trim_by(uint8_t trim_size)
@@ -53,11 +54,11 @@ struct Buffer final
   std::array<uint8_t, max_size> data_;
 
 private:
-  uint8_t leading_garbage_size() const
+  uint8_t leading_eols_count() const
   {
     uint8_t c = 0;
-    for(auto i=0u; i<size_; ++i, ++c)
-      if(data_[i] == '!')
+    for(; c<size_; ++c)
+      if( not is_eol(data_[c]) )
         return c;
     return c;
   }
