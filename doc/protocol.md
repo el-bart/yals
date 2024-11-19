@@ -74,8 +74,15 @@ int main()
 this section defines higher-level protocol for communicating with YALS, in a form of logical frames.
 i.e. here only payload of the frame is covered, by it's now split into fields.
 
-first byte of each payload is 4-bit protocol version and 4-bit request/reply ID.
-protocol version is binary `0000` here.
+first byte of each payload is 2-bit protocol version and 6-bit request/reply ID, i.e.:
+```
+vviiiiii
+```
+protocol version is binary `00` here.
+for example frame id `11111` and version `00` would yield byte:
+```
+0011111
+```
 
 ### set servo position
 #### request
