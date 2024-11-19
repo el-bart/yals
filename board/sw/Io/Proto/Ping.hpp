@@ -14,7 +14,7 @@ struct Reply
   char const* err_{nullptr};
 };
 
-inline Request decode(Line const& line)
+inline std::optional<Request> decode(Line const& line)
 {
   return {};    // TODO
 }
