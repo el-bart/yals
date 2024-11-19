@@ -119,7 +119,7 @@ where:
 ### get telemetry
 #### request
 ```
-?tXX\n
+#XX\n
 ```
 where:
 * `XX` is hex-encoded checksum (or literal `XX` - meaning unset)
@@ -135,7 +135,7 @@ where:
 ### get persistent configuration
 #### request
 ```
-?cXX\n
+?XX\n
 ```
 where:
 * `XX` is hex-encoded checksum (or literal `XX` - meaning unset)
