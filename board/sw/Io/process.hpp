@@ -52,6 +52,7 @@ auto dispatch(Line const& line, H&& h)
   switch(line.data_[0])
   {
     case '?': return run_handler(h, line, Get_persistent_config::decode, Get_persistent_config::encode);
+    case '!': return run_handler(h, line, Get_servo_position::decode, Get_servo_position::encode);
   }
 
   return detail::error_line("unknown cmd");

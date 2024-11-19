@@ -24,7 +24,7 @@ struct Handler
   Get_servo_position::Reply handle(Get_servo_position::Request const& req)
   {
     calls_["Get_servo_position"] += 1;
-    return {};    // TODO
+    return { .pos_{73} };
   }
 
   Get_telemetry::Reply handle(Get_telemetry::Request const& req)
@@ -167,6 +167,25 @@ TEST_CASE("process(): Get_persistent_config")
   {
     ErrorHandler h;
     CHECK( process_test("?", h) == "-Eget_persistent_configE" );
+  }
+}
+
+
+TEST_CASE("process(): Get_servo_position")
+{
+  SECTION("parsing with correct checksum")
+  {
+    Handler h;
+    REQUIRE( h.calls_.empty() );
+    CHECK( process_test("!", h) == "+073" );
+    CHECK( h.calls_.size() == 1 );
+    CHECK( h.calls_["Get_servo_position"] == 1 );
+  }
+
+  SECTION("parsing with error handler")
+  {
+    ErrorHandler h;
+    CHECK( process_test("!", h) == "-Eget_servo_positionE" );
   }
 }
 
