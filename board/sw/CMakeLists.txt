@@ -12,13 +12,19 @@ include_directories("${CMAKE_CURRENT_SOURCE_DIR}/")
 
 add_subdirectory("Hal/${YALS_HAL}")
 
+add_library(servo_lib STATIC
+  placeholder.cpp
+)
+
 if ("${YALS_HAL}" STREQUAL "simulate")
   enable_testing()
   add_binary(uts main.ut.cpp
     sim.ut.cpp
   )
   target_link_libraries(uts hal)
+  target_link_libraries(uts servo_lib)
   add_test(NAME uts COMMAND "${CMAKE_CURRENT_BINARY_DIR}/uts")
 endif()
 
 add_binary(servo_ctrl servo_ctrl.cpp)
+target_link_libraries(servo_ctrl servo_lib)
