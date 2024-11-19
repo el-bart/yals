@@ -35,9 +35,9 @@ where:
 * `XX` is hex-encoded checksum (or literal `XX` - meaning unset)
 #### reply
 * OK: `+msg\n` where:
-  * `msg` is a string containing basic device info (name, version, etc.). 32B max.
+  * `msg` is a string containing basic device info (name, version, etc.). 30B max.
 * error: `-msg\n` where:
-  * `msg` is an error description string. 32B max.
+  * `msg` is an error description string. 30B max.
 
 ### set servo position
 #### request
@@ -50,7 +50,7 @@ where:
 #### reply
 * OK: `+\n`
 * error: `-msg\n` where:
-  * `msg` is a string containing basic device info (name, version, etc.). 32B max.
+  * `msg` is a string containing basic device info (name, version, etc.). 30B max.
 
 ### get servo position
 #### request
@@ -63,7 +63,7 @@ where:
 * OK: `+nnn\n` where:
   * `nnn` is a current 000..999 servo position
 * error: `-msg\n` where:
-  * `msg` is a string containing basic device info (name, version, etc.). 32B max.
+  * `msg` is a string containing basic device info (name, version, etc.). 30B max.
 
 ### set min servo position
 #### request
@@ -76,7 +76,7 @@ where:
 #### reply
 * OK: `+\n`
 * error: `-msg\n` where:
-  * `msg` is a string containing basic device info (name, version, etc.). 32B max.
+  * `msg` is a string containing basic device info (name, version, etc.). 30B max.
 
 ### set max servo position
 #### request
@@ -89,7 +89,7 @@ where:
 #### reply
 * OK: `+\n`
 * error: `-msg\n` where:
-  * `msg` is a string containing basic device info (name, version, etc.). 32B max.
+  * `msg` is a string containing basic device info (name, version, etc.). 30B max.
 
 ### set LED brightness
 #### request
@@ -102,7 +102,7 @@ where:
 #### reply
 * OK: `+\n`
 * error: `-msg\n` where:
-  * `msg` is a string containing basic device info (name, version, etc.). 32B max.
+  * `msg` is a string containing basic device info (name, version, etc.). 30B max.
 
 ### get telemetry
 #### request
@@ -116,7 +116,7 @@ where:
   * `iiii` is current engine current in `mA` (0000..9999); e.g. `1234` is 1.234 A.
   * `uuuuu` is current main voltage in `mV` (00000..99999); e.g. `12345` is 12.345 V.
 * error: `-msg\n` where:
-  * `msg` is a string containing basic device info (name, version, etc.). 32B max.
+  * `msg` is a string containing basic device info (name, version, etc.). 30B max.
 
 ### get persistent configuration
 #### request
@@ -131,4 +131,4 @@ where:
   * `MMM` is 000..999 servo max position
   * `bb` is 00..99 LED brightness
 * error: `-msg\n` where:
-  * `msg` is a string containing basic device info (name, version, etc.). 32B max.
+  * `msg` is a string containing basic device info (name, version, etc.). 30B max.
