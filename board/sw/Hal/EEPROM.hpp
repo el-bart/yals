@@ -36,7 +36,7 @@ private:
 
   bool write_32(size_t slot, float value)
   {
-    auto const n = static_cast<uint32_t>( round( value * u32_max_i ) );
+    auto const n = static_cast<uint32_t>( roundf( value * u32_max_i ) );
     return impl_.write(slot, n);
   }
 

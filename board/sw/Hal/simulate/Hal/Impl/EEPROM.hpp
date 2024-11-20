@@ -33,9 +33,9 @@ struct EEPROM
     switch(slot)
     {
       case 0: return sim().marker_;
-      case 1: return round( sim().min_position_ * u32_max_i );
-      case 2: return round( sim().max_position_ * u32_max_i );
-      case 3: return round( sim().LED_brightness_ * u32_max_i );
+      case 1: return roundf( sim().min_position_ * u32_max_i );
+      case 2: return roundf( sim().max_position_ * u32_max_i );
+      case 3: return roundf( sim().LED_brightness_ * u32_max_i );
     }
     throw std::runtime_error{"EEPROM::read(): unknown slot: " + std::to_string(slot)};
   }
