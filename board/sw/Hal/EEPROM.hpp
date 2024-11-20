@@ -2,6 +2,7 @@
 #include "Hal/Impl/EEPROM.hpp"
 #include <cmath>
 #include <cinttypes>
+#include <optional>
 
 namespace Hal
 {
@@ -10,26 +11,34 @@ struct EEPROM
 {
   EEPROM() = default;
 
-  void  min_position(float value) { write_pos(index_min_pos_, value); }
-  float min_position() const      { return read_pos(index_min_pos_);  }
+  bool                 min_position(float value) { return write_pos(index_min_pos_, value); }
+  std::optional<float> min_position() const      { return read_pos(index_min_pos_);  }
 
-  void  max_position(float value) { write_pos(index_max_pos_, value); }
-  float max_position() const      { return read_pos(index_max_pos_);  }
+  bool                 max_position(float value) { return write_pos(index_max_pos_, value); }
+  std::optional<float> max_position() const      { return read_pos(index_max_pos_);  }
 
-  void marker_write()       { impl_.write(index_marker_, marker_); }
-  bool marker_check() const { return impl_.read(index_marker_) == marker_; }
-
-private:
-  void write_pos(size_t slot, float value)
+  bool                marker_write()       { return impl_.write(index_marker_, marker_); }
+  std::optional<bool> marker_check() const
   {
-    auto const n = static_cast<uint32_t>( round( value * 65535 ) );
-    impl_.write(slot, n);
+    auto const m = impl_.read(index_marker_);
+    if(not m)
+      return {};
+    return *m == marker_;
   }
 
-  float read_pos(size_t slot) const
+private:
+  bool write_pos(size_t slot, float value)
+  {
+    auto const n = static_cast<uint32_t>( round( value * 65535 ) );
+    return impl_.write(slot, n);
+  }
+
+  std::optional<float> read_pos(size_t slot) const
   {
     auto const n = impl_.read(slot);
-    return n / 65535.0f;
+    if(not n)
+      return {};
+    return *n / 65535.0f;
   }
 
   static constexpr uint32_t marker_{0x42};

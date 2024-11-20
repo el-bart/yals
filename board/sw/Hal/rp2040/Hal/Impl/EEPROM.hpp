@@ -1,6 +1,7 @@
 #pragma once
 #include "hardware/i2c.h"
 #include "pico/stdlib.h"
+#include <optional>
 #include <cinttypes>
 #include <cstdio>
 
@@ -27,8 +28,9 @@ struct EEPROM
   EEPROM(EEPROM &&) = delete;
   EEPROM& operator=(EEPROM &&) = delete;
 
-  void write(size_t slot, uint32_t value)
+  bool write(size_t slot, uint32_t value)
   {
+    return false;
     /*
     switch(slot)
     {
@@ -40,8 +42,9 @@ struct EEPROM
     */
   }
 
-  uint32_t read(size_t slot) const
+  std::optional<uint32_t> read(size_t slot) const
   {
+    return {};          
     auto const base = slot * sizeof(uint32_t);
     // TODO 4B plz...
     return read_byte(base) / 255.0 * 65535;

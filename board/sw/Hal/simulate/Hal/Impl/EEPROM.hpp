@@ -1,6 +1,7 @@
 #pragma once
 #include "Hal/Sim.hpp"
 #include <stdexcept>
+#include <optional>
 #include <cmath>
 
 namespace Hal::Impl
@@ -15,18 +16,18 @@ struct EEPROM
   EEPROM(EEPROM &&) = delete;
   EEPROM& operator=(EEPROM &&) = delete;
 
-  void write(size_t slot, uint32_t value)
+  bool write(size_t slot, uint32_t value)
   {
     switch(slot)
     {
-      case 0: sim().marker_ = value; return;
-      case 1: sim().min_position_ = value / 65535.0f; return;
-      case 2: sim().max_position_ = value / 65535.0f; return;
+      case 0: sim().marker_ = value;                  return true;
+      case 1: sim().min_position_ = value / 65535.0f; return true;
+      case 2: sim().max_position_ = value / 65535.0f; return true;
     }
     throw std::runtime_error{"EEPROM::write(): unknown slot: " + std::to_string(slot)};
   }
 
-  uint32_t read(size_t slot) const
+  std::optional<uint32_t> read(size_t slot) const
   {
     switch(slot)
     {

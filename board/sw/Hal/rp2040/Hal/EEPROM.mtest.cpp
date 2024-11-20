@@ -46,57 +46,77 @@ void read_all(Hal::Uart& uart, Hal::EEPROM& eeprom)
   auto const min = eeprom.min_position();
   auto const max = eeprom.max_position();
   auto const mark_set = eeprom.marker_check();
-  write_line_fmt(uart, ">> min=%f max=%f mark:%s", min, max, mark_set ? "set" : "unset");
+  if(not min || not max || not mark_set)
+    write_line_fmt(uart, ">> EEPROM reading failed: %d %d %d", min.has_value(), max.has_value(), mark_set.has_value());
+  else
+    write_line_fmt(uart, ">> min=%f max=%f mark:%s", *min, *max, *mark_set ? "set" : "unset");
 }
 
 void write_mark(Hal::Uart& uart, Hal::EEPROM& eeprom)
 {
-  eeprom.marker_write();
-  write_line(uart, ">> EEPROM-set marker written");
+  if( eeprom.marker_write() )
+    write_line(uart, ">> EEPROM-set marker written");
+  else
+    write_line(uart, ">> EEPROM-set marker writing failed");
 }
 
 
 void write_defaults(Hal::Uart& uart, Hal::EEPROM& eeprom)
 {
-  eeprom.min_position(0.0);
-  eeprom.max_position(1.0);
-  eeprom.marker_write();
-  write_line(uart, ">> defaults written");
+  auto const min = eeprom.min_position(0.0);
+  auto const max = eeprom.max_position(1.0);
+  auto const mark_set = eeprom.marker_write();
+  if(not min || not max || not mark_set)
+    write_line_fmt(uart, ">> EEPROM writing failed: %d %d %d", min, max, mark_set);
+  else
+    write_line(uart, ">> EEPROM defaults written");
 }
 
 
 void increment_min(Hal::Uart& uart, Hal::EEPROM& eeprom)
 {
-  auto const prev  = eeprom.min_position();
-  auto const next = std::clamp(prev + 0.1f, 0.0f, 1.0f);
-  eeprom.min_position(next);
-  write_line_fmt(uart, ">> min++ from %f to %f", prev, next);
+  auto const prev = eeprom.min_position();
+  if(not prev)
+    return write_line(uart, ">> reading min pos failed");
+  auto const next = std::clamp(*prev + 0.1f, 0.0f, 1.0f);
+  if( not eeprom.min_position(next) )
+    return write_line(uart, ">> writing min pos failed");
+  write_line_fmt(uart, ">> min++ from %f to %f", *prev, next);
   read_all(uart, eeprom);
 }
 
 void decrement_min(Hal::Uart& uart, Hal::EEPROM& eeprom)
 {
-  auto const prev  = eeprom.min_position();
-  auto const next = std::clamp(prev - 0.1f, 0.0f, 1.0f);
-  eeprom.min_position(next);
+  auto const prev = eeprom.min_position();
+  if(not prev)
+    return write_line(uart, ">> reading min pos failed");
+  auto const next = std::clamp(*prev - 0.1f, 0.0f, 1.0f);
+  if( not eeprom.min_position(next) )
+    return write_line(uart, ">> writing min pos failed");
   write_line_fmt(uart, ">> min-- from %f to %f", prev, next);
   read_all(uart, eeprom);
 }
 
 void increment_max(Hal::Uart& uart, Hal::EEPROM& eeprom)
 {
-  auto const prev  = eeprom.max_position();
-  auto const next = std::clamp(prev + 0.1f, 0.0f, 1.0f);
-  eeprom.max_position(next);
+  auto const prev = eeprom.max_position();
+  if(not prev)
+    return write_line(uart, ">> reading max pos failed");
+  auto const next = std::clamp(*prev + 0.1f, 0.0f, 1.0f);
+  if( not eeprom.max_position(next) )
+    return write_line(uart, ">> writing max pos failed");
   write_line_fmt(uart, ">> max++ from %f to %f", prev, next);
   read_all(uart, eeprom);
 }
 
 void decrement_max(Hal::Uart& uart, Hal::EEPROM& eeprom)
 {
-  auto const prev  = eeprom.max_position();
-  auto const next = std::clamp(prev - 0.1f, 0.0f, 1.0f);
-  eeprom.max_position(next);
+  auto const prev = eeprom.max_position();
+  if(not prev)
+    return write_line(uart, ">> reading max pos failed");
+  auto const next = std::clamp(*prev - 0.1f, 0.0f, 1.0f);
+  if( not eeprom.max_position(next) )
+    return write_line(uart, ">> writing max pos failed");
   write_line_fmt(uart, ">> max-- from %f to %f", prev, next);
   read_all(uart, eeprom);
 }
