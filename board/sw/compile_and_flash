@@ -39,7 +39,7 @@ clear
 
 (
   set -x
-  ls -alh "$f"
+  ls -alh "${f%%.elf}.bin"
   time scp "$f" rp-prog:/tmp/
   time ssh rp-prog rp2040_flash "/tmp/$(basename "$f")"
 )
