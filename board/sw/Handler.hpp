@@ -40,7 +40,7 @@ struct Handler final
 
   Io::Proto::Ping::Reply handle(Io::Proto::Ping::Request const& req)
   {
-    // TODO
+    // TODO: add SW version here
     return {};
   }
 

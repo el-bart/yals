@@ -19,8 +19,8 @@ TEST_CASE("Hal::Sim can be reset")
   s.amps_ = 0.42;
   s.led_brightness_ = 0.11;
   s.position_ = 0.69;
-  s.rx_.push('r');
-  s.tx_.push('t');
+  s.rx_.push_back('r');
+  s.tx_.push_back('t');
   s.vcc_ = 12.3;
 
   Hal::Sim const ref;
@@ -109,8 +109,8 @@ SCENARIO("Hal::Sim properly integrates with Hal::All")
 
   GIVEN("uart data in RX buffers");
   {
-    sim().rx_.push(0x13);
-    sim().rx_.push(0x42);
+    sim().rx_.push_back(0x13);
+    sim().rx_.push_back(0x42);
     WHEN("receving data")
     {
       const auto b1 = hal.uart_.rx();
@@ -143,9 +143,9 @@ SCENARIO("Hal::Sim properly integrates with Hal::All")
       {
         REQUIRE(sim().tx_.size() == 2u);
         REQUIRE(sim().tx_.front() == 0x13);
-        sim().tx_.pop();
+        sim().tx_.pop_front();
         REQUIRE(sim().tx_.front() == 0x42);
-        sim().tx_.pop();
+        sim().tx_.pop_front();
       }
     }
   }

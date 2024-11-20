@@ -19,7 +19,7 @@ struct Uart
   {
     if( sim().tx_.size() >= 32u )
       return false;
-    sim().tx_.push(b);
+    sim().tx_.push_back(b);
     return true;
   }
 
@@ -28,7 +28,7 @@ struct Uart
     if( sim().rx_.empty() )
       return {};
     auto b = sim().rx_.front();
-    sim().rx_.pop();
+    sim().rx_.pop_front();
     return b;
   }
 };

@@ -1,6 +1,6 @@
 #pragma once
 #include <initializer_list>
-#include <queue>
+#include <deque>
 #include <algorithm>
 #include <cstdlib>
 #include <cinttypes>
@@ -27,8 +27,8 @@ struct Sim
   float amps_{0};           // engine current [A]
   float led_brightness_{0}; // 0..1 of power
   float position_{0};       // 0..1 of scale
-  std::queue<uint8_t> rx_;  // RX queue
-  std::queue<uint8_t> tx_;  // TX queue
+  std::deque<uint8_t> rx_;  // data sent via dev's UART
+  std::deque<uint8_t> tx_;  // data received via dev's UART
   float vcc_{12.1};         // Vcc [V]
 
   // EEPROM:
