@@ -32,11 +32,11 @@ struct EEPROM
 
 private:
   static constexpr auto u32_max_i = std::numeric_limits<uint32_t>::max();
-  static constexpr auto u32_max_f = static_cast<float>(u32_max_i);
+  static constexpr auto u32_max_d = static_cast<double>(u32_max_i); // need double, as 2^32 is already adding too much of an error on floats
 
   bool write_32(size_t slot, float value)
   {
-    auto const n = static_cast<uint32_t>( roundf( value * u32_max_i ) );
+    auto const n = static_cast<uint32_t>( std::clamp( round( value * u32_max_d ), 0.0, u32_max_d ) );
     return impl_.write(slot, n);
   }
 
@@ -45,7 +45,7 @@ private:
     auto const n = impl_.read(slot);
     if(not n)
       return {};
-    return *n / u32_max_f;
+    return *n / u32_max_d;
   }
 
   static constexpr uint32_t marker_{0x42};
