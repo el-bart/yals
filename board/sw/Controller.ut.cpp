@@ -34,7 +34,6 @@ TEST_CASE("Controller's c-tor")
 
   SECTION("on start, if current servo setpoint is below min, it's clamped to it")
   {
-    // TODO: need EEPROM sim to work
     sim().min_position_ = 0.7;
     sim().position_ = 0.5;
     Controller ctrl;
@@ -43,7 +42,6 @@ TEST_CASE("Controller's c-tor")
 
   SECTION("on start, if current servo setpoint is below min, it's clamped to it")
   {
-    // TODO: need EEPROM sim to work
     sim().max_position_ = 0.7;
     sim().position_ = 0.9;
     Controller ctrl;
