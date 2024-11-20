@@ -33,26 +33,53 @@ int main()
   write_line(uart, "");
   write_line(uart, ">> EEPROM impl (raw) testing app");
 
+  // purge input
+  while( uart.rx() ) { }
+  auto first_run = true;
+
   while(true)
   {
-    auto const cmd = uart.rx();
-    if(not cmd)
-      continue;
+    sleep_ms(100);
 
-    uint32_t const v = 0x12345678u;
-    if( not eeprom.write(0, v) )
+    if(not first_run)
     {
-      write_line_fmt(uart, "FAILED to write test value: 0x%x", v);
-      continue;
+      auto const cmd = uart.rx();
+      if(not cmd)
+        continue;
     }
-    write_line_fmt(uart, "wrote test value: 0x%x", v);
+    first_run = false;
+    write_line(uart, "");
 
-    auto const r = eeprom.read(0);
-    if(not r)
+    constexpr auto slot = 0u;
+
     {
-      write_line(uart, "FAILED to read test value");
-      continue;
+      auto const r = eeprom.read(slot);
+      if(not r)
+      {
+        write_line(uart, "FAILED to read initial value");
+        continue;
+      }
+      write_line_fmt(uart, "read initial value: 0x%x", *r);
     }
-    write_line_fmt(uart, "read test value: 0x%x", *r);
+
+    {
+      uint32_t const v = 0x12345678u;
+      if( not eeprom.write(slot, v) )
+      {
+        write_line_fmt(uart, "FAILED to write test value: 0x%x", v);
+        continue;
+      }
+      write_line_fmt(uart, "wrote test value: 0x%x", v);
+    }
+
+    {
+      auto const r = eeprom.read(slot);
+      if(not r)
+      {
+        write_line(uart, "FAILED to read test value");
+        continue;
+      }
+      write_line_fmt(uart, "read test value: 0x%x", *r);
+    }
   }
 }
