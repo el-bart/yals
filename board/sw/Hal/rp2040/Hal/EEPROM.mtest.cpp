@@ -108,6 +108,7 @@ int main()
   Hal::Uart uart;
 
   write_line(uart, ">> EEPROM testing app");
+  read_all(uart, eeprom);
 
   while(true)
   {

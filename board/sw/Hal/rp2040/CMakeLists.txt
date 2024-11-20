@@ -2,6 +2,7 @@ add_library(hal placeholder.cpp)
 target_link_libraries(hal pico_stdlib)
 target_link_libraries(hal hardware_adc)
 target_link_libraries(hal hardware_pwm)
+target_link_libraries(hal hardware_i2c)
 
 function (add_mtest name)
   add_binary("Hal_${name}.mtest" "Hal/${name}.mtest.cpp")
