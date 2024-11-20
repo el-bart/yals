@@ -132,7 +132,7 @@ TEST_CASE("Controller")
     enqueue_command("~");
     ctrl.update();
     auto reply = reader.read_reply();
-    if(r == "")
+    if(reply == "")
     {
       // depending on the exact version, reply string may be large here, thus may not fit into a single I/O turn
       ctrl.update();
