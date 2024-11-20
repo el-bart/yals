@@ -52,7 +52,10 @@ struct Handler final
 
   Io::Proto::Set_max_servo_position::Reply handle(Io::Proto::Set_max_servo_position::Request const& req)
   {
-    // TODO
+    auto const b = req.max_pos_ / 999.0f;
+    ctx_.setpoints_.max_pos_ = b;
+    if( not ctx_.hal_.EEPROM_.max_position(b) )
+      return { .err_ = "set; EEPROM failed" };
     return {};
   }
 

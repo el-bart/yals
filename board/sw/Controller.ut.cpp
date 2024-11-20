@@ -161,6 +161,16 @@ TEST_CASE("Controller")
     CHECK( sim().LED_brightness_ == Approx(0.82).epsilon(0.05)  );
     CHECK( sim().EEPROM_LED_brightness_ == Approx(0.82).epsilon(0.05)  );
   }
+
+  SECTION("update() handles Set_max_servo_position")
+  {
+    enqueue_command(">900");
+    ctrl.update();
+    CHECK( read_reply() == "+" );
+    CHECK( sim().max_position_ == Approx(900.0/999.0) );
+    // TODO: max < min
+    // TODO: max < pos
+  }
 }
 
 }
