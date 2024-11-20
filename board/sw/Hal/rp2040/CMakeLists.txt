@@ -9,6 +9,7 @@ endfunction()
 
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/")
 
+add_mtest(EEPROM)
 add_mtest(Engine)
 add_mtest(Engine_current)
 add_mtest(Led)

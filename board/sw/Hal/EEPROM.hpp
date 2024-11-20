@@ -1,6 +1,7 @@
 #pragma once
 #include "Hal/Impl/EEPROM.hpp"
 #include <cmath>
+#include <cinttypes>
 
 namespace Hal
 {
