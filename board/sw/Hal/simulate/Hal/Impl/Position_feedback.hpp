@@ -13,9 +13,9 @@ struct Position_feedback
   Position_feedback(Position_feedback &&) = delete;
   Position_feedback& operator=(Position_feedback &&) = delete;
 
-  float percent()
+  float value()
   {
-    return sim().position_ * 100.0f;
+    return sim().position_;
   }
 };
 

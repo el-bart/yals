@@ -15,7 +15,7 @@ TEST_CASE("Controller's c-tor")
   SECTION("on start current servo position is assumed to be a setpoint")
   {
     Controller ctrl;
-    CHECK( ctrl.context().setpoints_.position_ == Approx( sim().position_ * 100.0 ) );
+    CHECK( ctrl.context().setpoints_.position_ == Approx( sim().position_ ) );
   }
 
   SECTION("on start, if current servo setpoint is below min, it's clamped to it")
@@ -24,7 +24,7 @@ TEST_CASE("Controller's c-tor")
     sim().min_position_ = 0.7;
     sim().position_ = 0.5;
     Controller ctrl;
-    CHECK( ctrl.context().setpoints_.position_ == Approx( sim().min_position_ * 100.0 ) );
+    CHECK( ctrl.context().setpoints_.position_ == Approx( sim().min_position_ ) );
   }
 
   SECTION("on start, if current servo setpoint is below min, it's clamped to it")
@@ -33,7 +33,7 @@ TEST_CASE("Controller's c-tor")
     sim().max_position_ = 0.7;
     sim().position_ = 0.9;
     Controller ctrl;
-    CHECK( ctrl.context().setpoints_.position_ == Approx( sim().max_position_ * 100.0 ) );
+    CHECK( ctrl.context().setpoints_.position_ == Approx( sim().max_position_ ) );
   }
 }
 
@@ -56,7 +56,7 @@ TEST_CASE("Controller")
     auto const& ctx = ctrl.context();
     CHECK( ctx.last_reads_.engine_current_A_ == sim().amps_ );
     CHECK( ctx.last_reads_.vcc_V_ == sim().vcc_ );
-    CHECK( ctx.last_reads_.position_percent_ == sim().position_ * 100 );
+    CHECK( ctx.last_reads_.position_ == sim().position_ );
   }
 }
 

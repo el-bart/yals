@@ -6,7 +6,7 @@ struct Controller final
 {
   Controller()
   {
-    ctx_.setpoints_.position_ = ctx_.hal_.pos_.percent();
+    ctx_.setpoints_.position_ = ctx_.hal_.pos_.value();
   }
 
   void update()

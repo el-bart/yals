@@ -52,7 +52,7 @@ SCENARIO("Hal::Sim properly integrates with Hal::All")
       sim().update(0.34);
       THEN("position was not change")
       {
-        CHECK( hal.pos_.percent() == 50.0 );
+        CHECK( hal.pos_.value() == 0.5 );
       }
     }
 
@@ -62,8 +62,8 @@ SCENARIO("Hal::Sim properly integrates with Hal::All")
       sim().update(0.5);
       THEN("position has advanced")
       {
-        CHECK( hal.pos_.percent() >  50.0 );
-        CHECK( hal.pos_.percent() < 100.0 );
+        CHECK( hal.pos_.value() > 0.5 );
+        CHECK( hal.pos_.value() < 1.0 );
       }
       THEN("current has increased")
       {
@@ -77,8 +77,8 @@ SCENARIO("Hal::Sim properly integrates with Hal::All")
       sim().update(0.5);
       THEN("position has decremented")
       {
-        CHECK( hal.pos_.percent() >  0.0 );
-        CHECK( hal.pos_.percent() < 50.0 );
+        CHECK( hal.pos_.value() > 0.0 );
+        CHECK( hal.pos_.value() < 0.5 );
       }
       THEN("current has increased")
       {
@@ -92,7 +92,7 @@ SCENARIO("Hal::Sim properly integrates with Hal::All")
       sim().update(42.0);
       THEN("position has reached maximum")
       {
-        CHECK( hal.pos_.percent() == 100.0 );
+        CHECK( hal.pos_.value() == 1.0 );
       }
     }
 
@@ -102,7 +102,7 @@ SCENARIO("Hal::Sim properly integrates with Hal::All")
       sim().update(42.0);
       THEN("position has reached minimum")
       {
-        CHECK( hal.pos_.percent() == 0.0 );
+        CHECK( hal.pos_.value() == 0.0 );
       }
     }
   }

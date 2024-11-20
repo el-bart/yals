@@ -8,9 +8,9 @@ struct Position_feedback
 {
   Position_feedback() = default;
 
-  float percent()
+  float value()
   {
-    return impl_.percent();
+    return impl_.value();
   }
 
 private:

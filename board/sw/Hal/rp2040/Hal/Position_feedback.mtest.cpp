@@ -11,9 +11,9 @@ int main()
 
   while(true)
   {
-    auto const percent = pf.percent();
+    auto const value = pf.value();
     char buf[16];
-    snprintf(buf, sizeof(buf), "p=%f%%\r\n", percent);
+    snprintf(buf, sizeof(buf), "p=%f%%\r\n", value * 100.0f);
     uart.tx(buf);
     sleep_ms(500);
   }
