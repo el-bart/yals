@@ -74,7 +74,6 @@ Line process(Line line, H&& h)
   if( not checksum_valid(line) )
     return detail::error_line_with_checksum("invalid checksum");
   line.size_ -= 2u;                 // trim checksum
-  line.data_[line.size_] = '\0';    // ensure it's null-terminated, so that it can be used with string parsers, too
 
   auto out = detail::dispatch(line, h);
   add_checksum(out);
