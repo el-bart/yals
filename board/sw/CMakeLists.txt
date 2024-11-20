@@ -16,11 +16,11 @@ include_directories("${CMAKE_CURRENT_SOURCE_DIR}/")
 add_subdirectory("Hal/${YALS_HAL}")
 
 include("git.cmake")
-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/Utils/version.cpp.in" "${CMAKE_CURRENT_BINARY_DIR}/Utils/version.cpp" @ONLY)
 
 add_library(servo_lib STATIC
   "${CMAKE_CURRENT_BINARY_DIR}/Utils/version.cpp"
 )
+add_dependencies(servo_lib version_proxy)
 
 if ("${YALS_HAL}" STREQUAL "simulate")
   enable_testing()

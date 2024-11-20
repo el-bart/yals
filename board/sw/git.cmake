@@ -10,9 +10,11 @@ configure_file(\"\${SRC}\" \"\${DST}\" @ONLY)
 include_directories(${CMAKE_BINARY_DIR})
 
 add_custom_target(version_proxy
-    "${CMAKE_COMMAND}" -D "SRC=${CMAKE_CURRENT_SOURCE_DIR}/Utils/version.cpp.in"
-                       -D "DST=${CMAKE_CURRENT_BINARY_DIR}/Utils/version.cpp"
-                       -P "${CMAKE_BINARY_DIR}/version_proxy.cmake"
+ "${CMAKE_COMMAND}" -D "SRC=${CMAKE_CURRENT_SOURCE_DIR}/Utils/version.cpp.in"
+                    -D "DST=${CMAKE_CURRENT_BINARY_DIR}/Utils/version.cpp"
+                    -P "${CMAKE_BINARY_DIR}/version_proxy.cmake"
+  SOURCE     "${CMAKE_CURRENT_SOURCE_DIR}/Utils/version.cpp.in"
+  BYPRODUCTS "${CMAKE_CURRENT_BINARY_DIR}/Utils/version.cpp"
 )
 
 #configure_file("${CMAKE_CURRENT_SOURCE_DIR}/Utils/version.cpp.in"
