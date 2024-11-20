@@ -239,7 +239,6 @@ TEST_CASE("Controller")
 
   SECTION("update() handles Set_max_servo_position with movement, if max < pos")
   {
-    return; // TODO
     enqueue_command("@990");
     ctrl.update();
     CHECK( read_reply() == "+" );
@@ -248,7 +247,7 @@ TEST_CASE("Controller")
     enqueue_command(">900");
     ctrl.update();
     CHECK( read_reply() == "+" );
-    CHECK( sim().max_position_    == Approx(900.0/999.0) );
+    CHECK( sim().max_position_                 == Approx(900.0/999.0) );
     CHECK( ctrl.context().setpoints_.position_ == Approx(900.0/999.0) );
   }
 

@@ -57,6 +57,7 @@ struct Handler final
       return { .err_ = "below min" };
 
     ctx_.setpoints_.max_pos_ = b;
+    ctx_.setpoints_.position_ = std::min(ctx_.setpoints_.position_, ctx_.setpoints_.max_pos_);
     if( not ctx_.hal_.EEPROM_.max_position(b) )
       return { .err_ = "max set; EEPROM failed" };
     return {};
