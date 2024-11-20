@@ -17,7 +17,7 @@ TEST_CASE("Hal::Sim can be reset")
   Hal::Sim s;
   s.engine_force_ = 13;
   s.amps_ = 0.42;
-  s.led_brightness_ = 0.11;
+  s.LED_brightness_ = 0.11;
   s.position_ = 0.69;
   s.rx_.push_back('r');
   s.tx_.push_back('t');
@@ -28,7 +28,7 @@ TEST_CASE("Hal::Sim can be reset")
 
   CHECK( s.engine_force_ == ref.engine_force_ );
   CHECK( s.amps_ == ref.amps_ );
-  CHECK( s.led_brightness_ == ref.led_brightness_ );
+  CHECK( s.LED_brightness_ == ref.LED_brightness_ );
   CHECK( s.position_ == ref.position_ );
   CHECK( s.rx_ == ref.rx_ );
   CHECK( s.tx_ == ref.tx_ );

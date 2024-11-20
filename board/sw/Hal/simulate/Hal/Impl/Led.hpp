@@ -16,9 +16,9 @@ struct Led
   void apply(bool status, uint8_t brightness) const
   {
     if(not status)
-      sim().led_brightness_ = 0;
+      sim().LED_brightness_ = 0;
     else
-      sim().led_brightness_ = brightness / 255.0f;
+      sim().LED_brightness_ = brightness / 255.0f;
   }
 };
 
