@@ -16,6 +16,7 @@ struct Controller final
   {
     update_reads();
     handle_io();
+    apply_presets();
     // TODO
   }
 
@@ -65,6 +66,12 @@ private:
       if( not ctx_.hal_.uart_.tx( ctx_.tx_buffer_.data_[sent] ) )
         break;
     ctx_.tx_buffer_.trim_by(sent);
+  }
+
+  void apply_presets()
+  {
+    ctx_.hal_.led_.brightness(ctx_.setpoints_.LED_brightness_);
+    // TODO: engine movement
   }
 
   bool init_EEPROM()
