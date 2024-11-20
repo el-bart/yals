@@ -26,6 +26,8 @@ struct EEPROM
     return *m == marker_;
   }
 
+  // TODO: add LED brightness persistency
+
 private:
   bool write_pos(size_t slot, float value)
   {
