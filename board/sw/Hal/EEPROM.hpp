@@ -15,8 +15,8 @@ struct EEPROM
   void  max_position(float value) { write_pos(index_max_pos_, value); }
   float max_position() const      { return read_pos(index_max_pos_);  }
 
-  void marker_write()       { impl_.write(index_max_pos_, marker_); }
-  bool marker_check() const { return impl_.read(index_max_pos_) == marker_; }
+  void marker_write()       { impl_.write(index_marker_, marker_); }
+  bool marker_check() const { return impl_.read(index_marker_) == marker_; }
 
 private:
   void write_pos(size_t slot, float value)

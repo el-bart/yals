@@ -32,7 +32,7 @@ struct Sim
   float vcc_{12.1};         // Vcc [V]
 
   // EEPROM:
-  uint32_t marker_{0xFFffFFff}; // indicator of write location
+  uint32_t marker_{0x42};       // indicator of write location (0x42 == set)
   float min_position_{0.0};     // 0..1 of scale
   float max_position_{1.0};     // 0..1 of scale
 

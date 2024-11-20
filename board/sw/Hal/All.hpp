@@ -18,7 +18,7 @@ struct All
   Engine_current eng_current_;
   Position_feedback pos_;
   Vcc_feedback vcc_;
-  EEPROM eeprom_;
+  EEPROM EEPROM_;
 };
 
 }

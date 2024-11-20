@@ -18,6 +18,20 @@ TEST_CASE("Controller's c-tor")
     CHECK( ctrl.context().setpoints_.position_ == Approx( sim().position_ ) );
   }
 
+  SECTION("on start, if marker is not set, min and max positions are set in EEPROM")
+  {
+    sim().marker_ = 0xFFffFFff;     // i.e. unset
+    sim().min_position_ = 0.4;
+    sim().max_position_ = 0.6;
+    sim().position_ = 0.5;
+    Controller ctrl;
+    CHECK( sim().min_position_ == Approx(0.0) );
+    CHECK( sim().max_position_ == Approx(1.0) );
+    CHECK( sim().marker_ == 0x42 );
+    CHECK( ctrl.context().setpoints_.min_pos_ == Approx( sim().min_position_ ) );
+    CHECK( ctrl.context().setpoints_.max_pos_ == Approx( sim().max_position_ ) );
+  }
+
   SECTION("on start, if current servo setpoint is below min, it's clamped to it")
   {
     // TODO: need EEPROM sim to work
