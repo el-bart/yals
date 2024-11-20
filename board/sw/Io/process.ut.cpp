@@ -39,7 +39,7 @@ struct Handler
   Ping::Reply handle(Ping::Request const& req)
   {
     calls_["Ping"] += 1;
-    return {};
+    return { .pong_ = "YALS test" };
   }
 
   Set_LED_brightness::Reply handle(Set_LED_brightness::Request const& req)
@@ -218,7 +218,7 @@ TEST_CASE("process(): Ping")
   {
     Handler h;
     REQUIRE( h.calls_.empty() );
-    CHECK( process_test("~", h) == "+YALS" );
+    CHECK( process_test("~", h) == "+YALS test" );
     CHECK( h.calls_.size() == 1 );
     CHECK( h.calls_["Ping"] == 1 );
   }
