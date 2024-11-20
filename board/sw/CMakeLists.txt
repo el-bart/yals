@@ -20,6 +20,7 @@ include("cmake/git.cmake")
 add_library(servo_lib STATIC
   "${CMAKE_CURRENT_BINARY_DIR}/Utils/version.cpp"
 )
+# this dependency ensures that rebuild is triggered, whenever git commit info changes
 add_dependencies(servo_lib version_proxy)
 
 if ("${YALS_HAL}" STREQUAL "simulate")
