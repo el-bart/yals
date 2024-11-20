@@ -25,16 +25,16 @@ struct Sim
 
   int32_t engine_force_{0}; // -/+ is dir, abs value is a force (16-bit)
   float amps_{0};           // engine current [A]
-  float led_brightness_{0}; // 0..1 of power // TODO: move to EEPROM
+  float vcc_{12.1};         // Vcc [V]
   float position_{0};       // 0..1 of scale
   std::deque<uint8_t> rx_;  // data sent via dev's UART
   std::deque<uint8_t> tx_;  // data received via dev's UART
-  float vcc_{12.1};         // Vcc [V]
 
   // EEPROM:
-  uint32_t marker_{0x42};       // indicator of write location (0x42 == set)
-  float min_position_{0.0};     // 0..1 of scale
-  float max_position_{1.0};     // 0..1 of scale
+  uint32_t marker_{0x42};   // indicator of write location (0x42 == set)
+  float min_position_{0.0}; // 0..1 of scale
+  float max_position_{1.0}; // 0..1 of scale
+  float led_brightness_{0}; // 0..1 of power // TODO: move to EEPROM
 
 private:
   void update_amps()
