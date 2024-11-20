@@ -173,15 +173,16 @@ TEST_CASE("Controller")
   SECTION("update() handles Set_max_servo_position with rejection, if max < min")
   {
     return;     // TODO
-    enqueue_command("<990");
+    enqueue_command("<500");
     ctrl.update();
     CHECK( read_reply() == "+" );
-    REQUIRE( sim().preset_position_ == Approx(990.0/999.0) );
+    REQUIRE( sim().min_position_ == Approx(500.0/999.0) );
+    REQUIRE( sim().max_position_ == Approx(999.0/999.0) );
 
-    enqueue_command(">900");
+    enqueue_command(">400");
     ctrl.update();
-    CHECK( read_reply() == "+" );
-    CHECK( sim().max_position_ == Approx(900.0/999.0) );
+    CHECK( read_reply() == "-" );
+    CHECK( sim().max_position_ == Approx(999.0/999.0) );
   }
 
   SECTION("update() handles Set_max_servo_position with movement, if max < pos")
@@ -194,7 +195,7 @@ TEST_CASE("Controller")
 
     enqueue_command(">900");
     CHECK( read_reply() == "+" );
-    CHECK( sim().max_position_ == Approx(900.0/999.0) );
+    CHECK( sim().max_position_    == Approx(900.0/999.0) );
     CHECK( sim().preset_position_ == Approx(900.0/999.0) );
   }
 }
