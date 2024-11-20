@@ -123,7 +123,8 @@ private:
   void init_IO()
   {
     // purge all input at start, to make sure there's no noise captured during flashing, etc.
-    // TODO                 
+    while( ctx_.hal_.uart_.rx() )
+    { }
   }
 
   Context ctx_;

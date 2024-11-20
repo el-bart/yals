@@ -95,6 +95,19 @@ TEST_CASE("Controller's c-tor")
     Controller ctrl;
     CHECK( ctrl.context().setpoints_.position_ == Approx( sim().max_position_ ) );
   }
+
+  SECTION("init clears all jung from RX buffer")
+  {
+    for(auto i=0; i<13; ++i)
+      sim().rx_.push_back('a' + i);
+    sim().rx_.push_back('\n');
+
+    Reader reader;
+    Controller ctrl;
+    CHECK( sim().rx_.size() == 0u );
+    ctrl.update();
+    CHECK( reader.read_reply() == "" );
+  }
 }
 
 
