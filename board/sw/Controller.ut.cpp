@@ -93,7 +93,7 @@ TEST_CASE("Controller")
 {
   sim().reset();
   sim().update(0.0);
-  sim().LED_brightness_ = 0.75;
+  sim().EEPROM_LED_brightness_ = 0.75;
 
   Controller ctrl;
 
