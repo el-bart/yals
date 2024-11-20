@@ -44,36 +44,32 @@ struct EEPROM
 
   std::optional<uint32_t> read(size_t slot) const
   {
-    return {};          
+    uint32_t out{};
     auto const base = slot * sizeof(uint32_t);
-    // TODO 4B plz...
-    return read_byte(base) / 255.0 * 65535;
-    /*
-    switch(slot)
+    for(auto i=0u; i<sizeof(out); ++i)
     {
-      case 0: return sim().marker_;
-      case 1: return round( sim().min_position_ * 65535 );
-      case 2: return round( sim().max_position_ * 65535 );
+      auto const b = read_byte(base + i);
+      if(not b)
+        return {};
+      out = (out << 8u) | uint32_t{*b};
     }
-    throw std::runtime_error{"EEPROM::read(): unknown slot: " + std::to_string(slot)};
-    */
-    return 13;  // TODO
+    return out;
   }
 
 private:
-  uint8_t read_byte(uint8_t const addr) const
+  std::optional<uint8_t> read_byte(uint8_t const addr) const
   {
-    uint8_t out = 64;          
     if( i2c_write_timeout_us(i2c_dev, i2c_EEPROM_addr_write, &addr, 1, false, i2c_byte_timeout_us) != 1 )
-      return 25;            
+      return {};
+    uint8_t out{};
     if( i2c_read_timeout_us (i2c_dev, i2c_EEPROM_addr_read,  &out,  1, false, i2c_byte_timeout_us) != 1 )
-      return 128;        
-    return out; // 255 by default
+      return {};
+    return out;
   }
 
-  void write_byte(uint8_t addr, uint8_t byte)
+  bool write_byte(uint8_t addr, uint8_t byte)
   {
-    // TODO
+    return false;       // TODO
   }
 
   static constexpr auto pin_i2c_sda = 24;
