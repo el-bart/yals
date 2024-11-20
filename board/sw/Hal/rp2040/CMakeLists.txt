@@ -11,7 +11,6 @@ endfunction()
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/")
 
 add_mtest(EEPROM)
-add_mtest(EEPROM_impl)
 add_mtest(Engine)
 add_mtest(Engine_current)
 add_mtest(Led)
@@ -19,4 +18,7 @@ add_mtest(Position_feedback)
 add_mtest(Uart)
 add_mtest(Vcc_feedback)
 
-add_mtest(I2C_bus_scan) # rework of a 3rd-party code
+# some more low-level EEPROM mtests:
+add_mtest(EEPROM_impl)
+add_mtest(I2C_bus_scan)     # rework of a 3rd-party code
+add_mtest(I2C_direct_io)    # AI-generated with some fixes and adjustments
