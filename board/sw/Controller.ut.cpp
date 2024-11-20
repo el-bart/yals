@@ -126,11 +126,20 @@ TEST_CASE("Controller")
 
   SECTION("update() handles Get_persistent_config")
   {
-    return;         
-    // TODO: these must be commands!
-    sim().min_position_   =  90.0f / 999.0f;
-    sim().max_position_   = 890.0f / 999.0f;
-    sim().LED_brightness_ =  81.0f /  99.0f;
+    enqueue_command("<090");
+    ctrl.update();
+    CHECK( read_reply() == "+" );
+    enqueue_command(">890");
+    ctrl.update();
+    CHECK( read_reply() == "+" );
+    enqueue_command("*81");
+    ctrl.update();
+    CHECK( read_reply() == "+" );
+
+    REQUIRE( sim().min_position_   == Approx(  90.0f / 999.0f) );
+    REQUIRE( sim().max_position_   == Approx( 890.0f / 999.0f) );
+    REQUIRE( sim().LED_brightness_ == Approx(  81.0f /  99.0f).epsilon(0.05) );
+
     enqueue_command("?");
     ctrl.update();
     CHECK( read_reply() == "+<090>890*81" );
