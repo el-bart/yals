@@ -162,6 +162,10 @@ TEST_CASE("Controller")
     CHECK( sim().EEPROM_LED_brightness_ == Approx(0.82).epsilon(0.05)  );
   }
 
+  //
+  // Set_servo_position
+  //
+
   SECTION("update() handles Set_servo_position")
   {
     INFO( ctrl.context().setpoints_.min_pos_ );
@@ -203,6 +207,10 @@ TEST_CASE("Controller")
     CHECK( ctrl.context().setpoints_.position_ == Approx(pp) );
   }
 
+  //
+  // Set_max_servo_position
+  //
+
   SECTION("update() handles Set_max_servo_position")
   {
     enqueue_command(">900");
@@ -214,17 +222,19 @@ TEST_CASE("Controller")
 
   SECTION("update() handles Set_max_servo_position with rejection, if max < min")
   {
-    return;     // TODO
     enqueue_command("<500");
     ctrl.update();
     CHECK( read_reply() == "+" );
     REQUIRE( sim().min_position_ == Approx(500.0/999.0) );
     REQUIRE( sim().max_position_ == Approx(999.0/999.0) );
+    auto const pp = ctrl.context().setpoints_.position_;
 
     enqueue_command(">400");
     ctrl.update();
-    CHECK( read_reply() == "-" );
+    CHECK( read_reply() == "-below min" );
+    CHECK( sim().min_position_ == Approx(500.0/999.0) );
     CHECK( sim().max_position_ == Approx(999.0/999.0) );
+    CHECK( ctrl.context().setpoints_.position_ == pp );
   }
 
   SECTION("update() handles Set_max_servo_position with movement, if max < pos")
@@ -236,10 +246,15 @@ TEST_CASE("Controller")
     CHECK( ctrl.context().setpoints_.position_ == Approx(990.0/999.0) );
 
     enqueue_command(">900");
+    ctrl.update();
     CHECK( read_reply() == "+" );
     CHECK( sim().max_position_    == Approx(900.0/999.0) );
     CHECK( ctrl.context().setpoints_.position_ == Approx(900.0/999.0) );
   }
+
+  //
+  // Set_min_servo_position
+  //
 
   SECTION("update() handles Set_min_servo_position")
   {
@@ -267,13 +282,13 @@ TEST_CASE("Controller")
 
   SECTION("update() handles Set_min_servo_position with movement, if min > pos")
   {
-    return; // TODO
     enqueue_command("@100");
     ctrl.update();
     CHECK( read_reply() == "+" );
     CHECK( ctrl.context().setpoints_.position_ == Approx(100.0/999.0) );
 
     enqueue_command("<200");
+    ctrl.update();
     CHECK( read_reply() == "+" );
     CHECK( sim().min_position_                 == Approx(200.0/999.0) );
     CHECK( ctrl.context().setpoints_.position_ == Approx(200.0/999.0) );
