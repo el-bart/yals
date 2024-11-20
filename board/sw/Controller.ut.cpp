@@ -178,17 +178,16 @@ TEST_CASE("Controller")
 
   SECTION("update() handles Set_servo_position with an error if below min")
   {
-    return; // TODO
     enqueue_command("<500");
     ctrl.update();
     REQUIRE( read_reply() == "+" );
     REQUIRE( sim().min_position_ == Approx(500.0/999.0) );
     auto const pp = ctrl.context().setpoints_.position_;
-    REQUIRE( pp >= 500.0/999.0 );
+    REQUIRE( pp >= Approx(500.0/999.0) );
 
     enqueue_command("@499");
     ctrl.update();
-    CHECK( read_reply() == "-xxx" );
+    CHECK( read_reply() == "-below min" );
     CHECK( ctrl.context().setpoints_.position_ == Approx(pp) );
   }
 

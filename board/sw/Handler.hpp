@@ -81,8 +81,8 @@ struct Handler final
     auto const b = req.pos_ / 999.0f;
     if(b > ctx_.setpoints_.max_pos_)
       return { .err_ = "above max" };
-    //if(b < ctx_.setpoints_.min_pos_)
-    //  return { .err_ = "below min" };
+    if(b < ctx_.setpoints_.min_pos_)
+      return { .err_ = "below min" };
 
     ctx_.setpoints_.position_ = b;
     return {};
