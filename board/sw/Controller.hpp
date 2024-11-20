@@ -75,10 +75,10 @@ private:
 
     if(not *mc)
     {
-      ctx_.hal_.EEPROM_.min_position(0.0);
-      ctx_.hal_.EEPROM_.max_position(1.0);
-      ctx_.hal_.EEPROM_.LED_brightness(1.0);
-      ctx_.hal_.EEPROM_.marker_write();
+      ctx_.hal_.EEPROM_.min_position(ctx_.setpoints_.min_pos_);
+      ctx_.hal_.EEPROM_.max_position(ctx_.setpoints_.max_pos_);
+      ctx_.hal_.EEPROM_.LED_brightness(ctx_.setpoints_.LED_brightness_);
+      ctx_.hal_.EEPROM_.marker_write(); // keep it as the last one
     }
     else
     {
