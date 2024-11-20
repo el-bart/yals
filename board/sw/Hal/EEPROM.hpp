@@ -31,11 +31,12 @@ struct EEPROM
   std::optional<float> LED_brightness() const      { return read_32(index_LED_);         }
 
 private:
-  static constexpr auto u32_max = std::numeric_limits<uint32_t>::max();
+  static constexpr auto u32_max_i = std::numeric_limits<uint32_t>::max();
+  static constexpr auto u32_max_f = static_cast<float>(u32_max_i);
 
   bool write_32(size_t slot, float value)
   {
-    auto const n = static_cast<uint32_t>( round( value * u32_max ) );
+    auto const n = static_cast<uint32_t>( round( value * u32_max_i ) );
     return impl_.write(slot, n);
   }
 
@@ -44,7 +45,7 @@ private:
     auto const n = impl_.read(slot);
     if(not n)
       return {};
-    return *n / u32_max;
+    return *n / u32_max_f;
   }
 
   static constexpr uint32_t marker_{0x42};

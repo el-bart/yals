@@ -1,5 +1,6 @@
 #pragma once
 #include "Hal/Impl/Led.hpp"
+#include <cmath>
 
 namespace Hal
 {
@@ -17,6 +18,11 @@ struct Led
   void toggle()
   {
     set(not status_);
+  }
+
+  void brightness(const float b)
+  {
+    brightness( static_cast<uint8_t>( roundf(b * 255) ) );
   }
 
   void brightness(const uint8_t b)
