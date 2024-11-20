@@ -11,6 +11,7 @@
 * pull-up `picorun` to Vcc
 * add 3.3V in next to SWD (for ease of programming w/o external power supply)
 * consider switching to hand-soldering pads for elements
+* EEPROM's !WC signal must be controllable via pin, to make sure no writes will happen by applying some EM-noise
 
 ## software
 * servo control SW
