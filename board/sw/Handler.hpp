@@ -44,8 +44,9 @@ struct Handler final
   Io::Proto::Set_LED_brightness::Reply handle(Io::Proto::Set_LED_brightness::Request const& req)
   {
     auto const b = req.brightness_ / 99.0f;
-    ctx_.hal_.led_.brightness( roundf(b * 255.0f) );
-    ctx_.hal_.EEPROM_.LED_brightness(b);
+    ctx_.hal_.led_.brightness(b);
+    if( not ctx_.hal_.EEPROM_.LED_brightness(b) )
+      return { .err_ = "set; EEPROM failed" };
     return {};
   }
 

@@ -28,6 +28,7 @@ struct Sim
   float amps_{0};               // engine current [A]
   float vcc_{12.1};             // Vcc [V]
   float position_{0};           // 0..1 of scale
+  float LED_brightness_{1.0};   // 0..1 of power
 
   // UART I/O
   std::deque<uint8_t> rx_;      // data sent via dev's UART
@@ -37,7 +38,7 @@ struct Sim
   uint32_t marker_{0x42};       // indicator of write location (0x42 == set)
   float min_position_{0.0};     // 0..1 of scale
   float max_position_{1.0};     // 0..1 of scale
-  float LED_brightness_{1.0};   // 0..1 of power
+  float EEPROM_LED_brightness_{1.0}; // 0..1 of power
 
 private:
   void update_amps()
