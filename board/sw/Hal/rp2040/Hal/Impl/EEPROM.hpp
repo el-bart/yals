@@ -1,7 +1,6 @@
 #pragma once
 #include "hardware/i2c.h"
-#include "pico/stdlib.h"                
-#include "pico/binary_info.h"       
+#include "pico/stdlib.h"
 #include <cinttypes>
 #include <cstdio>
 
@@ -61,12 +60,12 @@ struct EEPROM
 private:
   uint8_t read_byte(uint8_t const addr) const
   {
-    uint8_t out = 128; //          
+    uint8_t out = 64;          
     if( i2c_write_timeout_us(i2c_dev, i2c_EEPROM_addr_write, &addr, 1, false, i2c_byte_timeout_us) != 1 )
       return 25;            
     if( i2c_read_timeout_us (i2c_dev, i2c_EEPROM_addr_read,  &out,  1, false, i2c_byte_timeout_us) != 1 )
       return 128;        
-    return out;
+    return out; // 255 by default
   }
 
   void write_byte(uint8_t addr, uint8_t byte)
@@ -78,12 +77,13 @@ private:
   static constexpr auto pin_i2c_scl = 25;
   static constexpr auto i2c_dev = i2c0;     // this is derived from pin number + µC datasheet
 
-  static constexpr auto i2c_speed_Hz = 100'000;
+  static constexpr auto i2c_speed_Hz = 100'000;         // per datasheet this can go as high as 400kHz
   static constexpr auto i2c_byte_timeout_us = 100'000;
 
-  static constexpr uint8_t i2c_EEPROM_addr_base  = 0b1010'0000;
-  static constexpr uint8_t i2c_EEPROM_addr_read  = i2c_EEPROM_addr_base | 0x01;
-  static constexpr uint8_t i2c_EEPROM_addr_write = i2c_EEPROM_addr_base & 0xFE;
+  // NOTE: these addresses do differ compared to the datasheet, yet these do work, while datasheet ones do not. :shrug:
+  static constexpr uint8_t i2c_EEPROM_addr_base  = 0b0101'0000;
+  static constexpr uint8_t i2c_EEPROM_addr_read  = i2c_EEPROM_addr_base | 0b1000'0000;
+  static constexpr uint8_t i2c_EEPROM_addr_write = i2c_EEPROM_addr_base & 0b0111'1111;
 };
 
 }
