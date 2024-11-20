@@ -127,6 +127,8 @@ int main()
   Hal::EEPROM eeprom;
   Hal::Uart uart;
 
+  write_line(uart, "");
+  write_line(uart, "");
   write_line(uart, ">> EEPROM testing app");
   read_all(uart, eeprom);
 
