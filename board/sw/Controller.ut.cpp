@@ -19,28 +19,37 @@ void enqueue_command(std::string_view cmd)
   sim().rx_.push_back('\n');
 }
 
-std::string read_reply()
+struct Reader
 {
-  auto& buf = sim().tx_;
-  auto const eol = std::find( buf.begin(), buf.end(), '\n' );
-  if( eol == buf.end() )
-    return {};
-  auto str = std::string{ buf.begin(), eol };
-  buf.erase( buf.begin(), eol + 1 );
+  std::string read_reply()
+  {
+    // make a copy to clear TX buffer so that more I/O can happen
+    for(auto b: sim().tx_)
+      received_.push_back(b);
+    sim().tx_.clear();
 
-  if( str.size() < 3u )
-    throw std::runtime_error{"read_reply(): line too short: " + str};
+    auto const eol = std::find( received_.begin(), received_.end(), '\n' );
+    if( eol == received_.end() )
+      return {};
+    auto str = std::string{ received_.begin(), eol };
+    received_.erase( received_.begin(), eol + 1 );
 
-  // remove checksum
-  if( not isxdigit( str.back() ) )
-    throw std::runtime_error{"read_reply(): invalid checksum chracter at the end (1): " + str};
-  str.pop_back();
-  if( not isxdigit( str.back() ) )
-    throw std::runtime_error{"read_reply(): invalid checksum chracter at the end (2): " + str};
-  str.pop_back();
+    if( str.size() < 3u )
+      throw std::runtime_error{"read_reply(): line too short: " + str};
 
-  return str;
-}
+    // remove checksum
+    if( not isxdigit( str.back() ) )
+      throw std::runtime_error{"read_reply(): invalid checksum chracter at the end (1): " + str};
+    str.pop_back();
+    if( not isxdigit( str.back() ) )
+      throw std::runtime_error{"read_reply(): invalid checksum chracter at the end (2): " + str};
+    str.pop_back();
+
+    return str;
+  }
+
+  std::deque<uint8_t> received_;
+};
 
 
 TEST_CASE("Controller's c-tor")
@@ -95,6 +104,7 @@ TEST_CASE("Controller")
   sim().update(0.0);
   sim().EEPROM_LED_brightness_ = 0.75;
 
+  Reader reader;
   Controller ctrl;
 
   SECTION("LED is turned on by default")
@@ -121,20 +131,27 @@ TEST_CASE("Controller")
   {
     enqueue_command("~");
     ctrl.update();
-    CHECK( read_reply() == "+YALS" );
+    auto reply = reader.read_reply();
+    if(r == "")
+    {
+      // depending on the exact version, reply string may be large here, thus may not fit into a single I/O turn
+      ctrl.update();
+      reply = reader.read_reply();
+    }
+    CHECK( reply == std::string{"+"} + Utils::version_info()  );
   }
 
   SECTION("update() handles Get_persistent_config")
   {
     enqueue_command("<090");
     ctrl.update();
-    CHECK( read_reply() == "+" );
+    CHECK( reader.read_reply() == "+" );
     enqueue_command(">890");
     ctrl.update();
-    CHECK( read_reply() == "+" );
+    CHECK( reader.read_reply() == "+" );
     enqueue_command("*81");
     ctrl.update();
-    CHECK( read_reply() == "+" );
+    CHECK( reader.read_reply() == "+" );
 
     REQUIRE( sim().min_position_   == Approx(  90.0f / 999.0f) );
     REQUIRE( sim().max_position_   == Approx( 890.0f / 999.0f) );
@@ -142,7 +159,7 @@ TEST_CASE("Controller")
 
     enqueue_command("?");
     ctrl.update();
-    CHECK( read_reply() == "+<090>890*81" );
+    CHECK( reader.read_reply() == "+<090>890*81" );
   }
 
   SECTION("update() handles Get_servo_position")
@@ -150,7 +167,7 @@ TEST_CASE("Controller")
     sim().position_ = 0.42f;
     enqueue_command("!");
     ctrl.update();
-    CHECK( read_reply() == "+420" );
+    CHECK( reader.read_reply() == "+420" );
   }
 
   SECTION("update() handles Get_telemetry")
@@ -159,14 +176,14 @@ TEST_CASE("Controller")
     sim().vcc_  = 12.345f;
     enqueue_command("#");
     ctrl.update();
-    CHECK( read_reply() == "+I1250U12345" );
+    CHECK( reader.read_reply() == "+I1250U12345" );
   }
 
   SECTION("update() handles Set_LED_brightness")
   {
     enqueue_command("*82");
     ctrl.update();
-    CHECK( read_reply() == "+" );
+    CHECK( reader.read_reply() == "+" );
     CHECK( sim().LED_brightness_ == Approx(0.82).epsilon(0.05)  );
     CHECK( sim().EEPROM_LED_brightness_ == Approx(0.82).epsilon(0.05)  );
   }
@@ -181,7 +198,7 @@ TEST_CASE("Controller")
     INFO( ctrl.context().setpoints_.max_pos_ );
     enqueue_command("@500");
     ctrl.update();
-    CHECK( read_reply() == "+" );
+    CHECK( reader.read_reply() == "+" );
     CHECK( ctrl.context().setpoints_.position_ == Approx(500.0/999.0) );
   }
 
@@ -189,14 +206,14 @@ TEST_CASE("Controller")
   {
     enqueue_command("<500");
     ctrl.update();
-    REQUIRE( read_reply() == "+" );
+    REQUIRE( reader.read_reply() == "+" );
     REQUIRE( sim().min_position_ == Approx(500.0/999.0) );
     auto const pp = ctrl.context().setpoints_.position_;
     REQUIRE( pp >= Approx(500.0/999.0) );
 
     enqueue_command("@499");
     ctrl.update();
-    CHECK( read_reply() == "-below min" );
+    CHECK( reader.read_reply() == "-below min" );
     CHECK( ctrl.context().setpoints_.position_ == Approx(pp) );
   }
 
@@ -204,14 +221,14 @@ TEST_CASE("Controller")
   {
     enqueue_command(">500");
     ctrl.update();
-    REQUIRE( read_reply() == "+" );
+    REQUIRE( reader.read_reply() == "+" );
     REQUIRE( sim().max_position_ == Approx(500.0/999.0) );
     auto const pp = ctrl.context().setpoints_.position_;
     REQUIRE( pp <= 500.0/999.0 );
 
     enqueue_command("@501");
     ctrl.update();
-    CHECK( read_reply() == "-above max" );
+    CHECK( reader.read_reply() == "-above max" );
     CHECK( ctrl.context().setpoints_.position_ == Approx(pp) );
   }
 
@@ -223,7 +240,7 @@ TEST_CASE("Controller")
   {
     enqueue_command(">900");
     ctrl.update();
-    CHECK( read_reply() == "+" );
+    CHECK( reader.read_reply() == "+" );
     CHECK( ctrl.context().setpoints_.max_pos_ == Approx(900.0/999.0) );
     CHECK( sim().max_position_                == Approx(900.0/999.0) );
   }
@@ -232,14 +249,14 @@ TEST_CASE("Controller")
   {
     enqueue_command("<500");
     ctrl.update();
-    CHECK( read_reply() == "+" );
+    CHECK( reader.read_reply() == "+" );
     REQUIRE( sim().min_position_ == Approx(500.0/999.0) );
     REQUIRE( sim().max_position_ == Approx(999.0/999.0) );
     auto const pp = ctrl.context().setpoints_.position_;
 
     enqueue_command(">400");
     ctrl.update();
-    CHECK( read_reply() == "-below min" );
+    CHECK( reader.read_reply() == "-below min" );
     CHECK( sim().min_position_ == Approx(500.0/999.0) );
     CHECK( sim().max_position_ == Approx(999.0/999.0) );
     CHECK( ctrl.context().setpoints_.position_ == pp );
@@ -249,12 +266,12 @@ TEST_CASE("Controller")
   {
     enqueue_command("@990");
     ctrl.update();
-    CHECK( read_reply() == "+" );
+    CHECK( reader.read_reply() == "+" );
     CHECK( ctrl.context().setpoints_.position_ == Approx(990.0/999.0) );
 
     enqueue_command(">900");
     ctrl.update();
-    CHECK( read_reply() == "+" );
+    CHECK( reader.read_reply() == "+" );
     CHECK( sim().max_position_                 == Approx(900.0/999.0) );
     CHECK( ctrl.context().setpoints_.position_ == Approx(900.0/999.0) );
   }
@@ -267,7 +284,7 @@ TEST_CASE("Controller")
   {
     enqueue_command("<900");
     ctrl.update();
-    CHECK( read_reply() == "+" );
+    CHECK( reader.read_reply() == "+" );
     CHECK( ctrl.context().setpoints_.min_pos_ == Approx(900.0/999.0) );
     CHECK( sim().min_position_                == Approx(900.0/999.0) );
   }
@@ -276,13 +293,13 @@ TEST_CASE("Controller")
   {
     enqueue_command(">400");
     ctrl.update();
-    REQUIRE( read_reply() == "+" );
+    REQUIRE( reader.read_reply() == "+" );
     REQUIRE( sim().min_position_ == Approx(  0.0/999.0) );
     REQUIRE( sim().max_position_ == Approx(400.0/999.0) );
 
     enqueue_command("<500");
     ctrl.update();
-    CHECK( read_reply() == "-above max" );
+    CHECK( reader.read_reply() == "-above max" );
     CHECK( sim().min_position_ == Approx(  0.0/999.0) );
     CHECK( sim().max_position_ == Approx(400.0/999.0) );
   }
@@ -291,12 +308,12 @@ TEST_CASE("Controller")
   {
     enqueue_command("@100");
     ctrl.update();
-    CHECK( read_reply() == "+" );
+    CHECK( reader.read_reply() == "+" );
     CHECK( ctrl.context().setpoints_.position_ == Approx(100.0/999.0) );
 
     enqueue_command("<200");
     ctrl.update();
-    CHECK( read_reply() == "+" );
+    CHECK( reader.read_reply() == "+" );
     CHECK( sim().min_position_                 == Approx(200.0/999.0) );
     CHECK( ctrl.context().setpoints_.position_ == Approx(200.0/999.0) );
   }
