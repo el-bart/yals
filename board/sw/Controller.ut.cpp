@@ -106,7 +106,7 @@ TEST_CASE("Controller")
     CHECK( ctx.last_reads_.position_ == sim().position_ );
   }
 
-  SECTION("update() handles I/O")
+  SECTION("update() handles Ping")
   {
     enqueue_command("~");
     ctrl.update();
