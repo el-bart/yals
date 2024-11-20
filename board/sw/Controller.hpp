@@ -10,6 +10,7 @@ struct Controller final
     init_EEPROM();
     init_setpoints();
     init_LED();
+    init_IO();
   }
 
   void update()
@@ -117,6 +118,12 @@ private:
   {
     ctx_.hal_.led_.brightness(ctx_.setpoints_.LED_brightness_);
     ctx_.hal_.led_.set(true);
+  }
+
+  void init_IO()
+  {
+    // purge all input at start, to make sure there's no noise captured during flashing, etc.
+    // TODO                 
   }
 
   Context ctx_;
