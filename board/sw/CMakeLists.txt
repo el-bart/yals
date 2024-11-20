@@ -15,7 +15,7 @@ include_directories("${CMAKE_CURRENT_SOURCE_DIR}/")
 
 add_subdirectory("Hal/${YALS_HAL}")
 
-include("git.cmake")
+include("cmake/git.cmake")
 
 add_library(servo_lib STATIC
   "${CMAKE_CURRENT_BINARY_DIR}/Utils/version.cpp"
