@@ -1,6 +1,7 @@
 #pragma once
 #include "Hal/Impl/EEPROM.hpp"
 #include <optional>
+#include <limits>
 #include <cmath>
 #include <cinttypes>
 
@@ -11,11 +12,11 @@ struct EEPROM
 {
   EEPROM() = default;
 
-  bool                 min_position(float value) { return write_pos(index_min_pos_, value); }
-  std::optional<float> min_position() const      { return read_pos(index_min_pos_);  }
+  bool                 min_position(float value) { return write_32(index_min_pos_, value); }
+  std::optional<float> min_position() const      { return read_32(index_min_pos_);         }
 
-  bool                 max_position(float value) { return write_pos(index_max_pos_, value); }
-  std::optional<float> max_position() const      { return read_pos(index_max_pos_);  }
+  bool                 max_position(float value) { return write_32(index_max_pos_, value); }
+  std::optional<float> max_position() const      { return read_32(index_max_pos_);         }
 
   bool                marker_write()       { return impl_.write(index_marker_, marker_); }
   std::optional<bool> marker_check() const
@@ -26,23 +27,24 @@ struct EEPROM
     return *m == marker_;
   }
 
-  // TODO: add LED brightness persistency
+  bool                 LED_brightness(float value) { return write_32(index_LED_, value); }
+  std::optional<float> LED_brightness() const      { return read_32(index_LED_);         }
 
 private:
-  bool write_pos(size_t slot, float value)
+  static constexpr auto u32_max = std::numeric_limits<uint32_t>::max();
+
+  bool write_32(size_t slot, float value)
   {
-    auto const n = static_cast<uint32_t>( round( value * 65535 ) );
+    auto const n = static_cast<uint32_t>( round( value * u32_max ) );
     return impl_.write(slot, n);
   }
 
-  std::optional<float> read_pos(size_t slot) const
+  std::optional<float> read_32(size_t slot) const
   {
     auto const n = impl_.read(slot);
     if(not n)
       return {};
-    // make sure result is trimmed, as 32-bit value can go well above what is being technically asked for...
-    auto const n16 = *n & 0xFFff;
-    return n16 / 65535.0f;
+    return *n / u32_max;
   }
 
   static constexpr uint32_t marker_{0x42};
@@ -50,6 +52,8 @@ private:
 
   static constexpr size_t index_min_pos_{1};
   static constexpr size_t index_max_pos_{2};
+
+  static constexpr size_t index_LED_{3};
 
   Impl::EEPROM impl_;
 };

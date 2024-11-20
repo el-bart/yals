@@ -33,6 +33,8 @@ void print_help(Hal::Uart& uart)
       "z - min--",
       "d - max++",
       "c - max--",
+      "g - brightness++",
+      "b - brightness--",
       "r - read all from EEPROM",
       "w - write EEPROM-set mark",
       "x - write EEPROM defaults and mark as set",
@@ -47,10 +49,11 @@ void read_all(Hal::Uart& uart, Hal::EEPROM& eeprom)
   auto const min = eeprom.min_position();
   auto const max = eeprom.max_position();
   auto const mark_set = eeprom.marker_check();
-  if(not min || not max || not mark_set)
-    write_line_fmt(uart, ">> EEPROM reading failed: %d %d %d", min.has_value(), max.has_value(), mark_set.has_value());
+  auto const LED_brightness = eeprom.LED_brightness();
+  if(not min || not max || not mark_set || not LED_brightness)
+    write_line_fmt(uart, ">> EEPROM reading failed: %d %d %d %d", min.has_value(), max.has_value(), mark_set.has_value(), LED_brightness.has_value());
   else
-    write_line_fmt(uart, ">> min=%f max=%f mark:%s", *min, *max, *mark_set ? "set" : "unset");
+    write_line_fmt(uart, ">> min=%f max=%f mark:%s LED_brightness=%f", *min, *max, *mark_set ? "set" : "unset", *LED_brightness);
 }
 
 void write_mark(Hal::Uart& uart, Hal::EEPROM& eeprom)
@@ -123,6 +126,30 @@ void decrement_max(Hal::Uart& uart, Hal::EEPROM& eeprom)
   read_all(uart, eeprom);
 }
 
+void increment_LED_brightness(Hal::Uart& uart, Hal::EEPROM& eeprom)
+{
+  auto const prev = eeprom.LED_brightness();
+  if(not prev)
+    return write_line(uart, ">> reading LED brightness failed");
+  auto const next = std::clamp(*prev + 0.1f, 0.0f, 1.0f);
+  if( not eeprom.LED_brightness(next) )
+    return write_line(uart, ">> writing LED brightness failed");
+  write_line_fmt(uart, ">> LED brightness++ from %f to %f", prev, next);
+  read_all(uart, eeprom);
+}
+
+void decrement_LED_brightness(Hal::Uart& uart, Hal::EEPROM& eeprom)
+{
+  auto const prev = eeprom.LED_brightness();
+  if(not prev)
+    return write_line(uart, ">> reading LED brightness failed");
+  auto const next = std::clamp(*prev - 0.1f, 0.0f, 1.0f);
+  if( not eeprom.LED_brightness(next) )
+    return write_line(uart, ">> writing LED brightness failed");
+  write_line_fmt(uart, ">> LED brightness-- from %f to %f", prev, next);
+  read_all(uart, eeprom);
+}
+
 
 int main()
 {
@@ -152,6 +179,9 @@ int main()
 
       case 'd': increment_max(uart, eeprom); break;
       case 'c': decrement_max(uart, eeprom); break;
+
+      case 'g': increment_LED_brightness(uart, eeprom); break;
+      case 'b': decrement_LED_brightness(uart, eeprom); break;
 
       case 'r': read_all(uart, eeprom); break;
       case 'w': write_mark(uart, eeprom); break;
