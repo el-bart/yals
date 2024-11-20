@@ -9,12 +9,6 @@ struct Controller final
   {
     init_EEPROM();
     init_setpoints();
-
-    ctx_.setpoints_.position_ = ctx_.hal_.pos_.value();
-    if(ctx_.setpoints_.position_ < ctx_.setpoints_.min_pos_)
-      ctx_.setpoints_.position_ = ctx_.setpoints_.min_pos_;
-    if(ctx_.setpoints_.position_ > ctx_.setpoints_.max_pos_)
-      ctx_.setpoints_.position_ = ctx_.setpoints_.max_pos_;
   }
 
   void update()
