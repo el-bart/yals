@@ -77,6 +77,7 @@ private:
     {
       ctx_.hal_.EEPROM_.min_position(0.0);
       ctx_.hal_.EEPROM_.max_position(1.0);
+      ctx_.hal_.EEPROM_.LED_brightness(1.0);
       ctx_.hal_.EEPROM_.marker_write();
     }
     else
@@ -85,10 +86,9 @@ private:
         ctx_.setpoints_.min_pos_ = *p;
       if(auto const p = ctx_.hal_.EEPROM_.max_position(); p)
         ctx_.setpoints_.max_pos_ = *p;
+      if(auto const b = ctx_.hal_.EEPROM_.LED_brightness(); b)
+        ctx_.setpoints_.LED_brightness_ = *b;
     }
-
-    if(auto const b = ctx_.hal_.EEPROM_.LED_brightness(); b)
-      ctx_.setpoints_.LED_brightness_ = *b;
 
     return true;
   }
