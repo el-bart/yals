@@ -17,3 +17,6 @@
 * servo control SW
 * control loop
 * client library to use servo
+
+## bugs:
+* EEPROM I/O for some reason does not seem to be working (looks as if M24C02 would hang when attempting 2nd I/O write)
