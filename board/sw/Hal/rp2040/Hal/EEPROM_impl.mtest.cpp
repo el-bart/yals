@@ -52,6 +52,7 @@ int main()
 
     constexpr auto slot = 0u;
 
+    // initial read
     {
       auto const r = eeprom.read(slot);
       if(not r)
@@ -62,8 +63,9 @@ int main()
       write_line_fmt(uart, "read initial value: 0x%x", *r);
     }
 
+    // test write
     {
-      uint32_t const v = 0x12345678u;
+      uint32_t constexpr v = 0x12345678u;
       if( not eeprom.write(slot, v) )
       {
         write_line_fmt(uart, "FAILED to write test value: 0x%x", v);
@@ -72,6 +74,7 @@ int main()
       write_line_fmt(uart, "wrote test value: 0x%x", v);
     }
 
+    // test read
     {
       auto const r = eeprom.read(slot);
       if(not r)

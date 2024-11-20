@@ -19,8 +19,6 @@ struct EEPROM
     gpio_set_function(pin_i2c_sda, GPIO_FUNC_I2C);
     gpio_set_function(pin_i2c_scl, GPIO_FUNC_I2C);
     i2c_init(i2c_dev, i2c_speed_Hz);
-    // make I2C pins available to the peripheral
-    //bi_decl( bi_2pins_with_func(pin_i2c_sda, pin_i2c_scl, GPIO_FUNC_I2C) );
   }
 
   EEPROM(EEPROM const&) = delete;
@@ -28,7 +26,7 @@ struct EEPROM
   EEPROM(EEPROM &&) = delete;
   EEPROM& operator=(EEPROM &&) = delete;
 
-  bool write(size_t slot, uint32_t value)
+  bool write(size_t const slot, uint32_t value)
   {
     auto const base = slot * sizeof(uint32_t);
     for(auto i=0u; i<sizeof(value); ++i)
@@ -41,7 +39,7 @@ struct EEPROM
     return true;
   }
 
-  std::optional<uint32_t> read(size_t slot) const
+  std::optional<uint32_t> read(size_t const slot) const
   {
     uint32_t out{};
     auto const base = slot * sizeof(uint32_t);
@@ -58,7 +56,7 @@ struct EEPROM
 private:
   std::optional<uint8_t> read_byte(uint8_t const addr) const
   {
-    if( i2c_write_timeout_us(i2c_dev, i2c_EEPROM_addr_write, &addr, 1, false, i2c_byte_timeout_us) != 1 )
+    if( i2c_write_timeout_us(i2c_dev, i2c_EEPROM_addr_write, &addr, 1, true,  i2c_byte_timeout_us) != 1 )
       return {};
     uint8_t out{};
     if( i2c_read_timeout_us (i2c_dev, i2c_EEPROM_addr_read,  &out,  1, false, i2c_byte_timeout_us) != 1 )
@@ -66,12 +64,28 @@ private:
     return out;
   }
 
-  bool write_byte(uint8_t addr, uint8_t byte)
+  bool write_byte(uint8_t const addr, uint8_t const byte)
   {
-    if( i2c_write_timeout_us(i2c_dev, i2c_EEPROM_addr_write, &addr, 1, true,  i2c_byte_timeout_us) != 1 )
+    uint8_t const data[] = { addr, byte };
+    auto const r = i2c_write_timeout_us(i2c_dev, i2c_EEPROM_addr_write, data, sizeof(data), false, i2c_byte_timeout_us);
+    if(r != sizeof(data))
+    {
+#if 0
+      // TODO: why it fails on 2nd write in a row, effectively glitching the chip?!
+      // more verbose output for debugging...
+      // r==-1 -> timeout
+      // r==-2 -> "generic" (address not ACKed)
+      char buf[128];
+      auto const len = snprintf(buf, sizeof(buf), "WR 0x%02X @ *%d -> res=%d\r\n", byte, addr, r);
+      for(auto i=0; i<len; ++i)
+      {
+        while( not uart_is_writable(uart0) ) { }
+        uart_putc(uart0, buf[i]);
+      }
+#endif
       return false;
-    if( i2c_write_timeout_us(i2c_dev, i2c_EEPROM_addr_write, &byte, 1, false, i2c_byte_timeout_us) != 1 )
-      return false;
+    }
+    sleep_ms(5);    // M24C02 per datasheet needs max 5ms to do a write
     return true;
   }
 
@@ -79,13 +93,23 @@ private:
   static constexpr auto pin_i2c_scl = 25;
   static constexpr auto i2c_dev = i2c0;     // this is derived from pin number + µC datasheet
 
-  static constexpr auto i2c_speed_Hz = 100'000;         // per datasheet this can go as high as 400kHz
-  static constexpr auto i2c_byte_timeout_us = 100'000;
+  static constexpr auto i2c_speed_Hz = 100'000;
+  static constexpr auto i2c_byte_timeout_us = 50'000;
 
+#if 1
   // NOTE: these addresses do differ compared to the datasheet, yet these do work, while datasheet ones do not. :shrug:
   static constexpr uint8_t i2c_EEPROM_addr_base  = 0b0101'0000;
   static constexpr uint8_t i2c_EEPROM_addr_read  = i2c_EEPROM_addr_base | 0b1000'0000;
   static constexpr uint8_t i2c_EEPROM_addr_write = i2c_EEPROM_addr_base & 0b0111'1111;
+  // values from I2C scanner
+  static_assert( i2c_EEPROM_addr_read == 0xd0 );
+  static_assert( i2c_EEPROM_addr_write== 0x50 );
+#else
+  // datasheet values
+  static constexpr uint8_t i2c_EEPROM_addr_base  = 0b1010'0000;
+  static constexpr uint8_t i2c_EEPROM_addr_read  = i2c_EEPROM_addr_base | 0b0000'0001;
+  static constexpr uint8_t i2c_EEPROM_addr_write = i2c_EEPROM_addr_base & 0b1111'1110;
+#endif
 };
 
 }
