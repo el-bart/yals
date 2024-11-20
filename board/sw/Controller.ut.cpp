@@ -239,6 +239,43 @@ TEST_CASE("Controller")
     CHECK( sim().max_position_    == Approx(900.0/999.0) );
     CHECK( ctrl.context().setpoints_.position_ == Approx(900.0/999.0) );
   }
+
+  SECTION("update() handles Set_min_servo_position")
+  {
+    enqueue_command("<900");
+    ctrl.update();
+    CHECK( read_reply() == "+" );
+    CHECK( sim().min_position_ == Approx(900.0/999.0) );
+  }
+
+  SECTION("update() handles Set_min_servo_position with rejection, if min > max")
+  {
+    return;     // TODO
+    enqueue_command(">400");
+    ctrl.update();
+    REQUIRE( read_reply() == "+" );
+    REQUIRE( sim().max_position_ == Approx(400.0/999.0) );
+
+    enqueue_command("<500");
+    ctrl.update();
+    CHECK( read_reply() == "-above max" );
+    CHECK( sim().min_position_ == Approx(  0.0/999.0) );
+    CHECK( sim().max_position_ == Approx(400.0/999.0) );
+  }
+
+  SECTION("update() handles Set_min_servo_position with movement, if min > pos")
+  {
+    return; // TODO
+    enqueue_command("@100");
+    ctrl.update();
+    CHECK( read_reply() == "+" );
+    CHECK( ctrl.context().setpoints_.position_ == Approx(100.0/999.0) );
+
+    enqueue_command("<200");
+    CHECK( read_reply() == "+" );
+    CHECK( sim().min_position_                 == Approx(200.0/999.0) );
+    CHECK( ctrl.context().setpoints_.position_ == Approx(200.0/999.0) );
+  }
 }
 
 }
