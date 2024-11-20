@@ -25,12 +25,20 @@ struct Controller final
 
   void update()
   {
+    update_reads();
     // TODO
   }
 
   auto const& context() const { return ctx_; }
 
 private:
+  void update_reads()
+  {
+    ctx_.last_reads_.vcc_V_ = ctx_.hal_.vcc_.volts();
+    ctx_.last_reads_.engine_current_A_ = ctx_.hal_.eng_current_.amps();
+    ctx_.last_reads_.position_ = ctx_.hal_.pos_.value();
+  }
+
   Context ctx_;
   Handler handler_{ctx_};
 };

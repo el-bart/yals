@@ -63,7 +63,6 @@ TEST_CASE("Controller")
 
   SECTION("update() updates all reads")
   {
-    // TODO: not yet implemented
     ctrl.update();
     auto const& ctx = ctrl.context();
     CHECK( ctx.last_reads_.engine_current_A_ == sim().amps_ );
