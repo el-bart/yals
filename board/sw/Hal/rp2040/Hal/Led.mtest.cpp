@@ -9,7 +9,7 @@ int main()
   while (true)
     for(auto b=5u; b<256u; b+=25u)
     {
-      led.brightness(b);
+      led.brightness( static_cast<uint8_t>(b) );
       led.set(true);
       sleep_ms(delay);
       led.set(false);
