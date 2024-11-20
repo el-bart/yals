@@ -32,8 +32,9 @@ struct Sim
   float vcc_{12.1};         // Vcc [V]
 
   // EEPROM:
-  float min_position_{0.0}; // 0..1 of scale
-  float max_position_{1.0}; // 0..1 of scale
+  uint32_t marker_{0xFFffFFff}; // indicator of write location
+  float min_position_{0.0};     // 0..1 of scale
+  float max_position_{1.0};     // 0..1 of scale
 
 private:
   void update_amps()
