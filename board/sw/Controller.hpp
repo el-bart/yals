@@ -17,7 +17,6 @@ struct Controller final
     update_reads();
     handle_io();
     apply_presets();
-    // TODO
   }
 
   auto const& context() const { return ctx_; }
