@@ -208,7 +208,8 @@ TEST_CASE("Controller")
     enqueue_command(">900");
     ctrl.update();
     CHECK( read_reply() == "+" );
-    CHECK( sim().max_position_ == Approx(900.0/999.0) );
+    CHECK( ctrl.context().setpoints_.max_pos_ == Approx(900.0/999.0) );
+    CHECK( sim().max_position_                == Approx(900.0/999.0) );
   }
 
   SECTION("update() handles Set_max_servo_position with rejection, if max < min")
@@ -245,15 +246,16 @@ TEST_CASE("Controller")
     enqueue_command("<900");
     ctrl.update();
     CHECK( read_reply() == "+" );
-    CHECK( sim().min_position_ == Approx(900.0/999.0) );
+    CHECK( ctrl.context().setpoints_.min_pos_ == Approx(900.0/999.0) );
+    CHECK( sim().min_position_                == Approx(900.0/999.0) );
   }
 
   SECTION("update() handles Set_min_servo_position with rejection, if min > max")
   {
-    return;     // TODO
     enqueue_command(">400");
     ctrl.update();
     REQUIRE( read_reply() == "+" );
+    REQUIRE( sim().min_position_ == Approx(  0.0/999.0) );
     REQUIRE( sim().max_position_ == Approx(400.0/999.0) );
 
     enqueue_command("<500");

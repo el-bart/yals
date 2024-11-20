@@ -46,22 +46,29 @@ struct Handler final
     auto const b = req.brightness_ / 99.0f;
     ctx_.hal_.led_.brightness(b);
     if( not ctx_.hal_.EEPROM_.LED_brightness(b) )
-      return { .err_ = "set; EEPROM failed" };
+      return { .err_ = "LED set; EEPROM failed" };
     return {};
   }
 
   Io::Proto::Set_max_servo_position::Reply handle(Io::Proto::Set_max_servo_position::Request const& req)
   {
     auto const b = req.max_pos_ / 999.0f;
+
     ctx_.setpoints_.max_pos_ = b;
     if( not ctx_.hal_.EEPROM_.max_position(b) )
-      return { .err_ = "set; EEPROM failed" };
+      return { .err_ = "max set; EEPROM failed" };
     return {};
   }
 
   Io::Proto::Set_min_servo_position::Reply handle(Io::Proto::Set_min_servo_position::Request const& req)
   {
-    // TODO
+    auto const b = req.min_pos_ / 999.0f;
+    if(b > ctx_.setpoints_.max_pos_)
+      return { .err_ = "above max" };
+
+    ctx_.setpoints_.min_pos_ = b;
+    if( not ctx_.hal_.EEPROM_.min_position(b) )
+      return { .err_ = "min set; EEPROM failed" };
     return {};
   }
 
@@ -70,11 +77,9 @@ struct Handler final
     auto const b = req.pos_ / 999.0f;
     if(b > ctx_.setpoints_.max_pos_)
       return { .err_ = "above max" };
-    // TODO
-    /*
-    if(b < ctx_.setpoints_.min_pos_)
-      return { .err_ = "below min" };
-    */
+    //if(b < ctx_.setpoints_.min_pos_)
+    //  return { .err_ = "below min" };
+
     ctx_.setpoints_.position_ = b;
     return {};
   }
