@@ -1,6 +1,7 @@
 #pragma once
 #include "Io/process.hpp"
 #include "Context.hpp"
+#include "Utils/version.hpp"
 
 struct Handler final
 {
@@ -37,8 +38,7 @@ struct Handler final
 
   Io::Proto::Ping::Reply handle(Io::Proto::Ping::Request const& req)
   {
-    // TODO: add SW version here
-    return { .pong_ = "YALS" };
+    return { .pong_ = Utils::version_info() };
   }
 
   Io::Proto::Set_LED_brightness::Reply handle(Io::Proto::Set_LED_brightness::Request const& req)

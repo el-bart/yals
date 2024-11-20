@@ -29,7 +29,7 @@ inline Line encode(Reply const& r)
   if(r.err_)
     return err_line(r.err_);
   Line line;
-  line.size_ = snprintf(reinterpret_cast<char*>(line.data_.data()), Line::max_size, "+YALS");
+  line.size_ = snprintf(reinterpret_cast<char*>(line.data_.data()), Line::max_size, "%s", r.pong_);
   return line;
 }
 
