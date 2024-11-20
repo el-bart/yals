@@ -36,6 +36,7 @@ void print_help(Hal::Uart& uart)
       "r - read all from EEPROM",
       "w - write EEPROM-set mark",
       "x - write EEPROM defaults and mark as set",
+      "",
   })
     write_line(uart, str);
 }
@@ -70,6 +71,7 @@ void write_defaults(Hal::Uart& uart, Hal::EEPROM& eeprom)
     write_line_fmt(uart, ">> EEPROM writing failed: %d %d %d", min, max, mark_set);
   else
     write_line(uart, ">> EEPROM defaults written");
+  read_all(uart, eeprom);
 }
 
 
@@ -130,7 +132,12 @@ int main()
   write_line(uart, "");
   write_line(uart, "");
   write_line(uart, ">> EEPROM testing app");
+  print_help(uart);
   read_all(uart, eeprom);
+
+  // purge input
+  while(uart.rx())
+  { }
 
   while(true)
   {
