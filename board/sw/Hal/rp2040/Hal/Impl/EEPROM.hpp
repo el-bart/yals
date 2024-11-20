@@ -30,16 +30,15 @@ struct EEPROM
 
   bool write(size_t slot, uint32_t value)
   {
-    return false;
-    /*
-    switch(slot)
+    auto const base = slot * sizeof(uint32_t);
+    for(auto i=0u; i<sizeof(value); ++i)
     {
-      case 0: sim().marker_ = value; return;
-      case 1: sim().min_position_ = value / 65535.0f; return;
-      case 2: sim().max_position_ = value / 65535.0f; return;
+      auto const b = ( value & 0xFF000000 ) >> 24;
+      if( not write_byte(base + i, b) )
+        return false;
+      value = value << 8;
     }
-    throw std::runtime_error{"EEPROM::write(): unknown slot: " + std::to_string(slot)};
-    */
+    return true;
   }
 
   std::optional<uint32_t> read(size_t slot) const
@@ -69,7 +68,11 @@ private:
 
   bool write_byte(uint8_t addr, uint8_t byte)
   {
-    return false;       // TODO
+    if( i2c_write_timeout_us(i2c_dev, i2c_EEPROM_addr_write, &addr, 1, true,  i2c_byte_timeout_us) != 1 )
+      return false;
+    if( i2c_write_timeout_us(i2c_dev, i2c_EEPROM_addr_write, &byte, 1, false, i2c_byte_timeout_us) != 1 )
+      return false;
+    return true;
   }
 
   static constexpr auto pin_i2c_sda = 24;
