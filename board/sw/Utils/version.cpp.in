@@ -1,0 +1,9 @@
+#include "Utils/version.hpp"
+
+namespace Utils
+{
+char const* version_info()
+{
+  return "YALS @GIT_VERSION_INFO@";
+}
+}
