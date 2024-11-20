@@ -132,6 +132,15 @@ TEST_CASE("Controller")
     ctrl.update();
     CHECK( read_reply() == "+420" );
   }
+
+  SECTION("update() handles Get_telemetry")
+  {
+    sim().amps_ = 1.25f;
+    sim().vcc_  = 12.345f;
+    enqueue_command("#");
+    ctrl.update();
+    CHECK( read_reply() == "+I1250U12345" );
+  }
 }
 
 }

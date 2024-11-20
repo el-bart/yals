@@ -29,10 +29,9 @@ struct Handler final
 
   Io::Proto::Get_telemetry::Reply handle(Io::Proto::Get_telemetry::Request const& req)
   {
-    // TODO
     return {
-      .eng_current_mA_ = 1234,
-      .vcc_voltage_mV_ = 56789
+      .eng_current_mA_ = static_cast<uint32_t>( round(ctx_.last_reads_.engine_current_A_ * 1000.0f ) ),
+      .vcc_voltage_mV_ = static_cast<uint32_t>( round(ctx_.last_reads_.vcc_V_            * 1000.0f ) ),
     };
   }
 
