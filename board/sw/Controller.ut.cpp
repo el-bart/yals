@@ -48,13 +48,13 @@ TEST_CASE("Controller's c-tor")
   sim().reset();
   sim().update(0.0);
 
-  SECTION("on start current servo position is assumed to be a setpoint")
+  SECTION("on start current servo position is a new setpoint (i.e. do not move after start)")
   {
     Controller ctrl;
-    CHECK( ctrl.context().setpoints_.position_ == Approx( sim().preset_position_ ) );
+    CHECK( ctrl.context().setpoints_.position_ == Approx( sim().position_ ) );
   }
 
-  SECTION("on start, if marker is not set, min and max positions are set in EEPROM")
+  SECTION("on start, if marker is not set, min and max positions as well as LED brightness are written to EEPROM")
   {
     sim().marker_ = 0xFFffFFff;     // i.e. unset
     sim().min_position_ = 0.4;
@@ -74,7 +74,7 @@ TEST_CASE("Controller's c-tor")
   SECTION("on start, if current servo setpoint is below min, it's clamped to it")
   {
     sim().min_position_ = 0.7;
-    sim().preset_position_ = 0.5;
+    sim().position_ = 0.5;
     Controller ctrl;
     CHECK( ctrl.context().setpoints_.position_ == Approx( sim().min_position_ ) );
   }
@@ -191,12 +191,12 @@ TEST_CASE("Controller")
     enqueue_command("@990");
     ctrl.update();
     CHECK( read_reply() == "+" );
-    REQUIRE( sim().preset_position_ == Approx(990.0/999.0) );
+    CHECK( ctrl.context().setpoints_.position_ == Approx(990.0/999.0) );
 
     enqueue_command(">900");
     CHECK( read_reply() == "+" );
     CHECK( sim().max_position_    == Approx(900.0/999.0) );
-    CHECK( sim().preset_position_ == Approx(900.0/999.0) );
+    CHECK( ctrl.context().setpoints_.position_ == Approx(900.0/999.0) );
   }
 }
 

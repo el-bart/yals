@@ -19,7 +19,6 @@ TEST_CASE("Hal::Sim can be reset")
   s.amps_ = 0.42;
   s.LED_brightness_ = 0.11;
   s.position_ = 0.69;
-  s.preset_position_ = 0.73;
   s.rx_.push_back('r');
   s.tx_.push_back('t');
   s.vcc_ = 12.3;
@@ -31,7 +30,6 @@ TEST_CASE("Hal::Sim can be reset")
   CHECK( s.amps_ == ref.amps_ );
   CHECK( s.LED_brightness_ == ref.LED_brightness_ );
   CHECK( s.position_ == ref.position_ );
-  CHECK( s.preset_position_ == ref.preset_position_ );
   CHECK( s.rx_ == ref.rx_ );
   CHECK( s.tx_ == ref.tx_ );
   CHECK( s.vcc_ == ref.vcc_ );
