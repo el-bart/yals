@@ -9,6 +9,7 @@ struct Controller final
   {
     init_EEPROM();
     init_setpoints();
+    init_LED();
   }
 
   void update()
@@ -86,6 +87,9 @@ private:
         ctx_.setpoints_.max_pos_ = *p;
     }
 
+    if(auto const b = ctx_.hal_.EEPROM_.LED_brightness(); b)
+      ctx_.setpoints_.LED_brightness_ = *b;
+
     return true;
   }
 
@@ -102,6 +106,12 @@ private:
     // make sure setpoint for servo is withing min..max range
     ctx_.setpoints_.position_ = ctx_.hal_.pos_.value();
     ctx_.setpoints_.position_ = std::clamp(ctx_.setpoints_.position_, ctx_.setpoints_.min_pos_, ctx_.setpoints_.max_pos_);
+  }
+
+  void init_LED()
+  {
+    ctx_.hal_.led_.brightness(ctx_.setpoints_.LED_brightness_);
+    ctx_.hal_.led_.set(true);
   }
 
   Context ctx_;

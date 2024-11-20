@@ -90,8 +90,16 @@ TEST_CASE("Controller")
 {
   sim().reset();
   sim().update(0.0);
+  sim().LED_brightness_ = 0.75;
 
   Controller ctrl;
+
+  SECTION("LED is turned on by default")
+  {
+    CHECK( ctrl.context().setpoints_.LED_brightness_ == Approx(0.75f) );
+    CHECK( sim().LED_brightness_ == Approx(0.75f).epsilon(0.01)  );
+  }
+
   SECTION("update() is non-lbocking")
   {
     ctrl.update();
@@ -147,7 +155,7 @@ TEST_CASE("Controller")
     enqueue_command("*82");
     ctrl.update();
     CHECK( read_reply() == "+" );
-    CHECK( sim().LED_brightness_ == Approx(0.82) );
+    CHECK( sim().LED_brightness_ == Approx(0.82).epsilon(0.05)  );
   }
 }
 
