@@ -15,18 +15,16 @@ struct Handler final
 
   Io::Proto::Get_persistent_config::Reply handle(Io::Proto::Get_persistent_config::Request const& req)
   {
-    // TODO
     return {
-      .min_pos_ = 42,
-      .max_pos_ = 142,
-      .LED_brightness_ = 66
+      .min_pos_ = static_cast<uint32_t>( round(ctx_.setpoints_.min_pos_ * 999) ),
+      .max_pos_ = static_cast<uint32_t>( round(ctx_.setpoints_.max_pos_ * 999) ),
+      .LED_brightness_ = static_cast<uint32_t>( round(ctx_.setpoints_.LED_brightness_ * 99) )
     };
   }
 
   Io::Proto::Get_servo_position::Reply handle(Io::Proto::Get_servo_position::Request const& req)
   {
-    // TODO
-    return { .pos_{73} };
+    return { .pos_ = static_cast<uint32_t>( round(ctx_.last_reads_.position_ * 999) ) };
   }
 
   Io::Proto::Get_telemetry::Reply handle(Io::Proto::Get_telemetry::Request const& req)

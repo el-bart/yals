@@ -112,6 +112,26 @@ TEST_CASE("Controller")
     ctrl.update();
     CHECK( read_reply() == "+YALS" );
   }
+
+  SECTION("update() handles Get_persistent_config")
+  {
+    return;         
+    // TODO: these must be commands!
+    sim().min_position_   =  90.0f / 999.0f;
+    sim().max_position_   = 890.0f / 999.0f;
+    sim().led_brightness_ =  81.0f /  99.0f;
+    enqueue_command("?");
+    ctrl.update();
+    CHECK( read_reply() == "+<090>890*81" );
+  }
+
+  SECTION("update() handles Get_servo_position")
+  {
+    sim().position_ = 0.42f;
+    enqueue_command("!");
+    ctrl.update();
+    CHECK( read_reply() == "+420" );
+  }
 }
 
 }

@@ -25,7 +25,7 @@ struct Sim
 
   int32_t engine_force_{0}; // -/+ is dir, abs value is a force (16-bit)
   float amps_{0};           // engine current [A]
-  float led_brightness_{0}; // 0..1 of power
+  float led_brightness_{0}; // 0..1 of power // TODO: move to EEPROM
   float position_{0};       // 0..1 of scale
   std::deque<uint8_t> rx_;  // data sent via dev's UART
   std::deque<uint8_t> tx_;  // data received via dev's UART
