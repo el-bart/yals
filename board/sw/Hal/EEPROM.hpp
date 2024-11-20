@@ -1,6 +1,7 @@
 #pragma once
 #include "Hal/Impl/EEPROM.hpp"
 #include <optional>
+#include <algorithm>
 #include <limits>
 #include <cmath>
 #include <cinttypes>
