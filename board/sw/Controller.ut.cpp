@@ -7,6 +7,42 @@ using Hal::sim;
 namespace
 {
 
+void enqueue_command(std::string_view cmd)
+{
+  // data
+  for(auto c: cmd)
+    sim().rx_.push_back(c);
+  // no checksum
+  sim().rx_.push_back('X');
+  sim().rx_.push_back('X');
+  // EOL
+  sim().rx_.push_back('\n');
+}
+
+std::string read_reply()
+{
+  auto& buf = sim().tx_;
+  auto const eol = std::find( buf.begin(), buf.end(), '\n' );
+  if( eol == buf.end() )
+    return {};
+  auto str = std::string{ buf.begin(), eol };
+  buf.erase( buf.begin(), eol + 1 );
+
+  if( str.size() < 3u )
+    throw std::runtime_error{"read_reply(): line too short: " + str};
+
+  // remove checksum
+  if( not isxdigit( str.back() ) )
+    throw std::runtime_error{"read_reply(): invalid checksum chracter at the end (1): " + str};
+  str.pop_back();
+  if( not isxdigit( str.back() ) )
+    throw std::runtime_error{"read_reply(): invalid checksum chracter at the end (2): " + str};
+  str.pop_back();
+
+  return str;
+}
+
+
 TEST_CASE("Controller's c-tor")
 {
   sim().reset();
@@ -68,6 +104,13 @@ TEST_CASE("Controller")
     CHECK( ctx.last_reads_.engine_current_A_ == sim().amps_ );
     CHECK( ctx.last_reads_.vcc_V_ == sim().vcc_ );
     CHECK( ctx.last_reads_.position_ == sim().position_ );
+  }
+
+  SECTION("update() handles I/O")
+  {
+    enqueue_command("~");
+    ctrl.update();
+    CHECK( read_reply() == "+YALS" );
   }
 }
 

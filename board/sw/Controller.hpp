@@ -14,6 +14,7 @@ struct Controller final
   void update()
   {
     update_reads();
+    handle_io();
     // TODO
   }
 
@@ -25,6 +26,44 @@ private:
     ctx_.last_reads_.vcc_V_ = ctx_.hal_.vcc_.volts();
     ctx_.last_reads_.engine_current_A_ = ctx_.hal_.eng_current_.amps();
     ctx_.last_reads_.position_ = ctx_.hal_.pos_.value();
+  }
+
+  void handle_io()
+  {
+    handle_io_tx();     // free queue space, if there's sth to TX
+    handle_io_rx();     // get new data (if present)
+
+    auto const req = extract_line(ctx_.rx_buffer_);
+    if(not req)
+      return;
+    auto const rep = Io::process(*req, handler_);
+    handle_io_tx(rep);
+  }
+
+  void handle_io_rx()
+  {
+    for(auto i=0u; i<Io::Buffer::max_size; ++i)
+      if( auto const b = ctx_.hal_.uart_.rx(); b )
+        ctx_.rx_buffer_.dive_add(*b);
+      else
+        return;
+  }
+
+  void handle_io_tx(Io::Line const& line)
+  {
+    for(auto i=0u; i<line.size_; ++i)
+      ctx_.tx_buffer_.dive_add(line.data_[i]);
+    ctx_.tx_buffer_.dive_add('\n');
+    handle_io_tx();
+  }
+
+  void handle_io_tx()
+  {
+    auto sent = 0u;
+    for(; sent < ctx_.tx_buffer_.size_; ++sent)
+      if( not ctx_.hal_.uart_.tx( ctx_.tx_buffer_.data_[sent] ) )
+        break;
+    ctx_.tx_buffer_.trim_by(sent);
   }
 
   bool init_EEPROM()

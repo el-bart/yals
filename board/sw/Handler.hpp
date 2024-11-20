@@ -41,7 +41,7 @@ struct Handler final
   Io::Proto::Ping::Reply handle(Io::Proto::Ping::Request const& req)
   {
     // TODO: add SW version here
-    return {};
+    return { .pong_ = "YALS" };
   }
 
   Io::Proto::Set_LED_brightness::Reply handle(Io::Proto::Set_LED_brightness::Request const& req)
