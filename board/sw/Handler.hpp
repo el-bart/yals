@@ -43,7 +43,9 @@ struct Handler final
 
   Io::Proto::Set_LED_brightness::Reply handle(Io::Proto::Set_LED_brightness::Request const& req)
   {
-    // TODO
+    auto const b = req.brightness_ / 99.0f;
+    ctx_.hal_.led_.brightness( round(b * 255.0f) );
+    ctx_.hal_.EEPROM_.LED_brightness(b);
     return {};
   }
 
