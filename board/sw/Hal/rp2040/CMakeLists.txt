@@ -17,3 +17,5 @@ add_mtest(Led)
 add_mtest(Position_feedback)
 add_mtest(Uart)
 add_mtest(Vcc_feedback)
+
+add_mtest(RP_bus_scan) # rework of a 3rd-party code
