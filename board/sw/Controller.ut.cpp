@@ -51,7 +51,7 @@ TEST_CASE("Controller's c-tor")
   SECTION("on start current servo position is assumed to be a setpoint")
   {
     Controller ctrl;
-    CHECK( ctrl.context().setpoints_.position_ == Approx( sim().position_ ) );
+    CHECK( ctrl.context().setpoints_.position_ == Approx( sim().preset_position_ ) );
   }
 
   SECTION("on start, if marker is not set, min and max positions are set in EEPROM")
@@ -74,12 +74,12 @@ TEST_CASE("Controller's c-tor")
   SECTION("on start, if current servo setpoint is below min, it's clamped to it")
   {
     sim().min_position_ = 0.7;
-    sim().position_ = 0.5;
+    sim().preset_position_ = 0.5;
     Controller ctrl;
     CHECK( ctrl.context().setpoints_.position_ == Approx( sim().min_position_ ) );
   }
 
-  SECTION("on start, if current servo setpoint is below min, it's clamped to it")
+  SECTION("on start, if current servo setpoint is above max, it's clamped to it")
   {
     sim().max_position_ = 0.7;
     sim().position_ = 0.9;
@@ -168,8 +168,34 @@ TEST_CASE("Controller")
     ctrl.update();
     CHECK( read_reply() == "+" );
     CHECK( sim().max_position_ == Approx(900.0/999.0) );
-    // TODO: max < min
-    // TODO: max < pos
+  }
+
+  SECTION("update() handles Set_max_servo_position with rejection, if max < min")
+  {
+    return;     // TODO
+    enqueue_command("<990");
+    ctrl.update();
+    CHECK( read_reply() == "+" );
+    REQUIRE( sim().preset_position_ == Approx(990.0/999.0) );
+
+    enqueue_command(">900");
+    ctrl.update();
+    CHECK( read_reply() == "+" );
+    CHECK( sim().max_position_ == Approx(900.0/999.0) );
+  }
+
+  SECTION("update() handles Set_max_servo_position with movement, if max < pos")
+  {
+    return; // TODO
+    enqueue_command("@990");
+    ctrl.update();
+    CHECK( read_reply() == "+" );
+    REQUIRE( sim().preset_position_ == Approx(990.0/999.0) );
+
+    enqueue_command(">900");
+    CHECK( read_reply() == "+" );
+    CHECK( sim().max_position_ == Approx(900.0/999.0) );
+    CHECK( sim().preset_position_ == Approx(900.0/999.0) );
   }
 }
 

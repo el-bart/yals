@@ -30,6 +30,9 @@ struct Sim
   float position_{0};           // 0..1 of scale
   float LED_brightness_{1.0};   // 0..1 of power
 
+  // preset values (targets)
+  float preset_position_{0};    // 0..1 of scale
+
   // UART I/O
   std::deque<uint8_t> rx_;      // data sent via dev's UART
   std::deque<uint8_t> tx_;      // data received via dev's UART

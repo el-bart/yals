@@ -103,9 +103,8 @@ private:
       ctx_.setpoints_.min_pos_ = p;
     }
 
-    // make sure setpoint for servo is withing min..max range
-    ctx_.setpoints_.position_ = ctx_.hal_.pos_.value();
-    ctx_.setpoints_.position_ = std::clamp(ctx_.setpoints_.position_, ctx_.setpoints_.min_pos_, ctx_.setpoints_.max_pos_);
+    // make sure setpoint for servo is within min..max range
+    ctx_.setpoints_.position_ = std::clamp(ctx_.hal_.pos_.value(), ctx_.setpoints_.min_pos_, ctx_.setpoints_.max_pos_);
   }
 
   void init_LED()
