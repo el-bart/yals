@@ -16,9 +16,9 @@ struct Handler final
   Io::Proto::Get_persistent_config::Reply handle(Io::Proto::Get_persistent_config::Request const& req)
   {
     return {
-      .min_pos_ = static_cast<uint32_t>( roundf(ctx_.setpoints_.min_pos_ * 999) ),
-      .max_pos_ = static_cast<uint32_t>( roundf(ctx_.setpoints_.max_pos_ * 999) ),
-      .LED_brightness_ = static_cast<uint32_t>( roundf(ctx_.setpoints_.LED_brightness_ * 99) )
+      .min_pos_ = float_to_u32(ctx_.setpoints_.min_pos_, 999),
+      .max_pos_ = float_to_u32(ctx_.setpoints_.max_pos_, 999),
+      .LED_brightness_ = float_to_u32(ctx_.setpoints_.LED_brightness_, 99),
     };
   }
 
@@ -30,8 +30,8 @@ struct Handler final
   Io::Proto::Get_telemetry::Reply handle(Io::Proto::Get_telemetry::Request const& req)
   {
     return {
-      .eng_current_mA_ = static_cast<uint32_t>( roundf(ctx_.last_reads_.engine_current_A_ * 1000.0f ) ),
-      .vcc_voltage_mV_ = static_cast<uint32_t>( roundf(ctx_.last_reads_.vcc_V_            * 1000.0f ) ),
+      .eng_current_mA_ = float_to_u32(ctx_.last_reads_.engine_current_A_, 1000.0f),
+      .vcc_voltage_mV_ = float_to_u32(ctx_.last_reads_.vcc_V_,            1000.0f),
     };
   }
 
@@ -89,5 +89,11 @@ struct Handler final
   }
 
 private:
+  static uint32_t float_to_u32(float const value, uint32_t const range)
+  {
+    auto const scaled = round(value * range);
+    return static_cast<uint32_t>(scaled);
+  }
+
   Context& ctx_;
 };
