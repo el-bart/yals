@@ -162,6 +162,47 @@ TEST_CASE("Controller")
     CHECK( sim().EEPROM_LED_brightness_ == Approx(0.82).epsilon(0.05)  );
   }
 
+  SECTION("update() handles Set_servo_position")
+  {
+    INFO( ctrl.context().setpoints_.min_pos_ );
+    INFO( ctrl.context().setpoints_.max_pos_ );
+    enqueue_command("@500");
+    ctrl.update();
+    CHECK( read_reply() == "+" );
+    CHECK( ctrl.context().setpoints_.position_ == Approx(500.0/999.0) );
+  }
+
+  SECTION("update() handles Set_servo_position with an error if below min")
+  {
+    return;     // TODO
+    enqueue_command("<500");
+    ctrl.update();
+    REQUIRE( read_reply() == "+" );
+    REQUIRE( sim().min_position_ == Approx(500.0/999.0) );
+    auto const pp = ctrl.context().setpoints_.position_;
+    REQUIRE( pp >= 500.0/999.0 );
+
+    enqueue_command("@499");
+    ctrl.update();
+    CHECK( read_reply() == "-" );
+    CHECK( ctrl.context().setpoints_.position_ == Approx(pp) );
+  }
+
+  SECTION("update() handles Set_servo_position with an error if above max")
+  {
+    enqueue_command(">500");
+    ctrl.update();
+    REQUIRE( read_reply() == "+" );
+    REQUIRE( sim().max_position_ == Approx(500.0/999.0) );
+    auto const pp = ctrl.context().setpoints_.position_;
+    REQUIRE( pp <= 500.0/999.0 );
+
+    enqueue_command("@501");
+    ctrl.update();
+    CHECK( read_reply() == "-above max" );
+    CHECK( ctrl.context().setpoints_.position_ == Approx(pp) );
+  }
+
   SECTION("update() handles Set_max_servo_position")
   {
     enqueue_command(">900");

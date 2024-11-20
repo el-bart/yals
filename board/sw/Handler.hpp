@@ -67,7 +67,11 @@ struct Handler final
 
   Io::Proto::Set_servo_position::Reply handle(Io::Proto::Set_servo_position::Request const& req)
   {
-    // TODO
+    auto const b = req.pos_ / 999.0f;
+    if(b > ctx_.setpoints_.max_pos_)
+      return { .err_ = "above max" };
+    ctx_.setpoints_.position_ = b;
+    // TODO: min / max
     return {};
   }
 
