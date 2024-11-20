@@ -16,9 +16,3 @@
 * servo control SW
 * control loop
 * client library to use servo
-* design I/O protocol:
-  * request position
-  * receive position
-  * ping
-  * monitor Vcc
-  * monitor power consumption
