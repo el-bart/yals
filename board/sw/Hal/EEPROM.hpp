@@ -1,8 +1,8 @@
 #pragma once
 #include "Hal/Impl/EEPROM.hpp"
+#include <optional>
 #include <cmath>
 #include <cinttypes>
-#include <optional>
 
 namespace Hal
 {
@@ -38,7 +38,9 @@ private:
     auto const n = impl_.read(slot);
     if(not n)
       return {};
-    return *n / 65535.0f;
+    // make sure result is trimmed, as 32-bit value can go well above what is being technically asked for...
+    auto const n16 = *n & 0xFFff;
+    return n16 / 65535.0f;
   }
 
   static constexpr uint32_t marker_{0x42};
