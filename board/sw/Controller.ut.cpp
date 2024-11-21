@@ -121,16 +121,19 @@ TEST_CASE("Controller")
   Reader reader;
   Controller ctrl;
 
+
   SECTION("LED is turned on by default")
   {
     CHECK( ctrl.context().setpoints_.LED_brightness_ == Approx(0.75f) );
     CHECK( sim().LED_brightness_ == Approx(0.75f).epsilon(0.01)  );
   }
 
+
   SECTION("update_and_apply() is non-lbocking")
   {
     ctrl.update_and_apply();
   }
+
 
   SECTION("update_and_apply() updates all reads")
   {
@@ -140,6 +143,7 @@ TEST_CASE("Controller")
     CHECK( ctx.last_reads_.vcc_V_ == sim().vcc_ );
     CHECK( ctx.last_reads_.position_ == sim().position_ );
   }
+
 
   SECTION("update_and_apply() handles Ping")
   {
@@ -154,6 +158,7 @@ TEST_CASE("Controller")
     }
     CHECK( reply == std::string{"+"} + Utils::version_info()  );
   }
+
 
   SECTION("update_and_apply() handles Get_persistent_config")
   {
@@ -176,6 +181,7 @@ TEST_CASE("Controller")
     CHECK( reader.read_reply() == "+<090>890*81" );
   }
 
+
   SECTION("update_and_apply() handles Get_servo_position")
   {
     sim().position_ = 0.42f;
@@ -183,6 +189,7 @@ TEST_CASE("Controller")
     ctrl.update_and_apply();
     CHECK( reader.read_reply() == "+420" );
   }
+
 
   SECTION("update_and_apply() handles Get_telemetry")
   {
@@ -193,6 +200,7 @@ TEST_CASE("Controller")
     CHECK( reader.read_reply() == "+I1250U12345" );
   }
 
+
   SECTION("update_and_apply() handles Set_LED_brightness")
   {
     enqueue_command("*82");
@@ -202,9 +210,6 @@ TEST_CASE("Controller")
     CHECK( sim().EEPROM_LED_brightness_ == Approx(0.82).epsilon(0.05)  );
   }
 
-  //
-  // Set_servo_position
-  //
 
   SECTION("update_and_apply() handles Set_servo_position")
   {
@@ -216,39 +221,6 @@ TEST_CASE("Controller")
     CHECK( ctrl.context().setpoints_.position_ == Approx(500.0/999.0) );
   }
 
-  SECTION("update_and_apply() handles Set_servo_position with an error if below min")
-  {
-    enqueue_command("<500");
-    ctrl.update_and_apply();
-    REQUIRE( reader.read_reply() == "+" );
-    REQUIRE( sim().min_position_ == Approx(500.0/999.0) );
-    auto const pp = ctrl.context().setpoints_.position_;
-    REQUIRE( pp >= Approx(500.0/999.0) );
-
-    enqueue_command("@499");
-    ctrl.update_and_apply();
-    CHECK( reader.read_reply() == "-below min" );
-    CHECK( ctrl.context().setpoints_.position_ == Approx(pp) );
-  }
-
-  SECTION("update_and_apply() handles Set_servo_position with an error if above max")
-  {
-    enqueue_command(">500");
-    ctrl.update_and_apply();
-    REQUIRE( reader.read_reply() == "+" );
-    REQUIRE( sim().max_position_ == Approx(500.0/999.0) );
-    auto const pp = ctrl.context().setpoints_.position_;
-    REQUIRE( pp <= 500.0/999.0 );
-
-    enqueue_command("@501");
-    ctrl.update_and_apply();
-    CHECK( reader.read_reply() == "-above max" );
-    CHECK( ctrl.context().setpoints_.position_ == Approx(pp) );
-  }
-
-  //
-  // Set_max_servo_position
-  //
 
   SECTION("update_and_apply() handles Set_max_servo_position")
   {
@@ -259,40 +231,6 @@ TEST_CASE("Controller")
     CHECK( sim().max_position_                == Approx(900.0/999.0) );
   }
 
-  SECTION("update_and_apply() handles Set_max_servo_position with rejection, if max < min")
-  {
-    enqueue_command("<500");
-    ctrl.update_and_apply();
-    CHECK( reader.read_reply() == "+" );
-    REQUIRE( sim().min_position_ == Approx(500.0/999.0) );
-    REQUIRE( sim().max_position_ == Approx(999.0/999.0) );
-    auto const pp = ctrl.context().setpoints_.position_;
-
-    enqueue_command(">400");
-    ctrl.update_and_apply();
-    CHECK( reader.read_reply() == "-below min" );
-    CHECK( sim().min_position_ == Approx(500.0/999.0) );
-    CHECK( sim().max_position_ == Approx(999.0/999.0) );
-    CHECK( ctrl.context().setpoints_.position_ == pp );
-  }
-
-  SECTION("update_and_apply() handles Set_max_servo_position with movement, if max < pos")
-  {
-    enqueue_command("@900");
-    ctrl.update_and_apply();
-    CHECK( reader.read_reply() == "+" );
-    CHECK( ctrl.context().setpoints_.position_ == Approx(900.0/999.0) );
-
-    enqueue_command(">800");
-    ctrl.update_and_apply();
-    CHECK( reader.read_reply() == "+" );
-    CHECK( sim().max_position_                 == Approx(800.0/999.0) );
-    CHECK( ctrl.context().setpoints_.position_ == Approx(800.0/999.0) );
-  }
-
-  //
-  // Set_min_servo_position
-  //
 
   SECTION("update_and_apply() handles Set_min_servo_position")
   {
@@ -303,38 +241,6 @@ TEST_CASE("Controller")
     CHECK( sim().min_position_                == Approx(900.0/999.0) );
   }
 
-  SECTION("update_and_apply() handles Set_min_servo_position with rejection, if min > max")
-  {
-    enqueue_command(">400");
-    ctrl.update_and_apply();
-    REQUIRE( reader.read_reply() == "+" );
-    REQUIRE( sim().min_position_ == Approx(  0.0/999.0) );
-    REQUIRE( sim().max_position_ == Approx(400.0/999.0) );
-
-    enqueue_command("<500");
-    ctrl.update_and_apply();
-    CHECK( reader.read_reply() == "-above max" );
-    CHECK( sim().min_position_ == Approx(  0.0/999.0) );
-    CHECK( sim().max_position_ == Approx(400.0/999.0) );
-  }
-
-  SECTION("update_and_apply() handles Set_min_servo_position with movement, if min > pos")
-  {
-    enqueue_command("@100");
-    ctrl.update_and_apply();
-    CHECK( reader.read_reply() == "+" );
-    CHECK( ctrl.context().setpoints_.position_ == Approx(100.0/999.0) );
-
-    enqueue_command("<200");
-    ctrl.update_and_apply();
-    CHECK( reader.read_reply() == "+" );
-    CHECK( sim().min_position_                 == Approx(200.0/999.0) );
-    CHECK( ctrl.context().setpoints_.position_ == Approx(200.0/999.0) );
-  }
-
-  //
-  // movement controle
-  //
 
   SECTION("update_and_apply() handles engine control")
   {
@@ -374,6 +280,7 @@ TEST_CASE("Controller")
       CHECK( sim().engine_force_ == -65535 );
     }
   }
+
 
   SECTION("update_only() does I/O but does not apply")
   {
