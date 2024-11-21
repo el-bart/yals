@@ -25,7 +25,7 @@ struct Engine_controller final
   {
     using namespace Utils::Config;
     auto const now = clock_.now();
-    if( fabsf(preset_position - current_position) * servo_traven_len_mm <= servo_position_tolerance_mm )
+    if( fabsf(preset_position - current_position) < servo_position_tolerance )
       stop();
     else
       move(now, preset_position, current_position);

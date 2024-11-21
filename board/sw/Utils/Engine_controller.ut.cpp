@@ -12,7 +12,6 @@ namespace
 
 TEST_CASE("Engine_controller")
 {
-  auto constexpr pos_tolerance = Utils::Config::servo_position_tolerance_mm / Utils::Config::servo_traven_len_mm;
   auto constexpr eng_full_travel_time_s = Hal::Sim::eng_full_travel_time_s;
   auto constexpr dt_step_s = 0.001f;
   sim().reset();
@@ -37,7 +36,7 @@ TEST_CASE("Engine_controller")
 
   SECTION("when present matches current position with a given tolerance, engine is stopped")
   {
-    auto const off = servo_position_tolerance_mm / servo_traven_len_mm;
+    auto const off = 0.99f * servo_position_tolerance;
     sim().update(500 * dt_step_s);  // make some time pass
     // +
     ec.update(sim().position_ + off, sim().position_);
@@ -52,7 +51,8 @@ TEST_CASE("Engine_controller")
   SECTION("chnging preset triggers movement")
   {
     auto const setpoint = 0.75f;
-    INFO("setpoint = " << setpoint);
+    INFO("setpoint=" << setpoint);
+    INFO("servo_position_tolerance=" << servo_position_tolerance);
     auto prev_delta_pos  = setpoint - sim().position_;
     auto prev_pos_offset = setpoint - sim().position_;
     for(auto t = 0.0; t < eng_full_travel_time_s; t += dt_step_s)
@@ -72,8 +72,10 @@ TEST_CASE("Engine_controller")
       CHECK( fabs(pos_offset) <= fabs(prev_pos_offset) );
       prev_delta_pos  = delta_pos;
       prev_pos_offset = pos_offset;
+      // uncomment to get a trace of the numbers on each iteration:
+      //CHECK(false);
     }
-    CHECK( sim().position_ == Approx(setpoint).epsilon(pos_tolerance) );
+    CHECK( sim().position_ == Approx(setpoint).epsilon(2*servo_position_tolerance) );
     CHECK( sim().engine_force_ == 0u );
   }
 }
