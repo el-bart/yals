@@ -1,21 +1,78 @@
 #include "Hal/Engine.hpp"
-#include <initializer_list>
+#include "Hal/Uart.hpp"
+#include "Hal/Impl/write_helpers.hpp"
 
-auto constexpr delay = 2000;
-
+using Hal::Impl::write_line;
+using Hal::Impl::write_line_fmt;
 using E = Hal::Engine;
+
+constexpr auto imp_long  = 0.2f;
+constexpr auto imp_short = 0.01f;
+
+void print_help(Hal::Uart& uart)
+{
+  write_line(uart, ">> help:");
+  write_line(uart, "* h - help screen");
+  write_line_fmt(uart, "* A - move forward  for %fs", imp_long);
+  write_line_fmt(uart, "* a - move forward  for %fs", imp_short);
+  write_line_fmt(uart, "* z - move backward for %fs", imp_short);
+  write_line_fmt(uart, "* Z - move backward for %fs", imp_long);
+  write_line(uart, "");
+}
+
+auto reverse(E::Direction dir)
+{
+  switch(dir)
+  {
+    case E::Direction::Right: return  E::Direction::Left;
+    case E::Direction::Left:  return  E::Direction::Right;
+    case E::Direction::Off:   return  E::Direction::Off;
+  }
+  assert(!"thu shall not pass!");
+  return E::Direction::Off;
+}
+
+void move(Hal::Uart& uart, E& eng, E::Direction dir, float dt)
+{
+  write_line_fmt(uart, ">> moving into %s for %fs", dir == E::Direction::Left ? "left" : "right", dt);
+  eng.set(dir, 65535);
+  sleep_ms( dt * 1'000u );
+#if 0
+  // explicit brake
+  write_line_fmt(uart, ">> brake");
+  eng.set( reverse(dir) , 65535 );
+  sleep_us(100);
+#endif
+  eng.direction(E::Direction::Off);
+  write_line_fmt(uart, ">> stopped");
+}
+
 
 int main()
 {
   E eng;
+  Hal::Uart uart;
+
+  write_line(uart, ">>");
+  write_line(uart, ">> engine testing app");
+  write_line(uart, ">>");
+  print_help(uart);
+  Hal::Impl::purge_rx(uart);
+
   while(true)
-    for(auto d: { E::Direction::Left, E::Direction::Off, E::Direction::Right, E::Direction::Off })
-      for(auto f: { 0.00, /*0.20,*/ 0.40, 0.50, 0.60, 0.80, 1.00 })
-      {
-        eng.force( f * 65536);
-        eng.direction(d);
-        sleep_ms(delay);
-        if( d == E::Direction::Off )
-          break;
-      }
+  {
+    auto const cmd = uart.rx();
+    if(not cmd)
+      continue;
+
+    switch(*cmd)
+    {
+      case 'A': move(uart, eng, E::Direction::Right, imp_long ); break;
+      case 'a': move(uart, eng, E::Direction::Right, imp_short); break;
+      case 'z': move(uart, eng, E::Direction::Left,  imp_short); break;
+      case 'Z': move(uart, eng, E::Direction::Left,  imp_long ); break;
+      case 'h':
+      default: print_help(uart); break;
+    }
+  }
 }
