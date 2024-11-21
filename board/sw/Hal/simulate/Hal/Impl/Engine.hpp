@@ -15,17 +15,17 @@ struct Engine
 
   void apply(int dir, uint16_t force) const
   {
-    if(dir==0)
+    if(dir == 0)
     {
       sim().engine_force_ = 0;
       return;
     }
-    if(dir<0)
+    if(dir > 0)
     {
       sim().engine_force_ = +force;
       return;
     }
-    if(dir>0)
+    if(dir < 0)
     {
       sim().engine_force_ = -force;
       return;
