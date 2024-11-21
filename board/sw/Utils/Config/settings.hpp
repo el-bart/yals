@@ -11,10 +11,13 @@ namespace Utils::Config
 // report 5mm as a current position ad infinitum, even though min pos is set to 0).
 constexpr auto servo_traven_exclusion_zone_mm = (potentiometer_precision_percent / 100.0f) * servo_traven_len_mm; // mm
 
-// max theoretical travel distance of a servo (i.e. potentiometer length).
-// 0..1 range.
-constexpr auto servo_absolute_min = servo_traven_exclusion_zone_mm;
-constexpr auto servo_absolute_max = servo_traven_len_mm - servo_traven_exclusion_zone_mm;
+// max theoretical travel distance of a servo (i.e. potentiometer length), cut but the potentiometer
+// precision limits. this helps to ensure wall will not be hit.
+constexpr auto servo_absolute_min_mm = servo_traven_exclusion_zone_mm;
+constexpr auto servo_absolute_max_mm = servo_traven_len_mm - servo_traven_exclusion_zone_mm;
+// same as above, but in 0..1 range.
+constexpr auto servo_absolute_min = servo_absolute_min_mm / servo_traven_len_mm;
+constexpr auto servo_absolute_max = servo_absolute_max_mm / servo_traven_len_mm;
 
 // 0..1 value for representing servo position tolerance (i.e. unit-agnostic value).
 // 0.5 factor represents that an actual value should be within +/-tolerance of a center point.
