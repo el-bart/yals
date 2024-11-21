@@ -67,6 +67,8 @@ struct Handler final
   Io::Proto::Set_min_servo_position::Reply handle(Io::Proto::Set_min_servo_position::Request const& req)
   {
     auto const b = req.min_pos_ / 999.0f;
+    if(b < Utils::Config::servo_absolute_min)
+      return { .err_ = "below abs min" };
     if(ctx_.setpoints_.max_pos_ < b)
       return { .err_ = "above max" };
 

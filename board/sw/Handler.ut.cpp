@@ -68,6 +68,44 @@ TEST_CASE("Handler")
       }
     }
   }
+
+
+  SECTION("setting min servo position")
+  {
+    using namespace Io::Proto::Set_min_servo_position;
+    ctx.setpoints_.position_ = 500.0/999.0;
+    ctx.setpoints_.min_pos_  = 200.0/999.0;
+    ctx.setpoints_.max_pos_  = 800.0/999.0;
+
+    SECTION("using correct value")
+    {
+      auto const r = h.handle( Request{ .min_pos_ = 123 } );
+      REQUIRE( r.err_ == nullptr );
+      CHECK( ctx.setpoints_.min_pos_ == Approx(123.0/999.0) );
+    }
+
+    SECTION("obeying absolute limits: min value")
+    {
+      if(servo_absolute_min == 0.0)
+        return;
+      auto const r = h.handle( Request{ .min_pos_ = 0 } );
+      REQUIRE( r.err_ != nullptr );
+      CHECK( r.err_ == std::string{"below abs min"} );
+      CHECK( ctx.setpoints_.position_ == Approx(500.0/999.0) );
+      CHECK( ctx.setpoints_.min_pos_  == Approx(200.0/999.0) );
+      CHECK( ctx.setpoints_.max_pos_  == Approx(800.0/999.0) );
+    }
+
+    SECTION("obeying logic: min <= max")
+    {
+      auto const r = h.handle( Request{ .min_pos_ = 801 } );
+      REQUIRE( r.err_ != nullptr );
+      CHECK( r.err_ == std::string{"above max"} );
+      CHECK( ctx.setpoints_.position_ == Approx(500.0/999.0) );
+      CHECK( ctx.setpoints_.min_pos_  == Approx(200.0/999.0) );
+      CHECK( ctx.setpoints_.max_pos_  == Approx(800.0/999.0) );
+    }
+  }
 }
 
 }
