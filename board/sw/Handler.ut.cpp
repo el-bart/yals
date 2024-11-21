@@ -57,9 +57,11 @@ TEST_CASE("Handler")
         CHECK( ctx.setpoints_.position_ == Approx(500.0/999.0) );
       }
 
-      SECTION("above maxvalue")
+      SECTION("above abs max value")
       {
-        auto const r = h.handle( Request{ .pos_ = 901 } );
+        if(servo_absolute_max == 1.0)
+          return;
+        auto const r = h.handle( Request{ .pos_ = 999 } );
         REQUIRE( r.err_ != nullptr );
         CHECK( r.err_ == std::string{"above abs max"} );
         CHECK( ctx.setpoints_.position_ == Approx(500.0/999.0) );
