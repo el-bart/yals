@@ -13,7 +13,8 @@ struct Engine_controller final
     eng_{eng},
     clock_{clock},
     last_run_at_{ clock.now() },
-    last_position_{current_position}
+    last_position_{current_position},
+    last_preset_{current_position}
   { }
 
   Engine_controller(Engine_controller const&) = delete;
@@ -25,17 +26,26 @@ struct Engine_controller final
   {
     using namespace Utils::Config;
     auto const now = clock_.now();
-    if( fabsf(preset_position - current_position) < servo_position_tolerance )
-      stop();
-    else
-      move(now, preset_position, current_position);
+    update_impl(now, preset_position, current_position);
     // wrap up
     last_run_at_ = now;
     last_position_ = current_position;
+    last_preset_ = preset_position;
   }
 
 private:
   using Dir = Hal::Engine::Direction;
+
+  void update_impl(Timepoint const now, float const preset_position, float const current_position)
+  {
+    using namespace Utils::Config;
+    if( fabsf(preset_position - current_position) < servo_position_tolerance )
+    {
+      stop();
+      return;
+    }
+    move(now, preset_position, current_position);
+  }
 
   inline void stop() { eng_.set(Dir::Off, 0); }
 
@@ -57,6 +67,7 @@ private:
   Hal::Clock const& clock_;
   Timepoint last_run_at_;
   float last_position_{};
+  float last_preset_{};
 };
 
 }
