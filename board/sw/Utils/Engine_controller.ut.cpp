@@ -48,7 +48,7 @@ TEST_CASE("Engine_controller")
     CHECK( sim().engine_force_ == 0u );
   }
 
-  SECTION("chnging preset triggers movement")
+  SECTION("changing preset triggers movement")
   {
     auto const setpoint = 0.75f;
     INFO("setpoint=" << setpoint);
@@ -79,8 +79,7 @@ TEST_CASE("Engine_controller")
     CHECK( sim().engine_force_ == 0u );
   }
 
-  // TODO: obeying absolute min
-  // TODO: obeying absolute max
+  // TODO: check histeresis at work
 }
 
 }
