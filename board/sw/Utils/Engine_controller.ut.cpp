@@ -13,7 +13,6 @@ namespace
 TEST_CASE("Engine_controller")
 {
   auto constexpr eng_full_travel_time_s = Hal::Sim::eng_full_travel_time_s;
-  auto constexpr dt_step_s = 0.001f;
   sim().reset();
   sim().position_ = 0.5;
   Hal::Engine eng;
@@ -28,7 +27,7 @@ TEST_CASE("Engine_controller")
 
   SECTION("when present matches current position, engine is stopped")
   {
-    sim().update(500 * dt_step_s);  // make some time pass
+    sim().update(500 * control_loop_time);  // make some time pass
     ec.update(sim().position_, sim().position_);
     CHECK( sim().position_ == 0.5f );
     CHECK( sim().engine_force_ == 0u );
@@ -37,7 +36,7 @@ TEST_CASE("Engine_controller")
   SECTION("when present matches current position with a given tolerance, engine is stopped")
   {
     auto const off = 0.99f * servo_position_tolerance;
-    sim().update(500 * dt_step_s);  // make some time pass
+    sim().update(500 * control_loop_time);  // make some time pass
     // +
     ec.update(sim().position_ + off, sim().position_);
     CHECK( sim().position_ == 0.5f );
@@ -55,11 +54,11 @@ TEST_CASE("Engine_controller")
     INFO("servo_position_tolerance=" << servo_position_tolerance);
     auto prev_delta_pos  = setpoint - sim().position_;
     auto prev_pos_offset = setpoint - sim().position_;
-    for(auto t = 0.0; t < eng_full_travel_time_s; t += dt_step_s)
+    for(auto t = 0.0; t < eng_full_travel_time_s; t += control_loop_time)
     {
       auto const prev_pos = sim().position_;
       ec.update(setpoint, sim().position_);
-      sim().update(dt_step_s);
+      sim().update(control_loop_time);
 
       auto const delta_pos  = sim().position_ - prev_pos;
       auto const pos_offset = setpoint - sim().position_;
@@ -75,11 +74,22 @@ TEST_CASE("Engine_controller")
       // uncomment to get a trace of the numbers on each iteration:
       //CHECK(false);
     }
-    CHECK( sim().position_ == Approx(setpoint).epsilon(2*servo_position_tolerance) );
+    CHECK( sim().position_ == Approx(setpoint).margin(servo_position_tolerance) );
     CHECK( sim().engine_force_ == 0u );
   }
 
-  // TODO: check histeresis at work
+  SECTION("histeresis support")
+  {
+    SECTION("reaching value and not moving until position is outside of histeresis")
+    {
+      // TODO
+    }
+
+    SECTION("moving immediately if setpoint changes (even if new position is still within histeresis range)")
+    {
+      // TODO
+    }
+  }
 }
 
 }

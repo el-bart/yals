@@ -74,11 +74,11 @@ TEST_CASE("Controller's c-tor")
     Controller ctrl;
     CHECK( sim().min_position_ == Approx(servo_absolute_min) );
     CHECK( sim().max_position_ == Approx(servo_absolute_max) );
-    CHECK( sim().LED_brightness_ == Approx(Utils::Config::default_LED_brightness).epsilon(0.01) );
+    CHECK( sim().LED_brightness_ == Approx(Utils::Config::default_LED_brightness).margin(0.01) );
     CHECK( sim().marker_ == 0x42 );
     CHECK( ctrl.context().setpoints_.min_pos_ == Approx( sim().min_position_ ) );
     CHECK( ctrl.context().setpoints_.max_pos_ == Approx( sim().max_position_ ) );
-    CHECK( ctrl.context().setpoints_.LED_brightness_ == Approx( sim().LED_brightness_ ).epsilon(0.01) );
+    CHECK( ctrl.context().setpoints_.LED_brightness_ == Approx( sim().LED_brightness_ ).margin(0.01) );
   }
 
   SECTION("on start, if current servo setpoint is below min, it's clamped to it")
@@ -125,7 +125,7 @@ TEST_CASE("Controller")
   SECTION("LED is turned on by default")
   {
     CHECK( ctrl.context().setpoints_.LED_brightness_ == Approx(0.75f) );
-    CHECK( sim().LED_brightness_ == Approx(0.75f).epsilon(0.01)  );
+    CHECK( sim().LED_brightness_ == Approx(0.75f).margin(0.01)  );
   }
 
 
@@ -174,7 +174,7 @@ TEST_CASE("Controller")
 
     REQUIRE( sim().min_position_   == Approx(  90.0f / 999.0f) );
     REQUIRE( sim().max_position_   == Approx( 890.0f / 999.0f) );
-    REQUIRE( sim().LED_brightness_ == Approx(  81.0f /  99.0f).epsilon(0.05) );
+    REQUIRE( sim().LED_brightness_ == Approx(  81.0f /  99.0f).margin(0.05) );
 
     enqueue_command("?");
     ctrl.update_and_apply();
@@ -206,8 +206,8 @@ TEST_CASE("Controller")
     enqueue_command("*82");
     ctrl.update_and_apply();
     CHECK( reader.read_reply() == "+" );
-    CHECK( sim().LED_brightness_ == Approx(0.82).epsilon(0.05)  );
-    CHECK( sim().EEPROM_LED_brightness_ == Approx(0.82).epsilon(0.05)  );
+    CHECK( sim().LED_brightness_ == Approx(0.82).margin(0.05)  );
+    CHECK( sim().EEPROM_LED_brightness_ == Approx(0.82).margin(0.05)  );
   }
 
 
@@ -342,7 +342,7 @@ TEST_CASE("Controller")
       ctrl.update_only();
       sim().update(dt);
       REQUIRE( reader.read_reply() == "+" );
-      CHECK( ctrl.context().setpoints_.LED_brightness_ == Approx(78.0/99.0).epsilon(0.05) );
+      CHECK( ctrl.context().setpoints_.LED_brightness_ == Approx(78.0/99.0).margin(0.05) );
       CHECK( sim().LED_brightness_ == prev_LED_brightness );
 
       SECTION("next update_and_apply() does the job")
@@ -350,8 +350,8 @@ TEST_CASE("Controller")
         ctrl.update_and_apply();
         sim().update(dt);
         REQUIRE( reader.read_reply() == "" );
-        CHECK( ctrl.context().setpoints_.LED_brightness_ == Approx(78.0/99.0).epsilon(0.05) );
-        CHECK( sim().LED_brightness_ == Approx(78.0/99.0).epsilon(0.05) );
+        CHECK( ctrl.context().setpoints_.LED_brightness_ == Approx(78.0/99.0).margin(0.05) );
+        CHECK( sim().LED_brightness_ == Approx(78.0/99.0).margin(0.05) );
       }
     }
   }
