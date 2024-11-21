@@ -78,6 +78,9 @@ TEST_CASE("Engine_controller")
     CHECK( sim().position_ == Approx(setpoint).epsilon(2*servo_position_tolerance) );
     CHECK( sim().engine_force_ == 0u );
   }
+
+  // TODO: obeying absolute min
+  // TODO: obeying absolute max
 }
 
 }
