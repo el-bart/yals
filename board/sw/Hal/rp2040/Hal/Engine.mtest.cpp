@@ -1,6 +1,8 @@
 #include "Hal/Engine.hpp"
 #include "Hal/Uart.hpp"
+#include "Hal/Position_feedback.hpp"
 #include "Hal/Impl/write_helpers.hpp"
+#include "Utils/Config/settings.hpp"
 
 using Hal::Impl::write_line;
 using Hal::Impl::write_line_fmt;
@@ -32,7 +34,7 @@ auto reverse(E::Direction dir)
   return E::Direction::Off;
 }
 
-void move(Hal::Uart& uart, E& eng, E::Direction dir, float dt)
+void move(Hal::Uart& uart, E& eng, Hal::Position_feedback& pos, E::Direction dir, float dt)
 {
   write_line_fmt(uart, ">> moving into %s for %fs", dir == E::Direction::Left ? "left" : "right", dt);
   eng.set(dir, 65535);
@@ -44,7 +46,9 @@ void move(Hal::Uart& uart, E& eng, E::Direction dir, float dt)
   sleep_us(100);
 #endif
   eng.direction(E::Direction::Off);
-  write_line_fmt(uart, ">> stopped");
+  auto const p = pos.value();
+  auto const dist = p * Utils::Config::servo_traven_len_mm;
+  write_line_fmt(uart, ">> stopped at %fmm (%f%%)", dist, p*100.0f);
 }
 
 
@@ -52,6 +56,7 @@ int main()
 {
   E eng;
   Hal::Uart uart;
+  Hal::Position_feedback pos;
 
   write_line(uart, ">>");
   write_line(uart, ">> engine testing app");
@@ -67,10 +72,10 @@ int main()
 
     switch(*cmd)
     {
-      case 'A': move(uart, eng, E::Direction::Right, imp_long ); break;
-      case 'a': move(uart, eng, E::Direction::Right, imp_short); break;
-      case 'z': move(uart, eng, E::Direction::Left,  imp_short); break;
-      case 'Z': move(uart, eng, E::Direction::Left,  imp_long ); break;
+      case 'A': move(uart, eng, pos, E::Direction::Right, imp_long ); break;
+      case 'a': move(uart, eng, pos, E::Direction::Right, imp_short); break;
+      case 'z': move(uart, eng, pos, E::Direction::Left,  imp_short); break;
+      case 'Z': move(uart, eng, pos, E::Direction::Left,  imp_long ); break;
       case 'h':
       default: print_help(uart); break;
     }
