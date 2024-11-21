@@ -32,6 +32,7 @@ if ("${YALS_HAL}" STREQUAL "simulate")
     Io/Proto/common.ut.cpp
     Io/checksum.ut.cpp
     Io/process.ut.cpp
+    Utils/Engine_controller.ut.cpp
     sim.ut.cpp
   )
   target_link_libraries(uts hal)
