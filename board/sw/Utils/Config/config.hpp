@@ -12,9 +12,14 @@ constexpr auto potentiometer_precision_percent = 5u; // %
 // default LED brightness (0..1)
 constexpr auto default_LED_brightness = 0.15f; // yes, it's very bright...
 
-// tolerance distance for servo (i.e. "how close is close enough not to bother?")
-constexpr auto servo_position_tolerance_mm = 1.5f; // mm
-// TODO: histeresis
+// tolerance distance for servo (i.e. "how close preset is close enough to stop adjusting?")
+constexpr auto servo_position_tolerance_mm = 1.5f;  // mm
+// histeresis of position (i.e. "how much readout must change before action is triggered?").
+// note that this is applied only once preset position is reached (with servo_position_tolerance_mm
+// precision). this value is ignored, when new preset position is set (even if new one is well
+// withing servo_position_histeresis_mm limit).
+constexpr auto servo_position_histeresis_mm = 4.0f; // mm
+static_assert( servo_position_tolerance_mm < servo_position_histeresis_mm );
 
 // full-throttle distance of the motor, when difference between a preset position and
 // actual position is at least equal to the above value.

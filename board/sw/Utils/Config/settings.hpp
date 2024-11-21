@@ -21,6 +21,8 @@ constexpr auto servo_absolute_max = servo_absolute_max_mm / servo_traven_len_mm;
 
 // 0..1 value for representing servo position tolerance (i.e. unit-agnostic value).
 constexpr auto servo_position_tolerance = servo_position_tolerance_mm / servo_traven_len_mm;
+// 0..1 value representing servo position histeresis (i.e. unit-agnostic value).
+constexpr auto servo_position_histeresis = servo_position_histeresis_mm / servo_traven_len_mm;
 
 // frequency represented as a loop time (it's more convenient to use in the code)
 constexpr auto control_loop_time = 1.0f / control_loop_frequency; // 1/f
