@@ -18,11 +18,17 @@ int main()
   auto const& clock = ctrl.context().hal_.clock_;
   auto const tpc = ticks_per_cycle(clock);
 
+  auto deadline = clock.now() + tpc;
   while(true)
   {
-    auto const deadline = clock.now() + tpc;
-    ctrl.update();
-    while( clock.now() < deadline )
-    { }
+    if( clock.now() < deadline )
+    {
+      // do I/O often
+      ctrl.update(false);
+      continue;
+    }
+    // apply periodically, to keep control loop frequency
+    ctrl.update(true);
+    deadline = deadline + tpc;
   }
 }
