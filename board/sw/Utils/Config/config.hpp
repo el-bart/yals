@@ -13,7 +13,7 @@ constexpr auto potentiometer_precision_percent = 5u; // %
 constexpr auto default_LED_brightness = 0.3f;
 
 // tolerance distance for servo (i.e. "how close is close enough not to bother?")
-constexpr auto servo_position_tolerance_mm = 0.8f; // mm
+constexpr auto servo_position_tolerance_mm = 0.5f; // mm
 
 // full-throttle distance of the motor, when difference between a preset position and
 // actual position is at least equal to the above value.
@@ -22,5 +22,5 @@ constexpr auto engine_full_throttle_at_diff_mm = 2.0f; // mm
 // engine min. force / torque that can be applied. values smaller than this will be clippe to it.
 // exception is 0.0, that is interpreted as a literal 0.0 (no force).
 // it ranges 0..1 here, where so 0.25 is 25% of force.
-constexpr auto engine_min_force = 0.40f;
+constexpr auto engine_min_force = 0.50f;
 }
