@@ -61,9 +61,9 @@ private:
   void update_pos(float dt_sec)
   {
     const auto f = engine_force_ / 65535.0f;
-    constexpr auto full_travel_sec = 2.0f;
-    const auto distance = f / full_travel_sec;
-    const auto delta = distance * dt_sec;
+    constexpr auto full_travel_sec = 0.9f;
+    const auto f_dt = f / full_travel_sec;
+    const auto delta = f_dt * dt_sec;
     position_ = std::clamp(position_ + delta, 0.0f, 1.0f);
   }
 };
