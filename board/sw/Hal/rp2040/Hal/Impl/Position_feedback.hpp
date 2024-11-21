@@ -26,7 +26,7 @@ struct Position_feedback
     constexpr float adc_conversion_factor = 3.3f / (1 << 12); // 12-bit conversion, assume max value == ADC_VREF == 3.3 V
     auto const voltage = sample * adc_conversion_factor;
     auto const value = voltage / 3.3f;
-    return value;
+    return 1.0f - value;    // value has to be inverted, due to potentiometer's direction
   }
 
 private:
