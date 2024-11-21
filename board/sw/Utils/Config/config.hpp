@@ -13,7 +13,7 @@ constexpr auto servo_traven_exclusion_zone_mm = 5.0f;
 constexpr auto default_LED_brightness = 0.3f;
 
 // tolerance distance for servo (i.e. "how close is close enough not to bother?")
-constexpr auto servo_position_tolerance = 0.5f;
+constexpr auto servo_position_tolerance_mm = 0.75f;
 
 // full-throttle distance of the motor, when difference between a preset position and
 // actual position is at least equal to the above value.
