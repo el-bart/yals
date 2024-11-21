@@ -23,6 +23,6 @@ inline auto operator==(Timepoint lhs, Timepoint rhs) { return lhs.value_ == rhs.
 inline auto operator!=(Timepoint lhs, Timepoint rhs) { return lhs.value_ != rhs.value_; }
 
 inline auto operator-(Timepoint lhs, Timepoint rhs) { return Ticks{ .value_ = lhs.value_ - rhs.value_ }; }
-inline auto operator+(Ticks     lhs, Ticks     rhs) { return (1.0 * lhs.value_) / rhs.value_; }
+inline auto operator/(Ticks     lhs, Ticks     rhs) { return (1.0 * lhs.value_) / rhs.value_; }
 
 }
