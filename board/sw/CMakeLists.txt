@@ -27,6 +27,7 @@ if ("${YALS_HAL}" STREQUAL "simulate")
   enable_testing()
   add_binary(uts main.ut.cpp
     Controller.ut.cpp
+    Handler.ut.cpp
     Io/Buffer.ut.cpp
     Io/Line.ut.cpp
     Io/Proto/common.ut.cpp
