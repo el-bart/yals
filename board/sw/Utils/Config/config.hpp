@@ -12,24 +12,23 @@ constexpr auto potentiometer_precision_percent = 5u; // %
 // default LED brightness (0..1)
 constexpr auto default_LED_brightness = 0.15f; // yes, it's very bright...
 
-// TODO: ADJUST THESE PARAMS AFTER HISTERESIS IS IMPLEMENTED                                
 // tolerance distance for servo (i.e. "how close preset is close enough to stop adjusting?")
-constexpr auto servo_position_tolerance_mm = 1.5f;  // mm
+constexpr auto servo_position_tolerance_mm = 0.5f;  // mm
 // histeresis of position (i.e. "how much readout must change before action is triggered?").
 // note that this is applied only once preset position is reached (with servo_position_tolerance_mm
 // precision). this value is ignored, when new preset position is set (even if new one is well
-// withing servo_position_histeresis_mm limit).
-constexpr auto servo_position_histeresis_mm = 4.0f; // mm
+// within servo_position_histeresis_mm limit).
+constexpr auto servo_position_histeresis_mm = 2.5f; // mm
 static_assert( servo_position_tolerance_mm < servo_position_histeresis_mm );
 
 // full-throttle distance of the motor, when difference between a preset position and
 // actual position is at least equal to the above value.
-constexpr auto engine_full_throttle_at_diff_mm = 5.0f; // mm
+constexpr auto engine_full_throttle_at_diff_mm = 4.0f; // mm
 
 // engine min. force / torque that can be applied. values smaller than this will be clippe to it.
 // exception is 0.0, that is interpreted as a literal 0.0 (no force).
 // it ranges 0..1 here, where so 0.25 is 25% of force.
-constexpr auto engine_min_force = 0.80f;
+constexpr auto engine_min_force = 0.99f;
 
 // expected frequency of engine control operations application.
 // note that I/O still happens att full throttle.
