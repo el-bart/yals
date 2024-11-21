@@ -3,6 +3,7 @@
 ## 3D model
 * add end-stops (or otherwise guarantee never going out of bounds, as it stalls engine and permanently locks it, requiring manual intervention)
   - this should be doable with potentiometer and moving slow ("calibration phase"?)
+* add "left" and "right" markers on servo edges, to signal cardinal directions
 
 ## board
 * silkscreen:
