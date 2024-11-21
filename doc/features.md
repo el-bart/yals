@@ -2,6 +2,7 @@
 
 ## startup
 * moving servo to within min..max range on init
+* setting LED brightness
 
 ## protocol
 * simple, ASCII-based serial protocol for I/O
@@ -11,3 +12,6 @@
 * readout:
   * SW information
   * telemetry (Vcc, engine current)
+
+## misc
+* hard min/max limits, compensating for potentiometer inaccuracies
