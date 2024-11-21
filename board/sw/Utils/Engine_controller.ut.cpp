@@ -52,7 +52,7 @@ TEST_CASE("Engine_controller")
   SECTION("on init no engine force is applied")
   {
     CHECK( sim().position_ == 0.5f );
-    CHECK( sim().engine_force_ == 0u );
+    CHECK( sim().engine_force_ == 0 );
   }
 
   SECTION("when present matches current position, engine is stopped")
@@ -60,7 +60,7 @@ TEST_CASE("Engine_controller")
     sim().update(500 * control_loop_time);  // make some time pass
     ec.update(sim().position_, sim().position_);
     CHECK( sim().position_ == 0.5f );
-    CHECK( sim().engine_force_ == 0u );
+    CHECK( sim().engine_force_ == 0 );
   }
 
   SECTION("when present matches current position with a given tolerance, engine is stopped")
@@ -70,11 +70,11 @@ TEST_CASE("Engine_controller")
     // +
     ec.update(sim().position_ + off, sim().position_);
     CHECK( sim().position_ == 0.5f );
-    CHECK( sim().engine_force_ == 0u );
+    CHECK( sim().engine_force_ == 0 );
     // -
     ec.update(sim().position_ - off, sim().position_);
     CHECK( sim().position_ == 0.5f );
-    CHECK( sim().engine_force_ == 0u );
+    CHECK( sim().engine_force_ == 0 );
   }
 
   SECTION("changing preset triggers movement")
@@ -82,13 +82,30 @@ TEST_CASE("Engine_controller")
     auto const setpoint = 0.75f;
     INFO("setpoint=" << setpoint);
     INFO("servo_position_tolerance=" << servo_position_tolerance);
-    sim_move_to(ec, setpoint);
+    REQUIRE( sim_move_to(ec, setpoint) );
     CHECK( sim().position_ == Approx(setpoint).margin(servo_position_tolerance) );
-    CHECK( sim().engine_force_ == 0u );
+    CHECK( sim().engine_force_ == 0 );
   }
 
   SECTION("histeresis support")
   {
+    REQUIRE( sim().engine_force_ == 0 );
+
+    SECTION("not moving when position is inside histeresis")
+    {
+      auto const prev_pos = sim().position_;
+      auto const off = 0.99 * servo_position_histeresis;
+      SECTION("to the left")
+      {
+        REQUIRE( sim_move_to(ec, prev_pos - off) );
+        CHECK( sim().position_ == prev_pos );
+      }
+      SECTION("to the right")
+      {
+        REQUIRE( sim_move_to(ec, prev_pos + off) );
+        CHECK( sim().position_ == prev_pos );
+      }
+    }
 
     SECTION("reaching value and not moving until position is outside of histeresis")
     {
