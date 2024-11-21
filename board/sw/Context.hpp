@@ -1,12 +1,13 @@
 #pragma once
 #include "Hal/All.hpp"
 #include "Io/Buffer.hpp"
+#include "Utils/Config/settings.hpp"
 
 struct Context final
 {
   struct Setpoints final
   {
-    float LED_brightness_{1.0}; // 0..1
+    float LED_brightness_{Utils::Config::default_LED_brightness}; // 0..1
     float min_pos_{0.0};        // 0..1
     float max_pos_{1.0};        // 0..1
     float position_{};          // 0..1

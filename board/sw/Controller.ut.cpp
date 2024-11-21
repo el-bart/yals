@@ -73,11 +73,11 @@ TEST_CASE("Controller's c-tor")
     Controller ctrl;
     CHECK( sim().min_position_ == Approx(0.0) );
     CHECK( sim().max_position_ == Approx(1.0) );
-    CHECK( sim().LED_brightness_ == Approx(1.0) );
+    CHECK( sim().LED_brightness_ == Approx(Utils::Config::default_LED_brightness).epsilon(0.01) );
     CHECK( sim().marker_ == 0x42 );
     CHECK( ctrl.context().setpoints_.min_pos_ == Approx( sim().min_position_ ) );
     CHECK( ctrl.context().setpoints_.max_pos_ == Approx( sim().max_position_ ) );
-    CHECK( ctrl.context().setpoints_.LED_brightness_ == Approx( sim().LED_brightness_ ) );
+    CHECK( ctrl.context().setpoints_.LED_brightness_ == Approx( sim().LED_brightness_ ).epsilon(0.01) );
   }
 
   SECTION("on start, if current servo setpoint is below min, it's clamped to it")

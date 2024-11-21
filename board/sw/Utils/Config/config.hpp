@@ -10,7 +10,7 @@ constexpr auto servo_traven_len_mm = 100.0f;
 constexpr auto potentiometer_precision_percent = 5u; // %
 
 // default LED brightness (0..1)
-constexpr auto default_LED_brightness = 0.3f;
+constexpr auto default_LED_brightness = 0.30f;
 
 // tolerance distance for servo (i.e. "how close is close enough not to bother?")
 constexpr auto servo_position_tolerance_mm = 0.75f;
