@@ -32,6 +32,7 @@ struct Sim
   float vcc_{12.1};             // Vcc [V]
   float position_{0};           // 0..1 of scale
   float LED_brightness_{1.0};   // 0..1 of power
+  bool simulate_stall_{false};  // when enabled, position does not change
 
   // UART I/O
   std::deque<uint8_t> rx_;      // data sent via dev's UART
@@ -63,6 +64,8 @@ private:
 
   void update_pos(float dt_sec)
   {
+    if(simulate_stall_)
+      return;
     // it's a very hand-wavy way to simulating engine torque to compute simulated
     // movement of the carriage. the "model" is also linear, as it's not really
     // good for any real testing. it's more of an 'example' approach.

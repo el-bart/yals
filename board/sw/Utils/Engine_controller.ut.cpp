@@ -10,7 +10,8 @@ using namespace Utils::Config;
 namespace
 {
 
-bool sim_move_to(EC& ec, float const setpoint)
+template<typename F>
+bool sim_move_to(EC& ec, float const setpoint, F&& on_iteration)
 {
   auto prev_delta_pos  = setpoint - sim().position_;
   auto prev_pos_offset = setpoint - sim().position_;
@@ -25,6 +26,7 @@ bool sim_move_to(EC& ec, float const setpoint)
     INFO("t="       << t)
       INFO("pos="     << sim().position_);
     INFO("force="   << sim().engine_force_ / 65535.0);
+    INFO("stall="   << (sim().simulate_stall_ ? "YES" : "no"));
     INFO("d_pos="   << delta_pos);
     INFO("pos_off=" << pos_offset);
     CHECK( fabs(delta_pos) <= fabs(prev_delta_pos) );
@@ -34,10 +36,17 @@ bool sim_move_to(EC& ec, float const setpoint)
     // uncomment to get a trace of the numbers on each iteration:
     //CHECK(false);
 
+    on_iteration(t, sim().position_);
+
     if( sim().engine_force_ == 0 )
       return true;
   }
   return false;
+}
+
+bool sim_move_to(EC& ec, float const setpoint)
+{
+  return sim_move_to(ec, setpoint, [](auto,auto){});
 }
 
 bool no_movement(EC& ec, float const setpoint)
@@ -67,7 +76,6 @@ TEST_CASE("Engine_controller")
 
   SECTION("when present matches current position, engine is stopped")
   {
-    sim().update(500 * control_loop_time);  // make some time pass
     ec.update(sim().position_, sim().position_);
     CHECK( sim().position_ == 0.5f );
     CHECK( sim().engine_force_ == 0 );
@@ -76,7 +84,6 @@ TEST_CASE("Engine_controller")
   SECTION("when present matches current position with a given tolerance, engine is stopped")
   {
     auto const off = 0.99f * servo_position_tolerance;
-    sim().update(500 * control_loop_time);  // make some time pass
     SECTION("to the left")
     {
       CHECK( no_movement(ec, sim().position_ - off) );
@@ -145,6 +152,17 @@ TEST_CASE("Engine_controller")
         CHECK( sim_move_to(ec, sim().position_ + off) );
       }
     }
+  }
+
+  SECTION("engine power is temporary increased when stall is detected")
+  {
+    auto const setpoint = 0.75f;
+    auto stall_sim = [](double t, float pos) { sim().simulate_stall_ = (0.66 < pos && pos < 0.71); };
+    INFO("setpoint=" << setpoint);
+    INFO("servo_position_tolerance=" << servo_position_tolerance);
+    REQUIRE( sim_move_to(ec, setpoint, stall_sim) );
+    CHECK( sim().position_ == Approx(setpoint).margin(servo_position_tolerance) );
+    CHECK( sim().engine_force_ == 0 );
   }
 }
 
