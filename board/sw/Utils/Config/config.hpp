@@ -7,7 +7,7 @@ namespace Utils::Config
 constexpr auto servo_traven_len_mm = 100.0f;
 
 // linear potentiometer precision
-constexpr auto potentiometer_precision_percent = 5u;
+constexpr auto potentiometer_precision_percent = 5u; // %
 
 // default LED brightness (0..1)
 constexpr auto default_LED_brightness = 0.3f;
