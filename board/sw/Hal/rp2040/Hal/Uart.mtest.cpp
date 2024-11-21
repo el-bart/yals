@@ -1,44 +1,32 @@
 #include "Hal/Uart.hpp"
 #include <cstdio>
+#include "Hal/Impl/write_helpers.hpp"
 
-void write_long(Hal::Uart& uart, char const* str)
-{
-  auto left=str;
-  while(*left!=0)
-    left += uart.tx(left);
-}
+using Hal::Impl::write_line;
+using Hal::Impl::write_line_fmt;
+
 
 int main()
 {
   Hal::Uart uart;
 
-  write_long(uart,
-      ">>\r\n"
-      ">> HELLO USART!\r\n"
-      ">>\r\n"
-      ">> this text is too long to feet into a single\r\n"
-      ">> write, this will be split. you should not be\r\n"
-      ">> able to tell the difference.\r\n"
-      ">>\r\n"
-      );
+  write_line(uart, ">>");
+  write_line(uart, ">> HELLO USART!");
+  write_line(uart, ">>");
+  write_line(uart, ">> this text is too long to feet into a single");
+  write_line(uart, ">> write, this will be split. you should not be");
+  write_line(uart, ">> able to tell the difference.");
+  write_line(uart, ">>");
 
   for(auto n=0u; ; ++n)
   {
-    {
-      char buf[64];
-      snprintf(buf, sizeof(buf), "hello, serial #%u!\r\n", n);
-      uart.tx(buf);
-    }
+    write_line_fmt(uart, "hello, serial #%u!\r\n", n);
 
     auto const oc = uart.rx();
     sleep_ms(500);
     if(not oc)
       continue;
     else
-    {
-      char buf[64];
-      snprintf(buf, sizeof(buf), "got c=%d\r\n", int{*oc});
-      uart.tx(buf);
-    }
+      write_line_fmt(uart, "got c=%d\r\n", int{*oc});
   }
 }
