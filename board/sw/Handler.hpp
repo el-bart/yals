@@ -2,6 +2,7 @@
 #include "Io/process.hpp"
 #include "Context.hpp"
 #include "Utils/version.hpp"
+#include "Utils/Config/settings.hpp"
 
 struct Handler final
 {
@@ -79,10 +80,15 @@ struct Handler final
   Io::Proto::Set_servo_position::Reply handle(Io::Proto::Set_servo_position::Request const& req)
   {
     auto const b = req.pos_ / 999.0f;
-    if(b > ctx_.setpoints_.max_pos_)
-      return { .err_ = "above max" };
+    if(b < Utils::Config::servo_absolute_min)
+      return { .err_ = "below abs min" };
     if(b < ctx_.setpoints_.min_pos_)
       return { .err_ = "below min" };
+
+    if(b > Utils::Config::servo_absolute_max)
+      return { .err_ = "above abs max" };
+    if(b > ctx_.setpoints_.max_pos_)
+      return { .err_ = "above max" };
 
     ctx_.setpoints_.position_ = b;
     return {};
