@@ -242,6 +242,33 @@ TEST_CASE("Controller")
   }
 
 
+  SECTION("update_and_apply() handles errors")
+  {
+    SECTION("on a known command")
+    {
+      auto const prev_pos = ctrl.context().setpoints_.position_;
+      enqueue_command("@999");
+      ctrl.update_and_apply();
+      CHECK( reader.read_reply() == "-above abs max" );
+      CHECK( ctrl.context().setpoints_.position_ == prev_pos );
+    }
+
+    SECTION("on an unknown command")
+    {
+      enqueue_command("abcdef");
+      ctrl.update_and_apply();
+      CHECK( reader.read_reply() == "-unknown cmd" );
+    }
+
+    SECTION("on a known command but with syntax error")
+    {
+      enqueue_command("@1234");
+      ctrl.update_and_apply();
+      CHECK( reader.read_reply() == "-cmd err" );
+    }
+  }
+
+
   SECTION("update_and_apply() handles engine control")
   {
     auto const dt = Hal::Sim::eng_full_travel_time_s / 100.0;
