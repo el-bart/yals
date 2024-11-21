@@ -103,19 +103,14 @@ TEST_CASE("Engine_controller")
 
     SECTION("not moving when position is inside histeresis")
     {
-      auto const prev_pos = sim().position_;
       auto const off = 0.99 * servo_position_histeresis;
       SECTION("to the left")
       {
-        auto const new_pos = sim().position_ - off;
-        REQUIRE( sim_move_to(ec, new_pos) );
-        CHECK( sim().position_ == new_pos );
+        CHECK( no_movement(ec, sim().position_ - off) );
       }
       SECTION("to the right")
       {
-        sim().position_ += off;
-        REQUIRE( sim_move_to(ec, prev_pos + off) );
-        CHECK( sim().position_ == prev_pos );
+        CHECK( no_movement(ec, sim().position_ + off) );
       }
     }
 
