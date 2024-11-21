@@ -15,6 +15,6 @@ int main()
     char buf[16];
     snprintf(buf, sizeof(buf), "p=%f%%\r\n", value * 100.0f);
     uart.tx(buf);
-    sleep_ms(500);
+    sleep_ms(100);
   }
 }
