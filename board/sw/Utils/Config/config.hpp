@@ -25,6 +25,7 @@ constexpr auto engine_full_throttle_at_diff_mm = 5.0f; // mm
 // it ranges 0..1 here, where so 0.25 is 25% of force.
 constexpr auto engine_min_force = 0.80f;
 
-// expected frequency of Controller::update() operations.
+// expected frequency of engine control operations application.
+// note that I/O still happens att full throttle.
 constexpr auto control_loop_frequency = 250u; // Hz
 }

@@ -16,12 +16,16 @@ struct Controller final
     init_IO();
   }
 
-  void update(bool apply=true)
+  void update_only()
   {
     update_reads();
     handle_io();
-    if(apply)
-      apply_presets();
+  }
+
+  void update_and_apply()
+  {
+    update_only();
+    apply_presets();
   }
 
   auto const& context() const { return ctx_; }

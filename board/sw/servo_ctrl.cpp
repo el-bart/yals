@@ -20,15 +20,11 @@ int main()
 
   auto deadline = clock.now() + tpc;
   while(true)
-  {
     if( clock.now() < deadline )
+      ctrl.update_only();           // do I/O often
+    else
     {
-      // do I/O often
-      ctrl.update(false);
-      continue;
+      ctrl.update_and_apply();      // engine control loop is to be kept at ~constant pace
+      deadline = deadline + tpc;
     }
-    // apply periodically, to keep control loop frequency
-    ctrl.update(true);
-    deadline = deadline + tpc;
-  }
 }
