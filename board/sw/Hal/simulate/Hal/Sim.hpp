@@ -26,7 +26,6 @@ struct Sim
   }
 
   // values set based on current situation
-  static constexpr uint64_t ticks_per_second_{1'000'000};
   uint64_t current_time_{123};  // current time point (see: ticks_per_second_)
   int32_t engine_force_{0};     // -/+ is dir, abs value is a force (16-bit)
   float amps_{0};               // engine current [A]
@@ -43,6 +42,10 @@ struct Sim
   float min_position_{0.0};     // 0..1 of scale
   float max_position_{1.0};     // 0..1 of scale
   float EEPROM_LED_brightness_{1.0}; // 0..1 of power
+
+  // model parameters
+  static constexpr uint64_t ticks_per_second_{1'000'000};
+  static constexpr auto eng_full_travel_time_s = 0.9f;
 
 private:
   void update_time(float dt_sec)
@@ -64,8 +67,7 @@ private:
     // movement of the carriage. the "model" is also linear, as it's not really
     // good for any real testing. it's more of an 'example' approach.
     const auto f = engine_force_ / 65535.0f;
-    constexpr auto full_travel_sec = 0.9f;
-    const auto f_dt = f / full_travel_sec;
+    const auto f_dt = f / eng_full_travel_time_s;
     const auto delta = f_dt * dt_sec;
     position_ = std::clamp(position_ + delta, 0.0f, 1.0f);
   }

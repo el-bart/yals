@@ -1,5 +1,6 @@
 #include "catch2/catch.hpp"
 #include "Utils/Engine_controller.hpp"
+#include "Utils/Config/settings.hpp"
 #include "Hal/Sim.hpp"
 
 using Hal::sim;
@@ -10,6 +11,9 @@ namespace
 
 TEST_CASE("Engine_controller")
 {
+  auto constexpr pos_tolerance = Utils::Config::servo_position_tolerance_mm / Utils::Config::servo_traven_len_mm;
+  auto constexpr eng_full_travel_time_s = Hal::Sim::eng_full_travel_time_s;
+  auto constexpr dt_step_s = 0.001f;
   sim().reset();
   sim().position_ = 0.5;
   Hal::Engine eng;
@@ -24,9 +28,32 @@ TEST_CASE("Engine_controller")
 
   SECTION("when present matches current position, engine is stopped")
   {
-    sim().update(0.5); // make sure some time passes
+    sim().update(500 * dt_step_s);  // make some time pass
     ec.update(sim().position_, sim().position_);
     CHECK( sim().position_ == 0.5f );
+    CHECK( sim().engine_force_ == 0u );
+  }
+
+  SECTION("chnging preset triggers movement")
+  {
+    auto const setpoint = 0.75f;
+    INFO("setpoint = " << setpoint);
+    auto prev_delta_pos = setpoint - sim().position_;
+    for(auto t = 0.0; t < eng_full_travel_time_s; t += dt_step_s)
+    {
+      auto const prev_pos = sim().position_;
+      ec.update(setpoint, sim().position_);
+      sim().update(dt_step_s);
+
+      auto const delta_pos = sim().position_ - prev_pos;
+      INFO("t="     << t)
+      INFO("pos="   << sim().position_);
+      INFO("force=" << sim().engine_force_ / 65535.0);
+      INFO("d_pos=" << delta_pos);
+      CHECK(prev_delta_pos < delta_pos);
+      prev_delta_pos = delta_pos;
+    }
+    CHECK( sim().position_ == Approx(setpoint).epsilon(pos_tolerance) );
     CHECK( sim().engine_force_ == 0u );
   }
 }
