@@ -3,6 +3,7 @@
 #include "Hal/Sim.hpp"
 
 using Hal::sim;
+using namespace Utils::Config;
 
 namespace
 {
@@ -71,8 +72,8 @@ TEST_CASE("Controller's c-tor")
     sim().LED_brightness_ = 0.12;
     sim().position_ = 0.5;
     Controller ctrl;
-    CHECK( sim().min_position_ == Approx(0.0) );
-    CHECK( sim().max_position_ == Approx(1.0) );
+    CHECK( sim().min_position_ == Approx(servo_absolute_min) );
+    CHECK( sim().max_position_ == Approx(servo_absolute_max) );
     CHECK( sim().LED_brightness_ == Approx(Utils::Config::default_LED_brightness).epsilon(0.01) );
     CHECK( sim().marker_ == 0x42 );
     CHECK( ctrl.context().setpoints_.min_pos_ == Approx( sim().min_position_ ) );
@@ -277,16 +278,16 @@ TEST_CASE("Controller")
 
   SECTION("update_and_apply() handles Set_max_servo_position with movement, if max < pos")
   {
-    enqueue_command("@990");
+    enqueue_command("@900");
     ctrl.update_and_apply();
     CHECK( reader.read_reply() == "+" );
-    CHECK( ctrl.context().setpoints_.position_ == Approx(990.0/999.0) );
-
-    enqueue_command(">900");
-    ctrl.update_and_apply();
-    CHECK( reader.read_reply() == "+" );
-    CHECK( sim().max_position_                 == Approx(900.0/999.0) );
     CHECK( ctrl.context().setpoints_.position_ == Approx(900.0/999.0) );
+
+    enqueue_command(">800");
+    ctrl.update_and_apply();
+    CHECK( reader.read_reply() == "+" );
+    CHECK( sim().max_position_                 == Approx(800.0/999.0) );
+    CHECK( ctrl.context().setpoints_.position_ == Approx(800.0/999.0) );
   }
 
   //

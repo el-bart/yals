@@ -6,16 +6,16 @@ struct Context final
 {
   struct Setpoints final
   {
-    float LED_brightness_{Utils::Config::default_LED_brightness}; // 0..1
-    float min_pos_{0.0};        // 0..1
-    float max_pos_{1.0};        // 0..1
-    float position_{};          // 0..1
+    float LED_brightness_{Utils::Config::default_LED_brightness};   // 0..1
+    float min_pos_{Utils::Config::servo_absolute_min};              // 0..1
+    float max_pos_{Utils::Config::servo_absolute_max};              // 0..1
+    float position_{};                                              // 0..1
   };
 
   struct Last_reads final
   {
-    float vcc_V_{};
-    float engine_current_A_{};
+    float vcc_V_{};             // [V]
+    float engine_current_A_{};  // [A]
     float position_{};          // 0..1
   };
 

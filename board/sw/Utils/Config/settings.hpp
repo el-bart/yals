@@ -19,6 +19,7 @@ constexpr auto servo_absolute_max_mm = servo_traven_len_mm - servo_traven_exclus
 constexpr auto servo_absolute_min = servo_absolute_min_mm / servo_traven_len_mm;
 constexpr auto servo_absolute_max = servo_absolute_max_mm / servo_traven_len_mm;
 
+// TODO that 0.5 thing...
 // 0..1 value for representing servo position tolerance (i.e. unit-agnostic value).
 // 0.5 factor represents that an actual value should be within +/-tolerance of a center point.
 constexpr auto servo_position_tolerance = 0.5f * servo_position_tolerance_mm / servo_traven_len_mm;
