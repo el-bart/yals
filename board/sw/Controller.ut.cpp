@@ -330,6 +330,49 @@ TEST_CASE("Controller")
     CHECK( sim().min_position_                 == Approx(200.0/999.0) );
     CHECK( ctrl.context().setpoints_.position_ == Approx(200.0/999.0) );
   }
+
+  //
+  // movement controle
+  //
+
+  SECTION("update() handles engine control")
+  {
+    auto const dt = Hal::Sim::eng_full_travel_time_s / 100.0;
+    sim().position_ = 500.0 / 999.0;
+
+    SECTION("no movement if already there")
+    {
+      enqueue_command("@500");
+      ctrl.update();
+      sim().update(dt);
+      REQUIRE( reader.read_reply() == "+" );
+      REQUIRE( ctrl.context().setpoints_.position_ == Approx(500.0/999.0) );
+      CHECK( sim().position_ == Approx(500.0/999.0) );
+      CHECK( sim().engine_force_ == 0u );
+    }
+
+    SECTION("move right")
+    {
+      enqueue_command("@600");
+      ctrl.update();
+      sim().update(dt);
+      REQUIRE( reader.read_reply() == "+" );
+      REQUIRE( ctrl.context().setpoints_.position_ == Approx(600.0/999.0) );
+      CHECK( sim().position_ > 500.0/999.0 );
+      CHECK( sim().engine_force_ == Approx(65535.0) );
+    }
+
+    SECTION("move left")
+    {
+      enqueue_command("@400");
+      ctrl.update();
+      sim().update(dt);
+      REQUIRE( reader.read_reply() == "+" );
+      REQUIRE( ctrl.context().setpoints_.position_ == Approx(400.0/999.0) );
+      CHECK( sim().position_ < 500.0/999.0 );
+      CHECK( sim().engine_force_ == Approx(-65535.0) );
+    }
+  }
 }
 
 }

@@ -2,11 +2,13 @@
 #include "Context.hpp"
 #include "Handler.hpp"
 #include "Io/Buffer.hpp"
+#include "Utils/Engine_controller.hpp"
 #include <algorithm>
 
 struct Controller final
 {
-  Controller()
+  Controller():
+    eng_ctrl_{ ctx_.hal_.eng_, ctx_.hal_.clock_, ctx_.hal_.pos_.value() }
   {
     init_EEPROM();
     init_setpoints();
@@ -72,7 +74,7 @@ private:
   void apply_presets()
   {
     ctx_.hal_.led_.brightness(ctx_.setpoints_.LED_brightness_);
-    // TODO: engine movement
+    eng_ctrl_.update(ctx_.setpoints_.position_, ctx_.last_reads_.position_);
   }
 
   bool init_EEPROM()
@@ -132,4 +134,5 @@ private:
   Handler handler_{ctx_};
   Io::Buffer tx_buffer_;
   Io::Buffer rx_buffer_;
+  Utils::Engine_controller eng_ctrl_;
 };
