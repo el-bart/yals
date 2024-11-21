@@ -40,6 +40,16 @@ bool sim_move_to(EC& ec, float const setpoint)
   return false;
 }
 
+bool no_movement(EC& ec, float const setpoint)
+{
+  auto const prev_pos = sim().position_;
+  ec.update(setpoint, sim().position_);
+  sim().update(control_loop_time);
+  CHECK( sim().position_ == prev_pos );
+  CHECK( sim().engine_force_ == 0 );
+  return sim().engine_force_ == 0;
+}
+
 
 TEST_CASE("Engine_controller")
 {
@@ -67,14 +77,14 @@ TEST_CASE("Engine_controller")
   {
     auto const off = 0.99f * servo_position_tolerance;
     sim().update(500 * control_loop_time);  // make some time pass
-    // +
-    ec.update(sim().position_ + off, sim().position_);
-    CHECK( sim().position_ == 0.5f );
-    CHECK( sim().engine_force_ == 0 );
-    // -
-    ec.update(sim().position_ - off, sim().position_);
-    CHECK( sim().position_ == 0.5f );
-    CHECK( sim().engine_force_ == 0 );
+    SECTION("to the left")
+    {
+      CHECK( no_movement(ec, sim().position_ - off) );
+    }
+    SECTION("to the eight")
+    {
+      CHECK( no_movement(ec, sim().position_ + off) );
+    }
   }
 
   SECTION("changing preset triggers movement")
@@ -97,11 +107,13 @@ TEST_CASE("Engine_controller")
       auto const off = 0.99 * servo_position_histeresis;
       SECTION("to the left")
       {
-        REQUIRE( sim_move_to(ec, prev_pos - off) );
-        CHECK( sim().position_ == prev_pos );
+        auto const new_pos = sim().position_ - off;
+        REQUIRE( sim_move_to(ec, new_pos) );
+        CHECK( sim().position_ == new_pos );
       }
       SECTION("to the right")
       {
+        sim().position_ += off;
         REQUIRE( sim_move_to(ec, prev_pos + off) );
         CHECK( sim().position_ == prev_pos );
       }
