@@ -1,8 +1,28 @@
 #include "Controller.hpp"
 
+using Utils::Ticks;
+using namespace Utils::Config;
+
+namespace
+{
+auto ticks_per_cycle(Hal::Clock const& clock)
+{
+  auto const tpc = clock.ticks_per_second().value_ * control_loop_time;
+  return Ticks{ .value_ = static_cast<uint64_t>(round(tpc)) };
+}
+}
+
 int main()
 {
   Controller ctrl;
+  auto const& clock = ctrl.context().hal_.clock_;
+  auto const tpc = ticks_per_cycle(clock);
+
   while(true)
+  {
+    auto const deadline = clock.now() + tpc;
     ctrl.update();
+    while( clock.now() < deadline )
+    { }
+  }
 }

@@ -19,4 +19,7 @@ constexpr auto servo_absolute_max = servo_traven_len_mm - servo_traven_exclusion
 // 0..1 value for representing servo position tolerance (i.e. unit-agnostic value).
 // 0.5 factor represents that an actual value should be within +/-tolerance of a center point.
 constexpr auto servo_position_tolerance = 0.5f * servo_position_tolerance_mm / servo_traven_len_mm;
+
+// frequency represented as a loop time (it's more convenient to use in the code)
+constexpr auto control_loop_time = 1.0f / control_loop_frequency; // 1/f
 }
