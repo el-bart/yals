@@ -1,6 +1,7 @@
 #pragma once
 #include "Context.hpp"
 #include "Handler.hpp"
+#include "Io/Buffer.hpp"
 #include <algorithm>
 
 struct Controller final
@@ -35,7 +36,7 @@ private:
     handle_io_tx();     // free queue space, if there's sth to TX
     handle_io_rx();     // get new data (if present)
 
-    auto const req = extract_line(ctx_.rx_buffer_);
+    auto const req = extract_line(rx_buffer_);
     if(not req)
       return;
     auto const rep = Io::process(*req, handler_);
@@ -46,7 +47,7 @@ private:
   {
     for(auto i=0u; i<Io::Buffer::max_size; ++i)
       if( auto const b = ctx_.hal_.uart_.rx(); b )
-        ctx_.rx_buffer_.dive_add(*b);
+        rx_buffer_.dive_add(*b);
       else
         return;
   }
@@ -54,18 +55,18 @@ private:
   void handle_io_tx(Io::Line const& line)
   {
     for(auto i=0u; i<line.size_; ++i)
-      ctx_.tx_buffer_.dive_add(line.data_[i]);
-    ctx_.tx_buffer_.dive_add('\n');
+      tx_buffer_.dive_add(line.data_[i]);
+    tx_buffer_.dive_add('\n');
     handle_io_tx();
   }
 
   void handle_io_tx()
   {
     auto sent = 0u;
-    for(; sent < ctx_.tx_buffer_.size_; ++sent)
-      if( not ctx_.hal_.uart_.tx( ctx_.tx_buffer_.data_[sent] ) )
+    for(; sent < tx_buffer_.size_; ++sent)
+      if( not ctx_.hal_.uart_.tx( tx_buffer_.data_[sent] ) )
         break;
-    ctx_.tx_buffer_.trim_by(sent);
+    tx_buffer_.trim_by(sent);
   }
 
   void apply_presets()
@@ -129,4 +130,6 @@ private:
 
   Context ctx_;
   Handler handler_{ctx_};
+  Io::Buffer tx_buffer_;
+  Io::Buffer rx_buffer_;
 };

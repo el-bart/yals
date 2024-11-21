@@ -1,6 +1,5 @@
 #pragma once
 #include "Hal/All.hpp"
-#include "Io/Buffer.hpp"
 #include "Utils/Config/settings.hpp"
 
 struct Context final
@@ -23,7 +22,4 @@ struct Context final
   Hal::All hal_;
   Setpoints setpoints_;
   Last_reads last_reads_;
-
-  Io::Buffer tx_buffer_;
-  Io::Buffer rx_buffer_;
 };
