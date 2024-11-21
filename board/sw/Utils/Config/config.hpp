@@ -12,6 +12,7 @@ constexpr auto potentiometer_precision_percent = 5u; // %
 // default LED brightness (0..1)
 constexpr auto default_LED_brightness = 0.15f; // yes, it's very bright...
 
+// TODO: ADJUST THESE PARAMS AFTER HISTERESIS IS IMPLEMENTED                                
 // tolerance distance for servo (i.e. "how close preset is close enough to stop adjusting?")
 constexpr auto servo_position_tolerance_mm = 1.5f;  // mm
 // histeresis of position (i.e. "how much readout must change before action is triggered?").
