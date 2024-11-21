@@ -2,27 +2,11 @@
 #include "Hal/Uart.hpp"
 #include <algorithm>
 #include <cstdio>
+#include "Hal/Impl/write_helpers.hpp"
 
-void write(Hal::Uart& uart, char const* str)
-{
-  for(; *str!=0; ++str)
-    while(not uart.tx(*str))
-    { }
-}
-
-void write_line(Hal::Uart& uart, char const* str)
-{
-  write(uart, str);
-  write(uart, "\r\n");
-}
-
-template<typename ...Args>
-void write_line_fmt(Hal::Uart& uart, char const* fmt, Args... args)
-{
-  char buf[1024];
-  snprintf(buf, sizeof(buf), fmt, args...);
-  write_line(uart, buf);
-}
+using Hal::Impl::write;
+using Hal::Impl::write_line;
+using Hal::Impl::write_line_fmt;
 
 void print_help(Hal::Uart& uart)
 {
