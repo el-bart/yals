@@ -359,7 +359,7 @@ TEST_CASE("Controller")
       REQUIRE( reader.read_reply() == "+" );
       REQUIRE( ctrl.context().setpoints_.position_ == Approx(600.0/999.0) );
       CHECK( sim().position_ > 500.0/999.0 );
-      CHECK( sim().engine_force_ == Approx(65535.0) );
+      CHECK( sim().engine_force_ == 65535 );
     }
 
     SECTION("move left")
@@ -370,7 +370,54 @@ TEST_CASE("Controller")
       REQUIRE( reader.read_reply() == "+" );
       REQUIRE( ctrl.context().setpoints_.position_ == Approx(400.0/999.0) );
       CHECK( sim().position_ < 500.0/999.0 );
-      CHECK( sim().engine_force_ == Approx(-65535.0) );
+      CHECK( sim().engine_force_ == -65535 );
+    }
+  }
+
+  SECTION("update_only() does I/O but does not apply")
+  {
+    auto const dt = Hal::Sim::eng_full_travel_time_s / 100.0;
+    sim().position_ = 500.0 / 999.0;
+
+    SECTION("move is not applied")
+    {
+      enqueue_command("@600");
+      ctrl.update_only();
+      sim().update(dt);
+      REQUIRE( reader.read_reply() == "+" );
+      REQUIRE( ctrl.context().setpoints_.position_ == Approx(600.0/999.0) );
+      CHECK( sim().position_ == Approx(500.0/999.0) );
+      CHECK( sim().engine_force_ == 0 );
+
+      SECTION("next update_and_apply() does the job")
+      {
+        ctrl.update_and_apply();
+        sim().update(dt);
+        REQUIRE( reader.read_reply() == "" );
+        CHECK( ctrl.context().setpoints_.position_ == Approx(600.0/999.0) );
+        CHECK( sim().position_ > 500.0/999.0 );
+        CHECK( sim().engine_force_ == 65535 );
+      }
+    }
+
+    SECTION("LED brightness is not applued")
+    {
+      auto const prev_LED_brightness = sim().LED_brightness_;
+      enqueue_command("*78");
+      ctrl.update_only();
+      sim().update(dt);
+      REQUIRE( reader.read_reply() == "+" );
+      CHECK( ctrl.context().setpoints_.LED_brightness_ == Approx(78.0/99.0).epsilon(0.05) );
+      CHECK( sim().LED_brightness_ == prev_LED_brightness );
+
+      SECTION("next update_and_apply() does the job")
+      {
+        ctrl.update_and_apply();
+        sim().update(dt);
+        REQUIRE( reader.read_reply() == "" );
+        CHECK( ctrl.context().setpoints_.LED_brightness_ == Approx(78.0/99.0).epsilon(0.05) );
+        CHECK( sim().LED_brightness_ == Approx(78.0/99.0).epsilon(0.05) );
+      }
     }
   }
 }
