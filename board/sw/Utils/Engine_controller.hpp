@@ -29,8 +29,8 @@ struct Engine_controller final
     update_impl(now, preset_position, current_position);
     // wrap up
     last_run_at_ = now;
-    last_position_ = current_position;
     last_preset_ = preset_position;
+    last_position_ = current_position;
   }
 
 private:
@@ -39,15 +39,24 @@ private:
   void update_impl(Timepoint const now, float const preset_position, float const current_position)
   {
     using namespace Utils::Config;
-    if( fabsf(preset_position - current_position) < servo_position_tolerance )
-    {
-      stop();
-      return;
-    }
+
+    if( preset_position != last_preset_ )
+      preset_reached_ = false;
+
+    auto const dp = fabsf(preset_position - current_position);
+    if( dp < servo_position_tolerance )
+      return stop();
+    if(preset_reached_)
+      if( dp < servo_position_histeresis )
+        return stop();
     move(now, preset_position, current_position);
   }
 
-  inline void stop() { eng_.set(Dir::Off, 0); }
+  inline void stop()
+  {
+    eng_.set(Dir::Off, 0);
+    preset_reached_ = true;
+  }
 
   inline void move(Timepoint const now, float preset_position, float current_position)
   {
@@ -68,6 +77,7 @@ private:
   Timepoint last_run_at_;
   float last_position_{};
   float last_preset_{};
+  bool preset_reached_{true};
 };
 
 }

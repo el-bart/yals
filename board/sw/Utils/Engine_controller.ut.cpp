@@ -104,24 +104,46 @@ TEST_CASE("Engine_controller")
     SECTION("not moving when position is inside histeresis")
     {
       auto const off = 0.99 * servo_position_histeresis;
+      auto const pos = sim().position_;
       SECTION("to the left")
       {
-        CHECK( no_movement(ec, sim().position_ - off) );
+        sim().position_ -= off;
+        CHECK( no_movement(ec, pos) );
       }
       SECTION("to the right")
       {
-        CHECK( no_movement(ec, sim().position_ + off) );
+        sim().position_ += off;
+        CHECK( no_movement(ec, pos) );
       }
     }
 
-    SECTION("reaching value and not moving until position is outside of histeresis")
+    SECTION("moving when position is outside histeresis")
     {
-      // TODO
+      auto const off = 1.01 * servo_position_histeresis;
+      auto const pos = sim().position_;
+      SECTION("to the left")
+      {
+        sim().position_ -= off;
+        CHECK( sim_move_to(ec, pos) );
+      }
+      SECTION("to the right")
+      {
+        sim().position_ += off;
+        CHECK( sim_move_to(ec, pos) );
+      }
     }
 
     SECTION("moving immediately if setpoint changes (even if new position is still within histeresis range)")
     {
-      // TODO
+      auto const off = 1.01 * servo_position_tolerance;
+      SECTION("to the left")
+      {
+        CHECK( sim_move_to(ec, sim().position_ - off) );
+      }
+      SECTION("to the right")
+      {
+        CHECK( sim_move_to(ec, sim().position_ + off) );
+      }
     }
   }
 }
