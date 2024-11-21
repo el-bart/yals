@@ -9,11 +9,11 @@ struct Clock
 {
   Clock() = default;
 
-  Utils::Timepoint now()      const { return impl_.now(); }
-  uint64_t ticks_per_second() const { return impl_.ticks_per_second(); }
+  Utils::Timepoint now()              const { return impl_.now(); }
+  Utils::Ticks     ticks_per_second() const { return impl_.ticks_per_second(); }
 
 private:
-  Impl::Clock impl_;
+  Impl::Clock const impl_;
 };
 
 }

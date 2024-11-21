@@ -19,7 +19,7 @@ struct Clock
     return { .value_ = value( get_absolute_time() ) };
   }
 
-  uint64_t ticks_per_second() const { return ticks_per_second_; }
+  Utils::Ticks ticks_per_second() const { return ticks_per_second_; }
 
 private:
   static uint64_t compute_ticks_per_second()
@@ -39,7 +39,7 @@ private:
 #endif
   }
 
-  uint64_t const ticks_per_second_{ compute_ticks_per_second() };
+  Utils::Ticks const ticks_per_second_{ .value_ = compute_ticks_per_second() };
 };
 
 }

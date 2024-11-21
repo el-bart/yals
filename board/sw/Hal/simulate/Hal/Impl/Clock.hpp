@@ -19,9 +19,9 @@ struct Clock
     return { .value_ = sim().current_time_ };
   }
 
-  uint64_t ticks_per_second() const
+  Utils::Ticks ticks_per_second() const
   {
-    return Sim::ticks_per_second_;
+    return { .value_ = Sim::ticks_per_second_ };
   }
 };
 
