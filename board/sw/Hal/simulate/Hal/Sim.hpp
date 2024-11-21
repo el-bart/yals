@@ -60,6 +60,9 @@ private:
 
   void update_pos(float dt_sec)
   {
+    // it's a very hand-wavy way to simulating engine torque to compute simulated
+    // movement of the carriage. the "model" is also linear, as it's not really
+    // good for any real testing. it's more of an 'example' approach.
     const auto f = engine_force_ / 65535.0f;
     constexpr auto full_travel_sec = 0.9f;
     const auto f_dt = f / full_travel_sec;

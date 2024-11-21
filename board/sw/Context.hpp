@@ -16,7 +16,7 @@ struct Context final
   {
     float vcc_V_{};
     float engine_current_A_{};
-    float position_{};      // 0..1
+    float position_{};          // 0..1
   };
 
   Hal::All hal_;

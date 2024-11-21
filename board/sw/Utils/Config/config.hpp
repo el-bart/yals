@@ -6,7 +6,10 @@ namespace Utils::Config
 // max theoretical travel distance of a servo (i.e. potentiometer length)
 constexpr auto servo_traven_len_mm = 100.0f;
 
-// configures how much on min / max position is not available, to compensate for non-perfect potentiometer
+// configures how much on min / max position is not available, to compensate for non-perfect potentiometer.
+// note that this does not change min / max and position values returned. it is only applied to limit the
+// actual movement of the carriage (i.e. off-limit of 5mm with position set to 0, will stop at 5mm and
+// report 5mm as a current position ad infinitum, even though min pos is set to 0).
 constexpr auto servo_traven_exclusion_zone_mm = 5.0f;
 
 // default LED brightness (0..1)
