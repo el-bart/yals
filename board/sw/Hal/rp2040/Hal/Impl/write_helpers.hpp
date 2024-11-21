@@ -27,7 +27,7 @@ void write_line_fmt(Hal::Uart& uart, char const* fmt, Args... args)
 
 inline void purge_rx(Hal::Uart& uart)
 {
-  while( uart.ex() )
+  while( uart.rx() )
   { }
 }
 
