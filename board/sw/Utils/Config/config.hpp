@@ -23,12 +23,12 @@ static_assert( servo_position_tolerance_mm < servo_position_histeresis_mm );
 
 // full-throttle distance of the motor, when difference between a preset position and
 // actual position is at least equal to the above value.
-constexpr auto engine_full_throttle_at_diff_mm = 4.0f; // mm
+constexpr auto engine_full_throttle_at_diff_mm = 5.0f; // mm
 
 // engine min. force / torque that can be applied. values smaller than this will be clippe to it.
 // exception is 0.0, that is interpreted as a literal 0.0 (no force).
 // it ranges 0..1 here, where so 0.25 is 25% of force.
-constexpr auto engine_min_force = 0.99f;
+constexpr auto engine_min_force = 0.40f;
 
 // expected frequency of engine control operations application.
 // note that I/O still happens att full throttle.
