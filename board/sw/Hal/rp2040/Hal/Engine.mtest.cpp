@@ -6,8 +6,8 @@ using Hal::Impl::write_line;
 using Hal::Impl::write_line_fmt;
 using E = Hal::Engine;
 
-constexpr auto imp_long  = 0.2f;
-constexpr auto imp_short = 0.01f;
+constexpr auto imp_long  = 0.1f;
+constexpr auto imp_short = 0.003f;
 
 void print_help(Hal::Uart& uart)
 {
