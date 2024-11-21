@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <cinttypes>
 #include <cmath>
+#include "Utils/Config/settings.hpp"
 
 namespace Hal
 {
@@ -46,7 +47,6 @@ struct Sim
 
   // model parameters
   static constexpr uint64_t ticks_per_second_{1'000'000};
-  static constexpr auto eng_full_travel_time_s = 0.9f;
 
 private:
   void update_time(float dt_sec)
@@ -65,12 +65,13 @@ private:
   void update_pos(float dt_sec)
   {
     if(simulate_stall_)
-      return;
+      if(engine_force_ < 50'000)
+        return;
     // it's a very hand-wavy way to simulating engine torque to compute simulated
     // movement of the carriage. the "model" is also linear, as it's not really
     // good for any real testing. it's more of an 'example' approach.
     const auto f = engine_force_ / 65535.0f;
-    const auto f_dt = f / eng_full_travel_time_s;
+    const auto f_dt = f / Utils::Config::servo_full_path_travel_time_s;
     const auto delta = f_dt * dt_sec;
     position_ = std::clamp(position_ + delta, 0.0f, 1.0f);
   }

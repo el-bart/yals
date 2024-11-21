@@ -3,6 +3,7 @@
 
 using Hal::Sim;
 using Hal::sim;
+using Utils::Config::servo_full_path_travel_time_s;
 
 namespace
 {
@@ -55,8 +56,8 @@ SCENARIO("Hal::Sim properly integrates with Hal::All")
 {
   sim().reset();
   Hal::All hal;
-  auto const dt_short = Sim::eng_full_travel_time_s / 100.0f;
-  auto const dt_long  = Sim::eng_full_travel_time_s *   2.0f;
+  auto const dt_short = servo_full_path_travel_time_s / 100.0f;
+  auto const dt_long  = servo_full_path_travel_time_s *   2.0f;
 
   GIVEN("servo in the center position")
   {

@@ -271,7 +271,7 @@ TEST_CASE("Controller")
 
   SECTION("update_and_apply() handles engine control")
   {
-    auto const dt = Hal::Sim::eng_full_travel_time_s / 100.0;
+    auto const dt = servo_full_path_travel_time_s / 100.0;
     sim().position_ = 500.0 / 999.0;
 
     SECTION("no movement if already there")
@@ -311,7 +311,7 @@ TEST_CASE("Controller")
 
   SECTION("update_only() does I/O but does not apply")
   {
-    auto const dt = Hal::Sim::eng_full_travel_time_s / 100.0;
+    auto const dt = servo_full_path_travel_time_s / 100.0;
     sim().position_ = 500.0 / 999.0;
 
     SECTION("move is not applied")
