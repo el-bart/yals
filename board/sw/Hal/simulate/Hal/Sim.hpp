@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <cstdlib>
 #include <cinttypes>
+#include <cmath>
 
 namespace Hal
 {
@@ -13,6 +14,7 @@ struct Sim
   // this updated world simulation state, based on current presets, each time it's set
   void update(float dt_sec)
   {
+    update_time(dt_sec);
     update_amps();
     update_pos(dt_sec);
   }
@@ -24,6 +26,8 @@ struct Sim
   }
 
   // values set based on current situation
+  static constexpr uint64_t ticks_per_second_{1'000'000};
+  uint64_t current_time_{123};  // current time point (see: ticks_per_second_)
   int32_t engine_force_{0};     // -/+ is dir, abs value is a force (16-bit)
   float amps_{0};               // engine current [A]
   float vcc_{12.1};             // Vcc [V]
@@ -41,6 +45,11 @@ struct Sim
   float EEPROM_LED_brightness_{1.0}; // 0..1 of power
 
 private:
+  void update_time(float dt_sec)
+  {
+    current_time_ += ceil( dt_sec * ticks_per_second_ );
+  }
+
   void update_amps()
   {
     amps_ = 0.01;

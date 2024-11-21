@@ -6,6 +6,7 @@
 #include "Hal/Uart.hpp"
 #include "Hal/Vcc_feedback.hpp"
 #include "Hal/EEPROM.hpp"
+#include "Hal/Clock.hpp"
 
 namespace Hal
 {
@@ -19,6 +20,7 @@ struct All
   Position_feedback pos_;
   Vcc_feedback vcc_;
   EEPROM EEPROM_;
+  Clock clock_;
 };
 
 }
