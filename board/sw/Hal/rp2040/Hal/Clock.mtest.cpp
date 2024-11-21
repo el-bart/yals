@@ -1,25 +1,33 @@
 #include "Hal/Clock.hpp"
 #include "Hal/Uart.hpp"
 #include <cstdio>
+#include "Hal/Impl/write_helpers.hpp"
+
+using Hal::Impl::write_line;
+using Hal::Impl::write_line_fmt;
+
 
 int main()
 {
   Hal::Clock clock;
   Hal::Uart uart;
 
-  uart.tx("\r\n>> HW Clock test app\r\n");
+  write_line(uart, ">>");
+  write_line(uart, ">> HW Clock test app");
+  write_line(uart, ">>");
 
-  {
-    char buf[32];
-    snprintf(buf, sizeof(buf), ">> %llu ticks per second\r\n", clock.ticks_per_second());
-    uart.tx(buf);
-  }
+  write_line_fmt(uart, ">> %llu ticks per second", clock.ticks_per_second().value_);
 
-  while(true)
+  for(auto s=0u;; ++s)
   {
-    char buf[32];
-    snprintf(buf, sizeof(buf), ">> at: %llu\r\n", clock.now().value_);
-    uart.tx(buf);
-    sleep_ms(500);
+    auto const start = clock.now();
+    write_line_fmt(uart, ">> at %us: %llu", s, start.value_);
+#if 0
+    sleep_ms(1'000);
+#else
+    auto const deadline = start + clock.ticks_per_second();
+    while( clock.now() < deadline )
+    { }
+#endif
   }
 }
