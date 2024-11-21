@@ -1,5 +1,6 @@
 #pragma once
 #include "Hal/Uart.hpp"
+#include <cstdio>
 
 namespace Hal::Impl
 {
