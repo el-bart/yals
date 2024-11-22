@@ -57,28 +57,28 @@ int main()
 
   for(auto n=0u; true; ++n)
   {
-    write_line_fmt(uart, ">> press 'q' to quit");
-    write_line_fmt(uart, ">> press any other key to start the #%u cycle", n);
-    auto const park_pos = std::clamp( pos.value(), 0.2f, 0.8f );
-    while(true)
-    {
-      ec.update(park_pos, pos.value());
-      ctrl_loop_cycle_pause();
-      auto const c = uart.rx();
-      if(not c)
-        continue;
-      if(*c == 'q')
-        quit(uart, ec, pos);
-      break;
-    }
-
     for(auto preset: {0.2, 0.8})
     {
+      write_line_fmt(uart, ">> press 'q' to quit");
+      write_line_fmt(uart, ">> press any other key to start the #%u cycle at preset=%f", n, preset);
+      auto const park_pos = std::clamp( pos.value(), 0.2f, 0.8f );
+      while(true)
+      {
+        ec.update(park_pos, pos.value());
+        ctrl_loop_cycle_pause();
+        auto const c = uart.rx();
+        if(not c)
+          continue;
+        if(*c == 'q')
+          quit(uart, ec, pos);
+        break;
+      }
+
       write_line_fmt(uart, ">> #%u moving to pos=%f", n, preset);
       go_to_position(uart, ec, pos, preset);
       write_line_fmt(uart, ">> arrived (pos=%f vs. preset=%f)", pos.value(), preset);
     }
-    write_line(uart, ">> done iteration");
+    write_line(uart, ">> cycle completed");
     write_line(uart, "");
   }
 }
