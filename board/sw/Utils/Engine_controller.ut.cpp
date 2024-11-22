@@ -156,17 +156,22 @@ TEST_CASE("Engine_controller")
 
   SECTION("engine power is temporary increased when stall is detected")
   {
+    std::cerr << "--------##############################################################################################################################------------\n";              
     auto const setpoint = 0.75f;
     auto stall_sim = [setpoint](double t, float pos) {
+      std::cerr << "\npos=" << pos << "\n";           
       auto const from = setpoint - engine_full_throttle_at_diff_mm / 2.0;
       auto const to   = setpoint - servo_position_tolerance * 1.3;
       sim().simulate_stall_ = (from < pos && pos < to);
+      if(sim().simulate_stall_)                         
+        std::cerr << ">>> simulating stall <<<\n";          
     };
     INFO("setpoint=" << setpoint);
     INFO("servo_position_tolerance=" << servo_position_tolerance);
     REQUIRE( sim_move_to(ec, setpoint, stall_sim) );
     CHECK( sim().position_ == Approx(setpoint).margin(servo_position_tolerance) );
     CHECK( sim().engine_force_ == 0 );
+    std::cerr << "--------$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$------------\n";              
   }
 }
 

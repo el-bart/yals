@@ -6,6 +6,7 @@
 #include <cinttypes>
 #include <cmath>
 #include "Utils/Config/settings.hpp"
+#include <iostream>             
 
 namespace Hal
 {
@@ -64,9 +65,13 @@ private:
 
   void update_pos(float dt_sec)
   {
+    std::cerr << "$ f=" << engine_force_ << "\n";          
     if(simulate_stall_)
+    {
       if(engine_force_ < 50'000)
         return;
+      std::cerr << "OVERCOMMING STALL!\n";      
+    }
     // it's a very hand-wavy way to simulating engine torque to compute simulated
     // movement of the carriage. the "model" is also linear, as it's not really
     // good for any real testing. it's more of an 'example' approach.

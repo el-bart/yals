@@ -38,4 +38,9 @@ constexpr auto engine_min_force = 0.40f;
 // expected frequency of engine control operations application.
 // note that I/O still happens att full throttle.
 constexpr auto control_loop_frequency = 250u; // Hz
+
+// engine's PID controller parameters
+constexpr auto PID_controller_P = 10.0f;
+constexpr auto PID_controller_I = 40.0f;
+constexpr auto PID_controller_D = 0.4f;
 }
