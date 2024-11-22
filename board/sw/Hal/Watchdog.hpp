@@ -8,6 +8,7 @@ struct Watchdog
 {
   Watchdog() = default;
   void reset() { impl_.reset(); }
+  static bool rebooted_by_watchdog() { return Impl::Watchdog::rebooted_by_watchdog(); }
 
 private:
   Impl::Watchdog impl_;

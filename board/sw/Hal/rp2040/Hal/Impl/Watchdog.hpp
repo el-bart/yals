@@ -25,6 +25,7 @@ struct Watchdog
   Watchdog& operator=(Watchdog&&) = delete;
 
   void reset() { watchdog_update(); }
+  static bool rebooted_by_watchdog() { return watchdog_caused_reboot(); }
 };
 
 }

@@ -5,6 +5,7 @@
 
 using Utils::write_line;
 using Utils::write_line_fmt;
+using Hal::Watchdog;
 
 int main()
 {
@@ -15,7 +16,7 @@ int main()
   write_line(uart, ">>");
   Utils::purge_rx(uart);
 
-  if( watchdog_caused_reboot() )
+  if( Watchdog::rebooted_by_watchdog() )
   {
     write_line(uart, ">> REBOOT WAS CAUSED BY WATCHDOG!");
     write_line(uart, ">> STOPPING APP NOW TO PREVENT BUSY LOOP (YOU ARE WELCOME)");
@@ -24,7 +25,7 @@ int main()
         write_line(uart, ">> yes, i'm still here");
   }
 
-  Hal::Watchdog watchdog;
+  Watchdog watchdog;
 
   for(auto n=0u; true; ++n)
   {
