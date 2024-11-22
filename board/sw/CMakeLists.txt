@@ -14,6 +14,7 @@ include_directories("${CMAKE_CURRENT_SOURCE_DIR}/Hal/${YALS_HAL}/")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/")
 
 add_subdirectory("Hal/${YALS_HAL}")
+add_subdirectory("Utils")
 
 include("cmake/git.cmake")
 
