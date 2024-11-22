@@ -1,11 +1,11 @@
 #include "Hal/Engine.hpp"
 #include "Hal/Uart.hpp"
 #include "Hal/Position_feedback.hpp"
-#include "Hal/Impl/write_helpers.hpp"
 #include "Utils/Config/settings.hpp"
+#include "Utils/write_helpers.hpp"
 
-using Hal::Impl::write_line;
-using Hal::Impl::write_line_fmt;
+using Utils::write_line;
+using Utils::write_line_fmt;
 using E = Hal::Engine;
 
 constexpr auto imp_long  = 0.1f;
@@ -62,7 +62,7 @@ int main()
   write_line(uart, ">> engine testing app");
   write_line(uart, ">>");
   print_help(uart);
-  Hal::Impl::purge_rx(uart);
+  Utils::purge_rx(uart);
 
   while(true)
   {

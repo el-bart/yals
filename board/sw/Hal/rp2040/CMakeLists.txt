@@ -8,8 +8,6 @@ function (add_mtest name)
   add_binary("Hal_${name}.mtest" "Hal/${name}.mtest.cpp")
 endfunction()
 
-include_directories("${CMAKE_CURRENT_SOURCE_DIR}/")
-
 add_mtest(Clock)
 add_mtest(EEPROM)
 add_mtest(Engine)

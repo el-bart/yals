@@ -2,11 +2,11 @@
 #include "Hal/Uart.hpp"
 #include <algorithm>
 #include <cstdio>
-#include "Hal/Impl/write_helpers.hpp"
+#include "Utils/write_helpers.hpp"
 
-using Hal::Impl::write;
-using Hal::Impl::write_line;
-using Hal::Impl::write_line_fmt;
+using Utils::write;
+using Utils::write_line;
+using Utils::write_line_fmt;
 
 
 int main()
@@ -18,8 +18,8 @@ int main()
   write_line(uart, "");
   write_line(uart, ">> EEPROM impl (raw) testing app");
 
-  // purge input
-  while( uart.rx() ) { }
+  Utils::purge_rx(uart);
+
   auto first_run = true;
 
   while(true)

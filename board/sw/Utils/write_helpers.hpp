@@ -2,7 +2,7 @@
 #include "Hal/Uart.hpp"
 #include <cstdio>
 
-namespace Hal::Impl
+namespace Utils
 {
 
 inline void write(Hal::Uart& uart, char const* str)

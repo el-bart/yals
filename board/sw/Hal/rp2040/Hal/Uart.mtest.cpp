@@ -1,9 +1,9 @@
 #include "Hal/Uart.hpp"
 #include <cstdio>
-#include "Hal/Impl/write_helpers.hpp"
+#include "Utils/write_helpers.hpp"
 
-using Hal::Impl::write_line;
-using Hal::Impl::write_line_fmt;
+using Utils::write_line;
+using Utils::write_line_fmt;
 
 
 int main()
@@ -17,6 +17,8 @@ int main()
   write_line(uart, ">> write, this will be split. you should not be");
   write_line(uart, ">> able to tell the difference.");
   write_line(uart, ">>");
+
+  Utils::purge_rx(uart);
 
   for(auto n=0u; ; ++n)
   {

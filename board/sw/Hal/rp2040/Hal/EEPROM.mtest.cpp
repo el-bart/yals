@@ -2,11 +2,12 @@
 #include "Hal/Uart.hpp"
 #include <algorithm>
 #include <cstdio>
-#include "Hal/Impl/write_helpers.hpp"
+#include "Utils/write_helpers.hpp"
 
-using Hal::Impl::write;
-using Hal::Impl::write_line;
-using Hal::Impl::write_line_fmt;
+using Utils::write;
+using Utils::write_line;
+using Utils::write_line_fmt;
+using Utils::purge_rx;
 
 void print_help(Hal::Uart& uart)
 {
@@ -146,9 +147,7 @@ int main()
   print_help(uart);
   read_all(uart, eeprom);
 
-  // purge input
-  while(uart.rx())
-  { }
+  purge_rx(uart);
 
   while(true)
   {
