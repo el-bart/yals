@@ -3,7 +3,7 @@
 ## 3D model
 * add end-stops (or otherwise guarantee never going out of bounds, as it stalls engine and permanently locks it, requiring manual intervention)
   - this should be doable with potentiometer and moving slow ("calibration phase"?)
-* add "left" and "right" markers on servo edges, to signal cardinal directions
+* add "left" and "right" visual markers on servo edges, to signal cardinal directions
 
 ## board
 * silkscreen:
@@ -15,8 +15,6 @@
 * EEPROM's !WC signal must be controllable via pin, to make sure no writes will happen by applying some EM-noise
 
 ## software
-* servo control SW
-* control loop
 * client library to use servo
 
 ## bugs:
