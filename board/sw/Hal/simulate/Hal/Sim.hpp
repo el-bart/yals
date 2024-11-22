@@ -6,7 +6,6 @@
 #include <cinttypes>
 #include <cmath>
 #include "Utils/Config/settings.hpp"
-#include <iostream>             
 
 namespace Hal
 {
