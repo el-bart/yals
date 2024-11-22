@@ -16,7 +16,7 @@ void ctrl_loop_cycle_pause()
 
 void quit(Hal::Uart& uart, Utils::Engine_controller& ec, Hal::Position_feedback& pos)
 {
-  write_line(uart, ">> quit requested - parking in the middle...");
+  write_line(uart, ">> QUIT REQUESTED - PARKING IN THE MIDDLE...");
   while(true)
   {
     auto const p = pos.value();
@@ -36,7 +36,7 @@ void go_to_position(Hal::Uart& uart, Utils::Engine_controller& ec, Hal::Position
     ec.update(preset, p);
     ctrl_loop_cycle_pause();
   }
-  while( fabs(p - preset) > Utils::Config::servo_position_tolerance_mm );
+  while( fabs(p - preset) > Utils::Config::servo_position_tolerance );
 }
 
 int main()
@@ -47,6 +47,8 @@ int main()
   Hal::Clock clock;
   Utils::Engine_controller ec{eng, clock, pos.value()};
 
+  write_line(uart, "");
+  write_line(uart, "");
   write_line(uart, ">>");
   write_line(uart, ">> engine controller - jogging app");
   write_line(uart, ">>");
@@ -57,8 +59,11 @@ int main()
   {
     write_line_fmt(uart, ">> press 'q' to quit");
     write_line_fmt(uart, ">> press any other key to start the #%u cycle", n);
+    auto const park_pos = std::clamp( pos.value(), 0.2f, 0.8f );
     while(true)
     {
+      ec.update(park_pos, pos.value());
+      ctrl_loop_cycle_pause();
       auto const c = uart.rx();
       if(not c)
         continue;
@@ -71,12 +76,9 @@ int main()
     {
       write_line_fmt(uart, ">> #%u moving to pos=%f", n, preset);
       go_to_position(uart, ec, pos, preset);
-
-      write_line(uart, ">> short pause between cycles");
-      auto const deadline = clock.now() + clock.ticks_per_second();
-      while( clock.now() < deadline )
-        go_to_position(uart, ec, pos, preset);
-      write_line(uart, "");
+      write_line_fmt(uart, ">> arrived (pos=%f vs. preset=%f)", pos.value(), preset);
     }
+    write_line(uart, ">> done iteration");
+    write_line(uart, "");
   }
 }
