@@ -18,8 +18,10 @@ int main()
   if( watchdog_caused_reboot() )
   {
     write_line(uart, ">> REBOOT WAS CAUSED BY WATCHDOG!");
-    write_line(uart, ">> STOPPING APP NOW TO PREVENT BUSY LOOP (YOU ARE WELCOME");
-    while(true) { }
+    write_line(uart, ">> STOPPING APP NOW TO PREVENT BUSY LOOP (YOU ARE WELCOME)");
+    while(true)
+      if(auto const c = uart.rx(); c)
+        write_line(uart, ">> yes, i'm still here");
   }
 
   Hal::Watchdog watchdog;
