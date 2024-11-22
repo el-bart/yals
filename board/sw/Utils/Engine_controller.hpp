@@ -77,9 +77,6 @@ private:
     else
     {
       auto const dest_pos_delta_mm = (preset_position  - current_position) * servo_traven_len_mm;    // how far are we from destination?
-      //auto const last_pos_delta_mm = (current_position - last_position_  ) * servo_traven_len_mm;    // how far has ve travelled since last iteration?
-      //auto const dt_s = (now - last_run_at_) / clock_.ticks_per_second();
-      //auto const exp_d_pos_mmps = last_pos_delta_mm / dt_s;                                          // expected travel distance per update() in [mm/s]
       force_coef = fabsf(dest_pos_delta_mm) / engine_full_throttle_at_diff_mm;
       dir = dest_pos_delta_mm < 0.0f ? Dir::Left : Dir::Right;
       // when approaching final position, enable PID
