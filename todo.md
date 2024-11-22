@@ -15,8 +15,11 @@
 * EEPROM's !WC signal must be controllable via pin, to make sure no writes will happen by applying some EM-noise
 
 ## software
+* native client library to use servo with demo using serial port
 * LED blinking when I/Oing (on command level)
-* client library to use servo
+* PID controller:
+  * fine-tune PID to avoid overshoots when traveling long distance
+  * make PID default for full range of travel
 
 ## bugs:
 * EEPROM I/O for some reason does not seem to be working (looks as if M24C02 would hang when attempting 2nd I/O write)
