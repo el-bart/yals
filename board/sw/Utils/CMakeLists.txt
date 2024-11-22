@@ -4,3 +4,4 @@ function (add_mtest name)
 endfunction()
 
 add_mtest(Engine_controller)
+add_mtest(Engine_controller_auto_jog)
