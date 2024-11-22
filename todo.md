@@ -15,6 +15,7 @@
 * EEPROM's !WC signal must be controllable via pin, to make sure no writes will happen by applying some EM-noise
 
 ## software
+* LED blinking when I/Oing (on command level)
 * client library to use servo
 
 ## bugs:
