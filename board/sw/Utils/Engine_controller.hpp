@@ -25,10 +25,13 @@ struct Engine_controller final
   Engine_controller(Engine_controller&&) = delete;
   Engine_controller& operator=(Engine_controller&&) = delete;
 
-  void update(float const preset_position, float const current_position)
+  void update(float const preset_position_in, float const current_position)
   {
     using namespace Utils::Config;
     auto const now = clock_.now();
+    // presets are silently clamped here, to make sure we do not jam things. in practice this is usually relevant
+    // only for mtest, as main user input is validated against these edge conditions already.
+    auto const preset_position = std::clamp(preset_position_in, servo_absolute_min, servo_absolute_max);
     update_impl(now, preset_position, current_position);
     // wrap up
     last_run_at_ = now;

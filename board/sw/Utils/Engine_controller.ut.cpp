@@ -23,14 +23,20 @@ bool sim_move_to(EC& ec, float const setpoint, F&& on_iteration)
 
     auto const delta_pos  = sim().position_ - prev_pos;
     auto const pos_offset = setpoint - sim().position_;
-    INFO("t="       << t)
-      INFO("pos="     << sim().position_);
+    INFO("t="       << t);
+    INFO("pos="     << sim().position_);
     INFO("force="   << sim().engine_force_ / 65535.0);
     INFO("stall="   << (sim().simulate_stall_ ? "YES" : "no"));
     INFO("d_pos="   << delta_pos);
     INFO("pos_off=" << pos_offset);
-    CHECK( fabs(delta_pos)  <= fabs(prev_delta_pos)  );
-    CHECK( fabs(pos_offset) <= fabs(prev_pos_offset) );
+    {
+      auto constexpr eps = 0.0001f;
+      // use extra conditions here as these metrics are sometimes a bit noisy due to numerical instabilities
+      if( fabs( fabs(delta_pos) - fabs(prev_delta_pos) ) > eps )
+        CHECK( fabs(delta_pos)  <= fabs(prev_delta_pos) );
+      if( fabs( fabs(pos_offset) - fabs(prev_pos_offset) ) > eps )
+        CHECK( fabs(pos_offset) <= fabs(prev_pos_offset) );
+    }
     prev_delta_pos  = delta_pos;
     prev_pos_offset = pos_offset;
     // uncomment to get a trace of the numbers on each iteration:
@@ -167,6 +173,27 @@ TEST_CASE("Engine_controller")
     REQUIRE( sim_move_to(ec, setpoint, stall_sim) );
     CHECK( sim().position_ == Approx(setpoint).margin(servo_position_tolerance) );
     CHECK( sim().engine_force_ == 0 );
+  }
+
+  SECTION("requesting position outside of absolute HW limits")
+  {
+    SECTION("above abs max")
+    {
+      auto const setpoint = 1.0f;
+      INFO("setpoint=" << setpoint);
+      REQUIRE( sim_move_to(ec, setpoint) );
+      CHECK( sim().position_ == Approx(servo_absolute_max).margin(servo_position_tolerance) );
+      CHECK( sim().engine_force_ == 0 );
+    }
+
+    SECTION("below abs min")
+    {
+      auto const setpoint = 0.0f;
+      INFO("setpoint=" << setpoint);
+      REQUIRE( sim_move_to(ec, setpoint) );
+      CHECK( sim().position_ == Approx(servo_absolute_min).margin(servo_position_tolerance) );
+      CHECK( sim().engine_force_ == 0 );
+    }
   }
 }
 
