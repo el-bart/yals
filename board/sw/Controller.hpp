@@ -14,6 +14,7 @@ struct Controller final
     init_setpoints();
     init_LED();
     init_IO();
+    ctx_.hal_.watchdog_.reset();
   }
 
   void update_only()
@@ -80,6 +81,7 @@ private:
   {
     ctx_.hal_.led_.brightness(ctx_.setpoints_.LED_brightness_);
     eng_ctrl_.update(ctx_.setpoints_.position_, ctx_.last_reads_.position_);
+    ctx_.hal_.watchdog_.reset();
   }
 
   bool init_EEPROM()

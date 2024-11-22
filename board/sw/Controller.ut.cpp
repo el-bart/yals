@@ -355,6 +355,31 @@ TEST_CASE("Controller")
       }
     }
   }
+
+
+  SECTION("watchdog control")
+  {
+    auto const prev_reset = sim().last_watchdog_reset_time_;
+    sim().update(0.5);    // push time a bit forward
+
+    SECTION("Controller resets watchdog on start, too")
+    {
+      Controller c;
+      CHECK( prev_reset < sim().last_watchdog_reset_time_ );
+    }
+
+    SECTION("update_only() does not call watchdog")
+    {
+      ctrl.update_only();
+      CHECK( prev_reset == sim().last_watchdog_reset_time_ );
+    }
+
+    SECTION("update_and_apply() resets watchdog")
+    {
+      ctrl.update_and_apply();
+      CHECK( prev_reset < sim().last_watchdog_reset_time_ );
+    }
+  }
 }
 
 }
