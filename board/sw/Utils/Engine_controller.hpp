@@ -44,7 +44,10 @@ private:
     using namespace Utils::Config;
 
     if( preset_position != last_preset_ )
+    {
       preset_reached_ = false;
+      pid_.reset(); // prevents PID taking over when changing direction, while almost at the destination
+    }
 
     auto const dp = fabsf(preset_position - current_position);
     if( dp < servo_position_tolerance )
