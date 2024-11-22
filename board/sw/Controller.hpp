@@ -14,7 +14,7 @@ struct Controller final
     init_setpoints();
     init_LED();
     init_IO();
-    ctx_.hal_.watchdog_.reset();
+    init_watchdog();
   }
 
   void update_only()
@@ -81,7 +81,7 @@ private:
   {
     ctx_.hal_.led_.brightness(ctx_.setpoints_.LED_brightness_);
     eng_ctrl_.update(ctx_.setpoints_.position_, ctx_.last_reads_.position_);
-    ctx_.hal_.watchdog_.reset();
+    reset_watchdog();
   }
 
   bool init_EEPROM()
@@ -90,6 +90,7 @@ private:
     if(not mc) // EEPROM I/O error...
       return false;
 
+    reset_watchdog();
     if(not *mc)
     {
       ctx_.hal_.EEPROM_.min_position(ctx_.setpoints_.min_pos_);
@@ -106,6 +107,7 @@ private:
       if(auto const b = ctx_.hal_.EEPROM_.LED_brightness(); b)
         ctx_.setpoints_.LED_brightness_ = *b;
     }
+    reset_watchdog();
 
     return true;
   }
@@ -134,7 +136,30 @@ private:
   {
     // purge all input at start, to make sure there's no noise captured during flashing, etc.
     while( ctx_.hal_.uart_.rx() )
-    { }
+      reset_watchdog();
+  }
+
+  void init_watchdog()
+  {
+    if( Hal::Watchdog::rebooted_by_watchdog() )
+      tx_watchdog_error();
+    reset_watchdog();
+  }
+
+  void reset_watchdog() { ctx_.hal_.watchdog_.reset(); }
+
+  void tx_watchdog_error()
+  {
+    Io::Line line;
+    for(auto c: "-ERROR WATCHDOG CAUSED REBOOT!!")
+      if(c!=0)
+        line.add_byte(c);
+    Io::add_checksum(line);
+    line.add_byte('\n');
+
+    for(auto i=0u; i<line.size_; ++i)
+      while( not ctx_.hal_.uart_.tx(line.data_[i]) )
+        reset_watchdog();
   }
 
   Context ctx_;
