@@ -15,6 +15,7 @@ add_mtest(Engine_current)
 add_mtest(Led)
 add_mtest(Position_feedback)
 add_mtest(Uart)
+add_mtest(Watchdog)
 add_mtest(Vcc_feedback)
 
 # some more low-level EEPROM mtests:
