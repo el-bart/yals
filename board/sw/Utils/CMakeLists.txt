@@ -5,3 +5,4 @@ endfunction()
 
 add_mtest(Engine_controller)
 add_mtest(Engine_controller_auto_jog)
+add_mtest(Engine_controller_rapid_change)
