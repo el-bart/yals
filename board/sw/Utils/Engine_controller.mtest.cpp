@@ -11,7 +11,7 @@ using Utils::write_line_fmt;
 void ctrl_loop_cycle_pause()
 {
   // keep ~constant processing pace
-  Hal::sleep( std::chrono::microseconds{ static_cast<uint64_t>(Utils::Config::control_loop_time * 1'000'000) } );
+  Hal::sleep( std::chrono::microseconds{ static_cast<uint64_t>(Utils::Config::control_loop_time_s * 1'000'000) } );
 }
 
 void quit(Hal::Uart& uart, Utils::Engine_controller& ec, Hal::Position_feedback& pos)

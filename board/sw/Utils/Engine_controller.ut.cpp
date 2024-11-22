@@ -15,11 +15,11 @@ bool sim_move_to(EC& ec, float const setpoint, F&& on_iteration)
 {
   auto prev_delta_pos  = setpoint - sim().position_;
   auto prev_pos_offset = setpoint - sim().position_;
-  for(auto t = 0.0; t < servo_full_path_travel_time_s; t += control_loop_time)
+  for(auto t = 0.0; t < servo_full_path_travel_time_s; t += control_loop_time_s)
   {
     auto const prev_pos = sim().position_;
     ec.update(setpoint, sim().position_);
-    sim().update(control_loop_time);
+    sim().update(control_loop_time_s);
 
     auto const delta_pos  = sim().position_ - prev_pos;
     auto const pos_offset = setpoint - sim().position_;
@@ -53,7 +53,7 @@ bool no_movement(EC& ec, float const setpoint)
 {
   auto const prev_pos = sim().position_;
   ec.update(setpoint, sim().position_);
-  sim().update(control_loop_time);
+  sim().update(control_loop_time_s);
   CHECK( sim().position_ == prev_pos );
   CHECK( sim().engine_force_ == 0 );
   return sim().engine_force_ == 0;

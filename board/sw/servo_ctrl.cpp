@@ -7,7 +7,7 @@ namespace
 {
 auto ticks_per_cycle(Hal::Clock const& clock)
 {
-  auto const tpc = clock.ticks_per_second().value_ * control_loop_time;
+  auto const tpc = clock.ticks_per_second().value_ * control_loop_time_s;
   return Ticks{ .value_ = static_cast<uint64_t>(round(tpc)) };
 }
 }
