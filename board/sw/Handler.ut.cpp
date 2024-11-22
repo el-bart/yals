@@ -38,8 +38,8 @@ TEST_CASE("Handler")
 
       SECTION("above maxvalue")
       {
-        ctx.setpoints_.max_pos_ = 900.0/999.0;
-        auto const r = h.handle( Request{ .pos_ = 901 } );
+        ctx.setpoints_.max_pos_ = 800.0/999.0;
+        auto const r = h.handle( Request{ .pos_ = 801 } );
         REQUIRE( r.err_ == std::string{"above max"} );
         CHECK( ctx.setpoints_.position_ == Approx(500.0/999.0) );
       }

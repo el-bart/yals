@@ -9,7 +9,7 @@ constexpr auto servo_traven_len_mm = 100.0f; // mm
 constexpr auto servo_travel_seed_mmps = 80.0f / 0.7f; // [mm/s]
 
 // linear potentiometer precision
-constexpr auto potentiometer_precision_percent = 5u; // %
+constexpr auto potentiometer_precision_percent = 10u;   // %
 
 // default LED brightness (0..1)
 constexpr auto default_LED_brightness = 0.15f; // yes, it's very bright...

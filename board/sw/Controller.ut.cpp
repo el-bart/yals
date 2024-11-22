@@ -162,7 +162,7 @@ TEST_CASE("Controller")
 
   SECTION("update_and_apply() handles Get_persistent_config")
   {
-    enqueue_command("<090");
+    enqueue_command("<110");
     ctrl.update_and_apply();
     CHECK( reader.read_reply() == "+" );
     enqueue_command(">890");
@@ -172,13 +172,13 @@ TEST_CASE("Controller")
     ctrl.update_and_apply();
     CHECK( reader.read_reply() == "+" );
 
-    REQUIRE( sim().min_position_   == Approx(  90.0f / 999.0f) );
+    REQUIRE( sim().min_position_   == Approx( 110.0f / 999.0f) );
     REQUIRE( sim().max_position_   == Approx( 890.0f / 999.0f) );
     REQUIRE( sim().LED_brightness_ == Approx(  81.0f /  99.0f).margin(0.05) );
 
     enqueue_command("?");
     ctrl.update_and_apply();
-    CHECK( reader.read_reply() == "+<090>890*81" );
+    CHECK( reader.read_reply() == "+<110>890*81" );
   }
 
 
@@ -224,11 +224,11 @@ TEST_CASE("Controller")
 
   SECTION("update_and_apply() handles Set_max_servo_position")
   {
-    enqueue_command(">900");
+    enqueue_command(">890");
     ctrl.update_and_apply();
     CHECK( reader.read_reply() == "+" );
-    CHECK( ctrl.context().setpoints_.max_pos_ == Approx(900.0/999.0) );
-    CHECK( sim().max_position_                == Approx(900.0/999.0) );
+    CHECK( ctrl.context().setpoints_.max_pos_ == Approx(890.0/999.0) );
+    CHECK( sim().max_position_                == Approx(890.0/999.0) );
   }
 
 
