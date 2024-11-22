@@ -15,7 +15,7 @@ bool sim_move_to(EC& ec, float const setpoint, F&& on_iteration)
 {
   auto prev_delta_pos  = setpoint - sim().position_;
   auto prev_pos_offset = setpoint - sim().position_;
-  for(auto t = 0.0; t < Hal::Sim::eng_full_travel_time_s; t += control_loop_time)
+  for(auto t = 0.0; t < servo_full_path_travel_time_s; t += control_loop_time)
   {
     auto const prev_pos = sim().position_;
     ec.update(setpoint, sim().position_);
@@ -29,7 +29,7 @@ bool sim_move_to(EC& ec, float const setpoint, F&& on_iteration)
     INFO("stall="   << (sim().simulate_stall_ ? "YES" : "no"));
     INFO("d_pos="   << delta_pos);
     INFO("pos_off=" << pos_offset);
-    CHECK( fabs(delta_pos) <= fabs(prev_delta_pos) );
+    CHECK( fabs(delta_pos)  <= fabs(prev_delta_pos)  );
     CHECK( fabs(pos_offset) <= fabs(prev_pos_offset) );
     prev_delta_pos  = delta_pos;
     prev_pos_offset = pos_offset;
@@ -157,7 +157,11 @@ TEST_CASE("Engine_controller")
   SECTION("engine power is temporary increased when stall is detected")
   {
     auto const setpoint = 0.75f;
-    auto stall_sim = [](double t, float pos) { sim().simulate_stall_ = (0.66 < pos && pos < 0.71); };
+    auto stall_sim = [setpoint](double t, float pos) {
+      auto const from = setpoint - engine_full_throttle_at_diff_mm / 2.0;
+      auto const to   = setpoint - servo_position_tolerance * 1.3;
+      sim().simulate_stall_ = (from < pos && pos < to);
+    };
     INFO("setpoint=" << setpoint);
     INFO("servo_position_tolerance=" << servo_position_tolerance);
     REQUIRE( sim_move_to(ec, setpoint, stall_sim) );
