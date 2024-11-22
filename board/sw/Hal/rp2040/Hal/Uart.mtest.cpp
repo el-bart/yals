@@ -22,13 +22,13 @@ int main()
 
   for(auto n=0u; ; ++n)
   {
-    write_line_fmt(uart, "hello, serial #%u!\r\n", n);
+    write_line_fmt(uart, "hello, serial #%u!", n);
 
     auto const oc = uart.rx();
     sleep_ms(500);
     if(not oc)
       continue;
     else
-      write_line_fmt(uart, "got c=%d\r\n", int{*oc});
+      write_line_fmt(uart, "got c=%d", int{*oc});
   }
 }
