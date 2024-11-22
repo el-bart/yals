@@ -40,7 +40,7 @@ constexpr auto engine_min_force = 0.40f;
 constexpr auto control_loop_frequency = 250u; // Hz
 
 // engine's PID controller parameters
-constexpr auto PID_controller_P = 10.0f;
-constexpr auto PID_controller_I = 40.0f;
-constexpr auto PID_controller_D = 0.4f;
+constexpr auto PID_controller_P = 15.0f;
+constexpr auto PID_controller_I = 50.0f;
+constexpr auto PID_controller_D = 0.7f;
 }
