@@ -2,6 +2,7 @@
 #include "Hal/Engine.hpp"
 #include "Hal/Clock.hpp"
 #include "Utils/Config/settings.hpp"
+#include <algorithm>
 #include <cmath>
 
 namespace Utils
