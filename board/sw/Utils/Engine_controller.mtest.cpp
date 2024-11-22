@@ -14,11 +14,24 @@ void ctrl_loop_cycle_pause()
   Hal::sleep( std::chrono::microseconds{ static_cast<uint64_t>(Utils::Config::control_loop_time * 1'000'000) } );
 }
 
-void go_to_position(Utils::Engine_controller& ec, Hal::Position_feedback& pos, float const preset)
+void quit(Hal::Uart& uart, Utils::Engine_controller& ec, Hal::Position_feedback& pos)
+{
+  write_line(uart, ">> quit requested - parking in the middle...");
+  while(true)
+  {
+    auto const p = pos.value();
+    ec.update(0.5, p);
+    ctrl_loop_cycle_pause();
+  }
+}
+
+void go_to_position(Hal::Uart& uart, Utils::Engine_controller& ec, Hal::Position_feedback& pos, float const preset)
 {
   float p;
   do
   {
+    if(auto const c = uart.rx(); c && *c == 'q')
+      quit(uart, ec, pos);
     p = pos.value();
     ec.update(preset, p);
     ctrl_loop_cycle_pause();
@@ -40,24 +53,30 @@ int main()
 
   Utils::purge_rx(uart);
 
-#if 0
-  for(auto n=0u;; ++n)
-#else
-  for(auto n=0u; n<3u; ++n)
-#endif
+  for(auto n=0u; true; ++n)
+  {
+    write_line_fmt(uart, ">> press 'q' to quit");
+    write_line_fmt(uart, ">> press any other key to start the #%u cycle", n);
+    while(true)
+    {
+      auto const c = uart.rx();
+      if(not c)
+        continue;
+      if(*c == 'q')
+        quit(uart, ec, pos);
+      break;
+    }
+
     for(auto preset: {0.2, 0.8})
     {
       write_line_fmt(uart, ">> #%u moving to pos=%f", n, preset);
-      go_to_position(ec, pos, preset);
+      go_to_position(uart, ec, pos, preset);
 
       write_line(uart, ">> short pause between cycles");
       auto const deadline = clock.now() + clock.ticks_per_second();
       while( clock.now() < deadline )
-        go_to_position(ec, pos, preset);
+        go_to_position(uart, ec, pos, preset);
       write_line(uart, "");
     }
-
-  write_line(uart, ">> done! parking in the middle...");
-  while(true)
-    go_to_position(ec, pos, 0.5);
+  }
 }
