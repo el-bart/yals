@@ -5,6 +5,8 @@ namespace Utils::Config
 {
 // max theoretical travel distance of a servo (i.e. potentiometer length)
 constexpr auto servo_traven_len_mm = 100.0f; // mm
+// measured speed of travel of the servo
+constexpr auto servo_travel_seed_mmps = 80.0f / 0.7f; // [mm/s]
 
 // linear potentiometer precision
 constexpr auto potentiometer_precision_percent = 5u; // %

@@ -26,4 +26,7 @@ constexpr auto servo_position_histeresis = servo_position_histeresis_mm / servo_
 
 // frequency represented as a loop time (it's more convenient to use in the code)
 constexpr auto control_loop_time = 1.0f / control_loop_frequency; // 1/f
+
+// time it takes servo to travel full range
+constexpr auto servo_full_path_travel_time_s = servo_traven_len_mm / servo_travel_seed_mmps; // [s]
 }
