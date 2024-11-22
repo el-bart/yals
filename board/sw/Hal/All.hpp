@@ -7,6 +7,7 @@
 #include "Hal/Vcc_feedback.hpp"
 #include "Hal/EEPROM.hpp"
 #include "Hal/Clock.hpp"
+#include "Hal/Watchdog.hpp"
 
 namespace Hal
 {
@@ -21,6 +22,7 @@ struct All
   Vcc_feedback vcc_;
   EEPROM EEPROM_;
   Clock clock_;
+  Watchdog watchdog_; // keep watchdog as the last one!
 };
 
 }

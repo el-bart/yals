@@ -43,4 +43,7 @@ constexpr auto control_loop_frequency = 250u; // Hz
 constexpr auto PID_controller_P = 15.0f;
 constexpr auto PID_controller_I = 50.0f;
 constexpr auto PID_controller_D = 0.7f;
+
+// number of cycles watchdog can skip before rebooting
+constexpr auto watchdog_allow_cycles_skip = 10u;
 }
