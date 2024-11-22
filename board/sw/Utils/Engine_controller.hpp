@@ -6,7 +6,6 @@
 #include <optional>
 #include <algorithm>
 #include <cmath>
-#include <iostream>             
 
 namespace Utils
 {
@@ -72,7 +71,6 @@ private:
     {
       auto const dt_s = (now - last_run_at_) / clock_.ticks_per_second();
       auto const pid = pid_->update(dt_s, preset_position, current_position);
-      std::cerr << "PID=" << pid << " ";               
       force_coef = fabsf(pid);
       dir = pid < 0.0f ? Dir::Left : Dir::Right;
     }
@@ -90,7 +88,6 @@ private:
     }
     // compute final settings for engine
     force_coef = std::clamp(force_coef, engine_min_force, 1.0f);
-    std::cerr << "force_coef=" << force_coef << "\n";               
     auto const force = static_cast<uint32_t>( ceil(force_coef * 65535.0) );
     eng_.set(dir, force);
   }

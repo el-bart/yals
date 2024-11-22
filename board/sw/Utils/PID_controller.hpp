@@ -34,7 +34,6 @@ struct PID_controller final
     // D
     auto const derivative = (error - prev_error_) / dt_s;
     auto const d = PID_controller_D * derivative;
-    std::cerr << "P=" << p << "  I=" << i << "  D=" << d << "\n";                      
 
     prev_error_ = error;
 
