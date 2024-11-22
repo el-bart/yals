@@ -20,12 +20,12 @@ struct PID_controller final
   // returns -1..+1 value reprenseting:
   // * 0..1 of engine throttle
   // * direction with a sign (negative is left, positive is right)
-  float update(double const /*dt_s*/, double const preset_position, double const current_position)
+  float update(double const in_dt_s, double const preset_position, double const current_position)
   {
     auto const error = preset_position - current_position;
 
     using namespace ::Utils::Config;
-    double const dt_s = control_loop_time_s;            
+    auto const dt_s = std::max(control_loop_time_s / 10.0, in_dt_s);   // in_dt_s may be ~0 in 1st iteration after system start
     // P
     auto const p = PID_controller_P * error;
     // I
