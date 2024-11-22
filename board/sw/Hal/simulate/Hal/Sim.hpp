@@ -35,6 +35,7 @@ struct Sim
   float LED_brightness_{1.0};   // 0..1 of power
   bool simulate_stall_{false};  // when enabled, position does not change
   uint64_t last_watchdog_reset_time_{0};    // current_time_ copy of last call to Watchdog::reset()
+  bool watchdog_caused_reboot_{false};      // simulate reboot caused by watchdog
 
   // UART I/O
   std::deque<uint8_t> rx_;      // data sent via dev's UART

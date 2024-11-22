@@ -151,7 +151,7 @@ private:
   void tx_watchdog_error()
   {
     Io::Line line;
-    for(auto c: "-ERROR WATCHDOG CAUSED REBOOT!!")
+    for(auto c: "-ERR: WATCHDOG REBOOT!")
       if(c!=0)
         line.add_byte(c);
     Io::add_checksum(line);

@@ -379,6 +379,25 @@ TEST_CASE("Controller")
       ctrl.update_and_apply();
       CHECK( prev_reset < sim().last_watchdog_reset_time_ );
     }
+
+    SECTION("Controller handling reboot by watchdog case")
+    {
+      Reader reader;
+      SECTION("does not print anything on normal boot")
+      {
+        Controller c;
+        CHECK( sim().tx_.size() == 0u );
+        CHECK( reader.read_reply() == "" );
+      }
+
+      SECTION("prints error when reboot was caused by watchdog")
+      {
+        sim().watchdog_caused_reboot_ = true;
+        Controller c;
+        CHECK( sim().tx_.size() != 0u );
+        CHECK( reader.read_reply() == "-ERR: WATCHDOG REBOOT!" );
+      }
+    }
   }
 }
 
