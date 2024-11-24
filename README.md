@@ -1,5 +1,7 @@
 # YALF: Yet Another Linear Servo
 
+![YALS 1st prototype](doc/yals.jpg)
+
 project to build a linear servo for RC models.
 
 
