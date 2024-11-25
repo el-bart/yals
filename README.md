@@ -1,4 +1,4 @@
-# YALF: Yet Another Linear Servo
+# YALS: Yet Another Linear Servo
 
 ![YALS 1st prototype](doc/yals.jpg)
 
