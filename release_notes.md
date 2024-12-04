@@ -1,7 +1,7 @@
 # release notes
 
 ## dev
-
+* added screw holes to mount servo to the external element
 
 ## v0.3
 * saves current when servo is at the destination
