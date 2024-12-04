@@ -45,6 +45,14 @@ bearing_size = [3, 7, 3]; // [ internal_d, external_d, h ]
 // combined, utility metrics
 base_to_axis_h = servo_body_bottom_h + lin_pot_size.z;
 
+// servo body: mount tower dimensions
+servo_body_mount_tower_hole_dist_to_wall = 3;
+servo_body_mount_tower_size = ( servo_body_mount_screw_d + 2 * servo_body_mount_tower_hole_dist_to_wall ) * [1,1,0] +
+                              [ 0,0, base_to_axis_h +
+                                engine_box_size.y/2 +
+                                servo_body_engine_mount_spacing_r +
+                                servo_body_wall ];
+
 // carriage
 carriage_magnet_d = 5;
 carriage_magnet_h = 5;

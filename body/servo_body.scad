@@ -65,8 +65,59 @@ module servo_body_carriage_pos()
 }
 
 
+module servo_body_mount_tower_center_pos()
+{
+  w = servo_body_mount_tower_size.x;
+
+  // around engine
+  sbw = servo_body_wall;
+  screw_mount_space = sbw + servo_body_threaded_insert_slot_d + sbw;
+  engine_base_plate_y = engine_size_total_len + universal_joint_center_spacing + sbw;
+  for(dx=[-1, +1])
+    translate([ dx*(engine_box_size.x + 2*screw_mount_space)/2,
+                -engine_base_plate_y + sbw,
+                0 ])
+      translate([dx*w/2, w/2, 0])
+        children();
+
+  // end of cariage
+  for(dx=[-1, +1])
+    translate([dx*w/2, lin_pot_size.y, 0])
+      translate([0, w/2, 0])
+        rotate([0, 0, 90])
+          children();
+}
+
+
 module servo_body(mocks=true)
 {
+  module mount_tower()
+  {
+    d2w = servo_body_mount_tower_hole_dist_to_wall;
+    size = servo_body_mount_tower_size;
+    w = size.x;
+    assert(size.x == size.y);
+    h = size.z;
+
+    translate(-w/2*[1,1,0])
+      difference()
+      {
+        $fn=fn(30);
+        ssd = servo_body_mount_screw_d + 0.5; // screw slot diameter
+
+        cube(size);
+        // top-down screw
+        translate([w/2, w/2, -eps])
+          cylinder(d=ssd, h=h+2*eps);
+        // front-back screws (top and bottom)
+        translate([0, -eps, 0])
+          rotate([-90, 0, 0])
+            for(dy=[ssd/2 + d2w, h - ssd/2 - d2w])
+              translate([w/2, -dy, 0])
+                cylinder(d=ssd, h=w+2*eps);
+      }
+  }
+
   module main_support()
   {
     lps = lin_pot_size;
@@ -236,6 +287,9 @@ module servo_body(mocks=true)
     lin_pot_screw_mounts();
     bearing_support();
     engine_support();
+    // mount holes
+    servo_body_mount_tower_center_pos()
+      mount_tower();
   }
 
   main_support();
