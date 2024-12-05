@@ -15,6 +15,31 @@ project to build a linear servo for RC models.
 * possible magnetic coupling with element moved
 
 
+## building
+
+TL;DR just run `make` from project's root directory.
+
+toolchain has been dockerized.
+to make usage more convenient, there's a top-level `Makefile` to run all the elements.
+it automatically keeps dependsncies in place.
+
+generated stuff:
+* 3D models for printing:
+  * all in: `body/build/voron_24_revo/petg/strength/*.gcode`
+  * note that there can be >1 carriage to choose from
+* electronics (HW):
+  * gerber files for PCB: `board/hw/build/gerber.zip`
+  * PCB assembly: `board/hw/build/graphics/`
+  * BOM: `board/hw/build/bom.csv`
+* software (SW):
+  * to flash use `./rp2020_sdk rp2040_flash <name_of_binary.elf>` from `board/sw` directory
+  * binaries:
+    * controller to flash (production): `board/sw/build/rp2040/servo_ctrl.elf`
+    * manual tests (for validation of HW assembly):
+      * `board/sw/build/rp2040/Hal/rp2040/Hal_*.mtest.elf`
+      * `board/sw/build/rp2040/Utils/*.mtest.elf`
+
+
 ## assembly
 
 ### BOM
