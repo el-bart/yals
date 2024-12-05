@@ -4,7 +4,7 @@ module pcb()
     rotate([0, 0, -90])
       rotate([90, 0, 0])
         translate([-90.8, 94.6, -1.35])
-          import("build/pcb.stl");
+          import("../build/pcb.stl");
 }
 
 pcb();

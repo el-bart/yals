@@ -10,7 +10,7 @@ endif
 all: body sw hw
 
 .PHONY: body
-body: Makefile body/mock/pcb.stl
+body: Makefile body/build/pcb.stl
 	@echo "BUILD body"
 	$(SILENT)cd body/ && ./make -j$(shell nproc)
 
