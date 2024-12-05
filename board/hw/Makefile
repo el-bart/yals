@@ -102,4 +102,4 @@ $(GRAPHICS_DIR)/pcb.done: $(PCB)
 
 .PHONY: clean
 clean:
-	rm -rfv "$(OUT_DIR)
+	rm -rfv "$(OUT_DIR)"
