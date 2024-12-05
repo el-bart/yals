@@ -10,7 +10,7 @@ case $# in
     exit 2
 esac
 
-clear
+[ -n "${SERVO_CTRL_NO_CLEAR:-}" ] || clear
 
 (
   set -x
