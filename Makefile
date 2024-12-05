@@ -8,6 +8,7 @@ endif
 
 .PHONY: all
 all: body sw hw
+	@echo "YALS build completed"
 
 .PHONY: body
 body: Makefile body/build/pcb.stl
