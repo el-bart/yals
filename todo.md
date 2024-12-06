@@ -13,6 +13,8 @@
 * add 3.3V in next to SWD (for ease of programming w/o external power supply)
 * consider switching to hand-soldering pads for elements
 * EEPROM's !WC signal must be controllable via pin, to make sure no writes will happen by applying some EM-noise
+* add polymer fuse for engine
+* add polymer fuse for µC
 
 ## software
 * native client library to use servo with demo using serial port
