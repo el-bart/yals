@@ -12,9 +12,7 @@
 * pull-up `picorun` to Vcc
 * add 3.3V in next to SWD (for ease of programming w/o external power supply)
 * consider switching to hand-soldering pads for elements
-* EEPROM's !WC signal must be controllable via pin, to make sure no writes will happen by applying some EM-noise
-* add polymer fuse for engine
-* add polymer fuse for µC
+* add polymer fuse for power line
 
 ## software
 * native client library to use servo with demo using serial port
@@ -24,5 +22,3 @@
   * make PID default for full range of travel
 
 ## bugs:
-* EEPROM I/O for some reason does not seem to be working (looks as if M24C02 would hang when attempting 2nd I/O write)
-  * the problem is that ~WC signal cannot be connected directly to GND - it must be left floating to work...
