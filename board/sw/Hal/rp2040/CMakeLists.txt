@@ -19,6 +19,4 @@ add_mtest(Watchdog)
 add_mtest(Vcc_feedback)
 
 # some more low-level EEPROM mtests:
-add_mtest(EEPROM_impl)
 add_mtest(I2C_bus_scan)     # rework of a 3rd-party code
-add_mtest(I2C_direct_io)    # AI-generated with some fixes and adjustments

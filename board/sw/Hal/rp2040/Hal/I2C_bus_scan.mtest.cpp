@@ -43,15 +43,6 @@ int main() {
     // Enable UART so we can print status output
     stdio_init_all();
 
-#if 0
-    i2c_init(i2c_dev, 100 * 1000);
-    gpio_set_function(pin_i2c_sda, GPIO_FUNC_I2C);
-    gpio_set_function(pin_i2c_scl, GPIO_FUNC_I2C);
-    gpio_pull_up(pin_i2c_sda);
-    gpio_pull_up(pin_i2c_scl);
-    // Make the I2C pins available to picotool
-    bi_decl(bi_2pins_with_func(pin_i2c_sda, pin_i2c_scl, GPIO_FUNC_I2C));
-#else
     gpio_init(pin_i2c_sda);
     gpio_init(pin_i2c_scl);
     gpio_pull_up(pin_i2c_sda);
@@ -59,7 +50,6 @@ int main() {
     gpio_set_function(pin_i2c_sda, GPIO_FUNC_I2C);
     gpio_set_function(pin_i2c_scl, GPIO_FUNC_I2C);
     i2c_init(i2c_dev, i2c_speed_Hz);
-#endif
 
     printf("\nI2C Bus Scan\n");
     printf("   0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F\n");
