@@ -56,10 +56,10 @@ struct EEPROM
 private:
   std::optional<uint8_t> read_byte(uint8_t const addr) const
   {
-    if( i2c_write_timeout_us(i2c_dev, i2c_EEPROM_addr_write, &addr, 1, true,  i2c_byte_timeout_us) != 1 )
+    if( i2c_write_timeout_us(i2c_dev, i2c_EEPROM_addr, &addr, 1, true,  i2c_byte_timeout_us) != 1 )
       return {};
     uint8_t out{};
-    if( i2c_read_timeout_us (i2c_dev, i2c_EEPROM_addr_read,  &out,  1, false, i2c_byte_timeout_us) != 1 )
+    if( i2c_read_timeout_us (i2c_dev, i2c_EEPROM_addr,  &out,  1, false, i2c_byte_timeout_us) != 1 )
       return {};
     return out;
   }
@@ -67,24 +67,9 @@ private:
   bool write_byte(uint8_t const addr, uint8_t const byte)
   {
     uint8_t const data[] = { addr, byte };
-    auto const r = i2c_write_timeout_us(i2c_dev, i2c_EEPROM_addr_write, data, sizeof(data), false, i2c_byte_timeout_us);
+    auto const r = i2c_write_timeout_us(i2c_dev, i2c_EEPROM_addr, data, sizeof(data), false, i2c_byte_timeout_us);
     if(r != sizeof(data))
-    {
-#if 0
-      // TODO: why it fails on 2nd write in a row, effectively glitching the chip?!
-      // more verbose output for debugging...
-      // r==-1 -> timeout
-      // r==-2 -> "generic" (address not ACKed)
-      char buf[128];
-      auto const len = snprintf(buf, sizeof(buf), "WR 0x%02X @ *%d -> res=%d\r\n", byte, addr, r);
-      for(auto i=0; i<len; ++i)
-      {
-        while( not uart_is_writable(uart0) ) { }
-        uart_putc(uart0, buf[i]);
-      }
-#endif
       return false;
-    }
     sleep_ms(5);    // M24C02 per datasheet needs max 5ms to do a write
     return true;
   }
@@ -96,20 +81,8 @@ private:
   static constexpr auto i2c_speed_Hz = 100'000;
   static constexpr auto i2c_byte_timeout_us = 50'000;
 
-#if 1
-  // NOTE: these addresses do differ compared to the datasheet, yet these do work, while datasheet ones do not. :shrug:
-  static constexpr uint8_t i2c_EEPROM_addr_base  = 0b0101'0000;
-  static constexpr uint8_t i2c_EEPROM_addr_read  = i2c_EEPROM_addr_base | 0b1000'0000;
-  static constexpr uint8_t i2c_EEPROM_addr_write = i2c_EEPROM_addr_base & 0b0111'1111;
-  // values from I2C scanner
-  static_assert( i2c_EEPROM_addr_read == 0xd0 );
-  static_assert( i2c_EEPROM_addr_write== 0x50 );
-#else
-  // datasheet values
-  static constexpr uint8_t i2c_EEPROM_addr_base  = 0b1010'0000;
-  static constexpr uint8_t i2c_EEPROM_addr_read  = i2c_EEPROM_addr_base | 0b0000'0001;
-  static constexpr uint8_t i2c_EEPROM_addr_write = i2c_EEPROM_addr_base & 0b1111'1110;
-#endif
+  // note that this address does not match what's in the datasheet, yet it works... :shrug:
+  static constexpr uint8_t i2c_EEPROM_addr = 0b0101'0000;
 };
 
 }
