@@ -10,6 +10,9 @@ namespace Hal::Impl
 
 struct EEPROM
 {
+  static constexpr unsigned delay_to_write_data_ms = 5; // per datasheet M24C02 needs max 5ms to do a 1B write
+  using value_type = uint32_t;
+
   EEPROM()
   {
     gpio_init(pin_i2c_sda);
@@ -26,11 +29,12 @@ struct EEPROM
   EEPROM(EEPROM &&) = delete;
   EEPROM& operator=(EEPROM &&) = delete;
 
-  bool write(size_t const slot, uint32_t value)
+  bool write(size_t const slot, value_type value)
   {
-    auto const base = slot * sizeof(uint32_t);
+    auto const base = slot * sizeof(value_type);
     for(auto i=0u; i<sizeof(value); ++i)
     {
+      static_assert( sizeof(value) == 4u, "valut_type changed - update the mask below or make code more generic here" );
       auto const b = ( value & 0xFF000000 ) >> 24;
       if( not write_byte(base + i, b) )
         return false;
@@ -39,16 +43,16 @@ struct EEPROM
     return true;
   }
 
-  std::optional<uint32_t> read(size_t const slot) const
+  std::optional<value_type> read(size_t const slot) const
   {
-    uint32_t out{};
-    auto const base = slot * sizeof(uint32_t);
+    value_type out{};
+    auto const base = slot * sizeof(value_type);
     for(auto i=0u; i<sizeof(out); ++i)
     {
       auto const b = read_byte(base + i);
       if(not b)
         return {};
-      out = (out << 8u) | uint32_t{*b};
+      out = (out << 8u) | value_type{*b};
     }
     return out;
   }
@@ -70,7 +74,7 @@ private:
     auto const r = i2c_write_timeout_us(i2c_dev, i2c_EEPROM_addr, data, sizeof(data), false, i2c_byte_timeout_us);
     if(r != sizeof(data))
       return false;
-    sleep_ms(5);    // M24C02 per datasheet needs max 5ms to do a write
+    sleep_ms(delay_to_write_data_ms);
     return true;
   }
 
