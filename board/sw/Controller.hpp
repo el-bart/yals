@@ -86,17 +86,21 @@ private:
 
   bool init_EEPROM()
   {
+    reset_watchdog();
     auto const mc = ctx_.hal_.EEPROM_.marker_check();
     if(not mc) // EEPROM I/O error...
       return false;
 
-    reset_watchdog();
     if(not *mc)
     {
       ctx_.hal_.EEPROM_.min_position(ctx_.setpoints_.min_pos_);
+      reset_watchdog();
       ctx_.hal_.EEPROM_.max_position(ctx_.setpoints_.max_pos_);
+      reset_watchdog();
       ctx_.hal_.EEPROM_.LED_brightness(ctx_.setpoints_.LED_brightness_);
+      reset_watchdog();
       ctx_.hal_.EEPROM_.marker_write(); // keep it as the last one
+      reset_watchdog();
     }
     else
     {
