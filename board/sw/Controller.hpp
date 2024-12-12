@@ -123,28 +123,42 @@ private:
     reset_watchdog();
   }
 
+  auto out_of_range(float const value, float const min, float const max) const
+  {
+    return value < min || max < value;
+  }
+
   bool sanitize_setpoints()
   {
     // ekhm... these should never happen, but who'd stop a hacker with a soldering iron... :P
     auto changes_needed = false;
+    auto const pos_abs_min = Utils::Config::servo_absolute_min;
+    auto const pos_abs_max = Utils::Config::servo_absolute_max;
 
-    if( ctx_.setpoints_.min_pos_ < Utils::Config::servo_absolute_min || Utils::Config::servo_absolute_max < ctx_.setpoints_.min_pos_ )
+    if( out_of_range(ctx_.setpoints_.min_pos_, pos_abs_min, pos_abs_max) )
     {
-      ctx_.setpoints_.min_pos_ = Utils::Config::servo_absolute_min;
+      ctx_.setpoints_.min_pos_ = pos_abs_min;
       changes_needed = true;
     }
 
-    if( ctx_.setpoints_.max_pos_ < Utils::Config::servo_absolute_min || Utils::Config::servo_absolute_max < ctx_.setpoints_.max_pos_ )
+    if( out_of_range(ctx_.setpoints_.max_pos_, pos_abs_min, pos_abs_max) )
     {
-      ctx_.setpoints_.max_pos_ = Utils::Config::servo_absolute_max;
+      ctx_.setpoints_.max_pos_ = pos_abs_max;
       changes_needed = true;
     }
 
     if(ctx_.setpoints_.max_pos_ < ctx_.setpoints_.min_pos_)
     {
-      ctx_.setpoints_.min_pos_ = Utils::Config::servo_absolute_min;
-      ctx_.setpoints_.max_pos_ = Utils::Config::servo_absolute_max;
+      ctx_.setpoints_.min_pos_ = pos_abs_min;
+      ctx_.setpoints_.max_pos_ = pos_abs_max;
       changes_needed = true;
+    }
+
+    if( out_of_range(ctx_.setpoints_.LED_brightness_, 0.0f, 1.0f) )
+    {
+      // TODO: re-enabled once tests are re-enabled and confirmed to fail
+      //ctx_.setpoints_.LED_brightness_ = Utils::Config::default_LED_brightness;
+      //changes_needed = true;
     }
 
     // make sure setpoint for servo is within min..max range
