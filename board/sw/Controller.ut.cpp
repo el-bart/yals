@@ -203,7 +203,6 @@ TEST_CASE("Controller's c-tor")
       CHECK( sim().EEPROM_LED_brightness() == Approx(Utils::Config::default_LED_brightness).margin(0.01) );
     }
 
-#if 0   // TODO re-enable after EEPROM rework
     SECTION("if LED brightness < 0.0")
     {
       sim().EEPROM_LED_brightness(-0.1);
@@ -246,11 +245,23 @@ TEST_CASE("Controller's c-tor")
     {
       sim().min_position(0.4);
       sim().max_position(0.6);
-      sim().LED_brightness(0.5);
+      sim().EEPROM_LED_brightness(0.5);
       sim().position_ = 0.55;
-      // TODO
+      Controller ctrl;
+      // sanity checks
+      CHECK( ctrl.context().setpoints_.min_pos_  <= ctrl.context().setpoints_.max_pos_  );
+      CHECK( ctrl.context().setpoints_.min_pos_  <= ctrl.context().setpoints_.position_ );
+      CHECK( ctrl.context().setpoints_.position_ <= ctrl.context().setpoints_.max_pos_  );
+      // setpoints
+      CHECK( ctrl.context().setpoints_.min_pos_        == Approx(0.4) );
+      CHECK( ctrl.context().setpoints_.max_pos_        == Approx(0.6) );
+      CHECK( ctrl.context().setpoints_.LED_brightness_ == Approx(0.5).margin(0.01) );
+      CHECK( ctrl.context().setpoints_.position_       == Approx(0.55) );
+      // EEPROM
+      CHECK( sim().min_position()          == Approx(0.4) );
+      CHECK( sim().max_position()          == Approx(0.6) );
+      CHECK( sim().EEPROM_LED_brightness() == Approx(0.5).margin(0.01) );
     }
-#endif  // TODO         
   }
 
   SECTION("init clears all jung from RX buffer")

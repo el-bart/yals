@@ -156,9 +156,8 @@ private:
 
     if( out_of_range(ctx_.setpoints_.LED_brightness_, 0.0f, 1.0f) )
     {
-      // TODO: re-enabled once tests are re-enabled and confirmed to fail
-      //ctx_.setpoints_.LED_brightness_ = Utils::Config::default_LED_brightness;
-      //changes_needed = true;
+      ctx_.setpoints_.LED_brightness_ = Utils::Config::default_LED_brightness;
+      changes_needed = true;
     }
 
     // make sure setpoint for servo is within min..max range
