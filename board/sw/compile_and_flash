@@ -21,7 +21,7 @@ esac
     cmake -DYALS_HAL="simulate" -DCMAKE_BUILD_TYPE=Debug -G Ninja -S . -B "$build"
   fi
   time ninja -C "$build"
-  time ctest --test-dir "$build" || ./build/simulate/uts
+  time ctest --test-dir "$build" --output-on-failure
 )
 
 (

@@ -39,7 +39,7 @@ if ("${YALS_HAL}" STREQUAL "simulate")
   )
   target_link_libraries(uts hal)
   target_link_libraries(uts servo_lib)
-  add_test(NAME uts COMMAND "${CMAKE_CURRENT_BINARY_DIR}/uts")
+  add_test(NAME uts COMMAND "${CMAKE_CURRENT_BINARY_DIR}/uts" --use-colour=yes)
 endif()
 
 add_binary(servo_ctrl servo_ctrl.cpp)
