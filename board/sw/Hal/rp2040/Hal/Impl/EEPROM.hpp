@@ -29,32 +29,26 @@ struct EEPROM
   EEPROM(EEPROM &&) = delete;
   EEPROM& operator=(EEPROM &&) = delete;
 
-  bool write(size_t const slot, value_type value)
+  bool write(size_t const address, void const* value, size_t const size)
   {
-    auto const base = slot * sizeof(value_type);
-    for(auto i=0u; i<sizeof(value); ++i)
-    {
-      static_assert( sizeof(value) == 4u, "valut_type changed - update the mask below or make code more generic here" );
-      auto const b = ( value & 0xFF000000 ) >> 24;
-      if( not write_byte(base + i, b) )
+    auto bytes = static_cast<uint8_t const*>(value);
+    for(auto i=0u; i<size; ++i)
+      if( not write_byte(address + i, bytes[i]) )
         return false;
-      value = value << 8;
-    }
     return true;
   }
 
-  std::optional<value_type> read(size_t const slot) const
+  bool read(size_t const address, void* value, size_t const size) const
   {
-    value_type out{};
-    auto const base = slot * sizeof(value_type);
-    for(auto i=0u; i<sizeof(out); ++i)
+    auto bytes = static_cast<uint8_t*>(value);
+    for(auto i=0u; i<size; ++i)
     {
-      auto const b = read_byte(base + i);
+      auto const b = read_byte(address + i);
       if(not b)
-        return {};
-      out = (out << 8u) | value_type{*b};
+        return false;
+      bytes[i] = *b;
     }
-    return out;
+    return true;
   }
 
 private:
