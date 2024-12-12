@@ -123,18 +123,21 @@ private:
     reset_watchdog();
   }
 
-  bool sanitize(float& value, float const min_value, float const max_value) const
-  {
-    auto const prev = value;
-    value = std::clamp(value, min_value, max_value);
-    auto const changes_needed = (prev != value);
-    return changes_needed;
-  }
-
   bool sanitize_setpoints()
   {
     auto changes_needed = false;
-    changes_needed |= sanitize(ctx_.setpoints_.min_pos_, Utils::Config::servo_absolute_min, Utils::Config::servo_absolute_max);
+
+    if( ctx_.setpoints_.min_pos_ < Utils::Config::servo_absolute_min || Utils::Config::servo_absolute_max < ctx_.setpoints_.min_pos_ )
+    {
+      ctx_.setpoints_.min_pos_ = Utils::Config::servo_absolute_min;
+      changes_needed = true;
+    }
+
+    if( ctx_.setpoints_.max_pos_ < Utils::Config::servo_absolute_min || Utils::Config::servo_absolute_max < ctx_.setpoints_.max_pos_ )
+    {
+      ctx_.setpoints_.max_pos_ = Utils::Config::servo_absolute_max;
+      changes_needed = true;
+    }
 
     // ekhm... that should never happen, but who'd stop a hacker with a soldering iron... :P
     if(ctx_.setpoints_.max_pos_ < ctx_.setpoints_.min_pos_)
