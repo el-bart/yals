@@ -125,6 +125,7 @@ private:
 
   bool sanitize_setpoints()
   {
+    // ekhm... these should never happen, but who'd stop a hacker with a soldering iron... :P
     auto changes_needed = false;
 
     if( ctx_.setpoints_.min_pos_ < Utils::Config::servo_absolute_min || Utils::Config::servo_absolute_max < ctx_.setpoints_.min_pos_ )
@@ -139,13 +140,11 @@ private:
       changes_needed = true;
     }
 
-    // ekhm... that should never happen, but who'd stop a hacker with a soldering iron... :P
     if(ctx_.setpoints_.max_pos_ < ctx_.setpoints_.min_pos_)
     {
-      auto const p = std::clamp(ctx_.setpoints_.min_pos_, 0.0f, 1.0f);
-      ctx_.setpoints_.max_pos_ = p;
-      ctx_.setpoints_.min_pos_ = p;
-      //changes_needed = true; TODO!
+      ctx_.setpoints_.min_pos_ = Utils::Config::servo_absolute_min;
+      ctx_.setpoints_.max_pos_ = Utils::Config::servo_absolute_max;
+      changes_needed = true;
     }
 
     // make sure setpoint for servo is within min..max range

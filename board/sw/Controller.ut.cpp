@@ -185,7 +185,20 @@ TEST_CASE("Controller's c-tor")
     {
       sim().min_position_ = 0.7;
       sim().max_position_ = 0.4;
-      // TODO
+      Controller ctrl;
+      // sanity checks
+      CHECK( ctrl.context().setpoints_.min_pos_  <= ctrl.context().setpoints_.max_pos_  );
+      CHECK( ctrl.context().setpoints_.min_pos_  <= ctrl.context().setpoints_.position_ );
+      CHECK( ctrl.context().setpoints_.position_ <= ctrl.context().setpoints_.max_pos_  );
+      // setpoints
+      CHECK( ctrl.context().setpoints_.min_pos_        == Approx(Utils::Config::servo_absolute_min) );
+      CHECK( ctrl.context().setpoints_.max_pos_        == Approx(Utils::Config::servo_absolute_max) );
+      CHECK( ctrl.context().setpoints_.LED_brightness_ == Approx(Utils::Config::default_LED_brightness).margin(0.01) );
+      CHECK( ctrl.context().setpoints_.position_       == Approx(0.5) );
+      // EEPROM
+      CHECK( sim().min_position_          == Approx(Utils::Config::servo_absolute_min) );
+      CHECK( sim().max_position_          == Approx(Utils::Config::servo_absolute_max) );
+      CHECK( sim().EEPROM_LED_brightness_ == Approx(Utils::Config::default_LED_brightness).margin(0.01) );
     }
 
     SECTION("if LED brightness < 0.0")
