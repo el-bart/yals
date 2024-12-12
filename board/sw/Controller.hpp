@@ -91,43 +91,70 @@ private:
     if(not mc) // EEPROM I/O error...
       return false;
 
-    if(not *mc)
-    {
-      ctx_.hal_.EEPROM_.min_position(ctx_.setpoints_.min_pos_);
-      reset_watchdog();
-      ctx_.hal_.EEPROM_.max_position(ctx_.setpoints_.max_pos_);
-      reset_watchdog();
-      ctx_.hal_.EEPROM_.LED_brightness(ctx_.setpoints_.LED_brightness_);
-      reset_watchdog();
-      ctx_.hal_.EEPROM_.marker_write(); // keep it as the last one
-      reset_watchdog();
-    }
+    if(*mc)
+      read_from_EEPROM();
     else
-    {
-      if(auto const p = ctx_.hal_.EEPROM_.min_position(); p)
-        ctx_.setpoints_.min_pos_ = *p;
-      if(auto const p = ctx_.hal_.EEPROM_.max_position(); p)
-        ctx_.setpoints_.max_pos_ = *p;
-      if(auto const b = ctx_.hal_.EEPROM_.LED_brightness(); b)
-        ctx_.setpoints_.LED_brightness_ = *b;
-    }
+      persist_in_EEPROM();
     reset_watchdog();
 
     return true;
   }
 
-  void init_setpoints()
+  void read_from_EEPROM()
   {
+    if(auto const p = ctx_.hal_.EEPROM_.min_position(); p)
+      ctx_.setpoints_.min_pos_ = *p;
+    if(auto const p = ctx_.hal_.EEPROM_.max_position(); p)
+      ctx_.setpoints_.max_pos_ = *p;
+    if(auto const b = ctx_.hal_.EEPROM_.LED_brightness(); b)
+      ctx_.setpoints_.LED_brightness_ = *b;
+  }
+
+  void persist_in_EEPROM()
+  {
+    reset_watchdog();
+    ctx_.hal_.EEPROM_.min_position(ctx_.setpoints_.min_pos_);
+    reset_watchdog();
+    ctx_.hal_.EEPROM_.max_position(ctx_.setpoints_.max_pos_);
+    reset_watchdog();
+    ctx_.hal_.EEPROM_.LED_brightness(ctx_.setpoints_.LED_brightness_);
+    reset_watchdog();
+    ctx_.hal_.EEPROM_.marker_write(); // keep it as the last one
+    reset_watchdog();
+  }
+
+  bool sanitize(float& value, float const min_value, float const max_value) const
+  {
+    auto const prev = value;
+    value = std::clamp(value, min_value, max_value);
+    auto const changes_needed = (prev != value);
+    return changes_needed;
+  }
+
+  bool sanitize_setpoints()
+  {
+    auto changes_needed = false;
+    changes_needed |= sanitize(ctx_.setpoints_.min_pos_, Utils::Config::servo_absolute_min, Utils::Config::servo_absolute_max);
+
     // ekhm... that should never happen, but who'd stop a hacker with a soldering iron... :P
     if(ctx_.setpoints_.max_pos_ < ctx_.setpoints_.min_pos_)
     {
       auto const p = std::clamp(ctx_.setpoints_.min_pos_, 0.0f, 1.0f);
       ctx_.setpoints_.max_pos_ = p;
       ctx_.setpoints_.min_pos_ = p;
+      //changes_needed = true; TODO!
     }
 
     // make sure setpoint for servo is within min..max range
     ctx_.setpoints_.position_ = std::clamp(ctx_.hal_.pos_.value(), ctx_.setpoints_.min_pos_, ctx_.setpoints_.max_pos_);
+
+    return changes_needed;
+  }
+
+  void init_setpoints()
+  {
+    if( sanitize_setpoints() )  // were changes needed?
+      persist_in_EEPROM();
   }
 
   void init_LED()

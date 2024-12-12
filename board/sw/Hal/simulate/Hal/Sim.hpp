@@ -31,7 +31,7 @@ struct Sim
   int32_t engine_force_{0};     // -/+ is dir, abs value is a force (16-bit)
   float amps_{0};               // engine current [A]
   float vcc_{12.1};             // Vcc [V]
-  float position_{0};           // 0..1 of scale
+  float position_{0.5};         // 0..1 of scale
   float LED_brightness_{1.0};   // 0..1 of power
   bool simulate_stall_{false};  // when enabled, position does not change
   uint64_t last_watchdog_reset_time_{0};    // current_time_ copy of last call to Watchdog::reset()

@@ -97,6 +97,81 @@ TEST_CASE("Controller's c-tor")
     CHECK( ctrl.context().setpoints_.position_ == Approx( sim().max_position_ ) );
   }
 
+  SECTION("on start, sanitize EEPROM values")
+  {
+    sim().min_position_ = Utils::Config::servo_absolute_min;
+    sim().max_position_ = Utils::Config::servo_absolute_max;
+    sim().EEPROM_LED_brightness_ = Utils::Config::default_LED_brightness;
+    sim().marker_ = 0x42;
+    sim().position_ = 0.5;
+
+    SECTION("if min < 0.0")
+    {
+      sim().min_position_ = -0.1;
+      Controller ctrl;
+      // sanity checks
+      CHECK( ctrl.context().setpoints_.min_pos_  <= ctrl.context().setpoints_.max_pos_  );
+      CHECK( ctrl.context().setpoints_.min_pos_  <= ctrl.context().setpoints_.position_ );
+      CHECK( ctrl.context().setpoints_.position_ <= ctrl.context().setpoints_.max_pos_  );
+      // setpoints
+      CHECK( ctrl.context().setpoints_.min_pos_        == Approx(Utils::Config::servo_absolute_min) );
+      CHECK( ctrl.context().setpoints_.max_pos_        == Approx(Utils::Config::servo_absolute_max) );
+      CHECK( ctrl.context().setpoints_.LED_brightness_ == Approx(Utils::Config::default_LED_brightness).margin(0.01) );
+      CHECK( ctrl.context().setpoints_.position_       == Approx(0.5) );
+      // EEPROM
+      CHECK( sim().min_position_          == Approx(Utils::Config::servo_absolute_min) );
+      CHECK( sim().max_position_          == Approx(Utils::Config::servo_absolute_max) );
+      CHECK( sim().EEPROM_LED_brightness_ == Approx(Utils::Config::default_LED_brightness).margin(0.01) );
+    }
+
+    SECTION("if min > 1.0")
+    {
+      sim().min_position_ = 1.1;
+      FAIL("TODO");     
+      // TODO
+    }
+
+    SECTION("if max < 0.0")
+    {
+      sim().max_position_ = -0.1;
+      // TODO
+    }
+
+    SECTION("if max > 1.0")
+    {
+      sim().max_position_ = 1.1;
+      // TODO
+    }
+
+    SECTION("if max > min, but both within the range")
+    {
+      sim().min_position_ = 0.7;
+      sim().max_position_ = 0.4;
+      // TODO
+    }
+
+    SECTION("if LED brightness < 0.0")
+    {
+      sim().LED_brightness_ = -0.1;
+      // TODO
+    }
+
+    SECTION("if LED brightness > 1.0")
+    {
+      sim().LED_brightness_ = 1.1;
+      // TODO
+    }
+
+    SECTION("nothing is changed, if all values are withing a range")
+    {
+      sim().min_position_ = 0.4;
+      sim().max_position_ = 0.6;
+      sim().LED_brightness_ = 0.5;
+      sim().position_ = 0.55;
+      // TODO
+    }
+  }
+
   SECTION("init clears all jung from RX buffer")
   {
     for(auto i=0; i<13; ++i)
