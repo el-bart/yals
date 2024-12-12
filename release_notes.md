@@ -4,6 +4,7 @@
 * added screw holes to mount servo to the external element
 * persisting values in EEPROM is now operational
 * added full sanitization of the EEPROM-read values
+* EEPROM writes simplified
 
 ## v0.3
 * saves current when servo is at the destination
