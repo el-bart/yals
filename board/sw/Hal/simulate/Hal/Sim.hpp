@@ -1,17 +1,24 @@
 #pragma once
 #include <initializer_list>
 #include <deque>
+#include <vector>
 #include <algorithm>
 #include <cstdlib>
 #include <cinttypes>
 #include <cmath>
 #include "Utils/Config/settings.hpp"
+#include "Hal/detail/EEPROM.hpp"
 
 namespace Hal
 {
 
 struct Sim
 {
+  Sim()
+  {
+    EEPROM_.resize(256, 0xFF);
+  }
+
   // this updated world simulation state, based on current presets, each time it's set
   void update(float dt_sec)
   {
@@ -41,11 +48,21 @@ struct Sim
   std::deque<uint8_t> rx_;      // data sent via dev's UART
   std::deque<uint8_t> tx_;      // data received via dev's UART
 
-  // EEPROM:
-  uint32_t marker_{0x42};       // indicator of write location (0x42 == set)
-  float min_position_{0.0};     // 0..1 of scale
-  float max_position_{1.0};     // 0..1 of scale
-  float EEPROM_LED_brightness_{1.0}; // 0..1 of power
+  // EEPROM
+  std::vector<uint8_t> EEPROM_;
+  // marker
+  void marker_set()   { EEPROM_[detail::EEPROM::address_marker] = detail::EEPROM::marker_set_value; }
+  void marker_clear() { EEPROM_[detail::EEPROM::address_marker] = 0xFF; }
+  bool marker_is_set() const { return EEPROM_[detail::EEPROM::address_marker] == detail::EEPROM::marker_set_value; }
+  // min
+  float min_position() const { return *reinterpret_cast<float const*>( EEPROM_.data() + detail::EEPROM::address_min_pos ); }
+  void min_position(float value) {    *reinterpret_cast<float*      >( EEPROM_.data() + detail::EEPROM::address_min_pos ) = value; }
+  // max
+  float max_position() const { return *reinterpret_cast<float const*>( EEPROM_.data() + detail::EEPROM::address_max_pos ); }
+  void max_position(float value) {    *reinterpret_cast<float*      >( EEPROM_.data() + detail::EEPROM::address_max_pos ) = value; }
+  // brightness
+  float EEPROM_LED_brightness() const { return *reinterpret_cast<float const*>( EEPROM_.data() + detail::EEPROM::address_LED ); }
+  void EEPROM_LED_brightness(float value) {    *reinterpret_cast<float*      >( EEPROM_.data() + detail::EEPROM::address_LED ) = value; }
 
   // model parameters
   static constexpr uint64_t ticks_per_second_{1'000'000};

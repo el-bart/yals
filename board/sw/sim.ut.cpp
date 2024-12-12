@@ -28,10 +28,10 @@ TEST_CASE("Hal::Sim can be reset")
   s.rx_.push_back('r');
   s.tx_.push_back('t');
 
-  s.marker_ = 0x123;
-  s.min_position_ = 0.012345;
-  s.max_position_ = 0.987654;
-  s.EEPROM_LED_brightness_ = 0.45678;
+  s.marker_set();
+  s.min_position(0.012345);
+  s.max_position(0.987654);
+  s.EEPROM_LED_brightness(0.45678);
 
   Sim const ref;
   s.reset();
@@ -46,10 +46,8 @@ TEST_CASE("Hal::Sim can be reset")
   CHECK( s.rx_ == ref.rx_ );
   CHECK( s.tx_ == ref.tx_ );
 
-  CHECK( s.marker_ == ref.marker_ );
-  CHECK( s.min_position_ == ref.min_position_ );
-  CHECK( s.max_position_ == ref.max_position_ );
-  CHECK( s.EEPROM_LED_brightness_ == ref.EEPROM_LED_brightness_ );
+  CHECK( s.EEPROM_.size() == 256u );
+  CHECK( s.EEPROM_ == ref.EEPROM_ );
 }
 
 SCENARIO("Hal::Sim properly integrates with Hal::All")

@@ -66,48 +66,50 @@ TEST_CASE("Controller's c-tor")
 
   SECTION("on start, if marker is not set, min and max positions as well as LED brightness are written to EEPROM")
   {
-    sim().marker_ = 0xFFffFFff;     // i.e. unset
-    sim().min_position_ = 0.4;
-    sim().max_position_ = 0.6;
-    sim().LED_brightness_ = 0.12;
+    sim().marker_clear();
+    sim().min_position(0.4);
+    sim().max_position(0.6);
+    sim().EEPROM_LED_brightness(0.12);
     sim().position_ = 0.5;
     Controller ctrl;
-    CHECK( sim().min_position_ == Approx(servo_absolute_min) );
-    CHECK( sim().max_position_ == Approx(servo_absolute_max) );
-    CHECK( sim().LED_brightness_ == Approx(Utils::Config::default_LED_brightness).margin(0.01) );
-    CHECK( sim().marker_ == 0x42 );
-    CHECK( ctrl.context().setpoints_.min_pos_ == Approx( sim().min_position_ ) );
-    CHECK( ctrl.context().setpoints_.max_pos_ == Approx( sim().max_position_ ) );
-    CHECK( ctrl.context().setpoints_.LED_brightness_ == Approx( sim().LED_brightness_ ).margin(0.01) );
+    CHECK( sim().min_position() == Approx(servo_absolute_min) );
+    CHECK( sim().max_position() == Approx(servo_absolute_max) );
+    CHECK( sim().EEPROM_LED_brightness() == Approx(Utils::Config::default_LED_brightness) );
+    CHECK( sim().marker_is_set() );
+    CHECK( ctrl.context().setpoints_.min_pos_ == Approx( sim().min_position() ) );
+    CHECK( ctrl.context().setpoints_.max_pos_ == Approx( sim().max_position() ) );
+    CHECK( ctrl.context().setpoints_.LED_brightness_ == Approx( sim().EEPROM_LED_brightness() ) );
+    CHECK( ctrl.context().setpoints_.LED_brightness_ == Approx( sim().LED_brightness_ ).margin(0.01)  );
   }
 
   SECTION("on start, if current servo setpoint is below min, it's clamped to it")
   {
-    sim().min_position_ = 0.7;
+    sim().min_position(0.7);
+    sim().marker_set();
     sim().position_ = 0.5;
     Controller ctrl;
-    CHECK( ctrl.context().setpoints_.position_ == Approx( sim().min_position_ ) );
+    CHECK( ctrl.context().setpoints_.position_ == Approx( sim().min_position() ) );
   }
 
   SECTION("on start, if current servo setpoint is above max, it's clamped to it")
   {
-    sim().max_position_ = 0.7;
+    sim().max_position(0.7);
     sim().position_ = 0.9;
     Controller ctrl;
-    CHECK( ctrl.context().setpoints_.position_ == Approx( sim().max_position_ ) );
+    CHECK( ctrl.context().setpoints_.position_ == Approx( sim().max_position() ) );
   }
 
   SECTION("on start, sanitize EEPROM values")
   {
-    sim().min_position_ = Utils::Config::servo_absolute_min;
-    sim().max_position_ = Utils::Config::servo_absolute_max;
-    sim().EEPROM_LED_brightness_ = Utils::Config::default_LED_brightness;
-    sim().marker_ = 0x42;
+    sim().min_position(Utils::Config::servo_absolute_min);
+    sim().max_position(Utils::Config::servo_absolute_max);
+    sim().EEPROM_LED_brightness(Utils::Config::default_LED_brightness);
+    sim().marker_set();
     sim().position_ = 0.5;
 
     SECTION("if min < 0.0")
     {
-      sim().min_position_ = -0.1;
+      sim().min_position(-0.1);
       Controller ctrl;
       // sanity checks
       CHECK( ctrl.context().setpoints_.min_pos_  <= ctrl.context().setpoints_.max_pos_  );
@@ -119,14 +121,14 @@ TEST_CASE("Controller's c-tor")
       CHECK( ctrl.context().setpoints_.LED_brightness_ == Approx(Utils::Config::default_LED_brightness).margin(0.01) );
       CHECK( ctrl.context().setpoints_.position_       == Approx(0.5) );
       // EEPROM
-      CHECK( sim().min_position_          == Approx(Utils::Config::servo_absolute_min) );
-      CHECK( sim().max_position_          == Approx(Utils::Config::servo_absolute_max) );
-      CHECK( sim().EEPROM_LED_brightness_ == Approx(Utils::Config::default_LED_brightness).margin(0.01) );
+      CHECK( sim().min_position()          == Approx(Utils::Config::servo_absolute_min) );
+      CHECK( sim().max_position()          == Approx(Utils::Config::servo_absolute_max) );
+      CHECK( sim().EEPROM_LED_brightness() == Approx(Utils::Config::default_LED_brightness).margin(0.01) );
     }
 
     SECTION("if min > 1.0")
     {
-      sim().min_position_ = 1.1;
+      sim().min_position(1.1);
       Controller ctrl;
       // sanity checks
       CHECK( ctrl.context().setpoints_.min_pos_  <= ctrl.context().setpoints_.max_pos_  );
@@ -138,14 +140,14 @@ TEST_CASE("Controller's c-tor")
       CHECK( ctrl.context().setpoints_.LED_brightness_ == Approx(Utils::Config::default_LED_brightness).margin(0.01) );
       CHECK( ctrl.context().setpoints_.position_       == Approx(0.5) );
       // EEPROM
-      CHECK( sim().min_position_          == Approx(Utils::Config::servo_absolute_min) );
-      CHECK( sim().max_position_          == Approx(Utils::Config::servo_absolute_max) );
-      CHECK( sim().EEPROM_LED_brightness_ == Approx(Utils::Config::default_LED_brightness).margin(0.01) );
+      CHECK( sim().min_position()          == Approx(Utils::Config::servo_absolute_min) );
+      CHECK( sim().max_position()          == Approx(Utils::Config::servo_absolute_max) );
+      CHECK( sim().EEPROM_LED_brightness() == Approx(Utils::Config::default_LED_brightness).margin(0.01) );
     }
 
     SECTION("if max < 0.0")
     {
-      sim().max_position_ = -0.1;
+      sim().max_position(-0.1);
       Controller ctrl;
       // sanity checks
       CHECK( ctrl.context().setpoints_.min_pos_  <= ctrl.context().setpoints_.max_pos_  );
@@ -157,14 +159,14 @@ TEST_CASE("Controller's c-tor")
       CHECK( ctrl.context().setpoints_.LED_brightness_ == Approx(Utils::Config::default_LED_brightness).margin(0.01) );
       CHECK( ctrl.context().setpoints_.position_       == Approx(0.5) );
       // EEPROM
-      CHECK( sim().min_position_          == Approx(Utils::Config::servo_absolute_min) );
-      CHECK( sim().max_position_          == Approx(Utils::Config::servo_absolute_max) );
-      CHECK( sim().EEPROM_LED_brightness_ == Approx(Utils::Config::default_LED_brightness).margin(0.01) );
+      CHECK( sim().min_position()          == Approx(Utils::Config::servo_absolute_min) );
+      CHECK( sim().max_position()          == Approx(Utils::Config::servo_absolute_max) );
+      CHECK( sim().EEPROM_LED_brightness() == Approx(Utils::Config::default_LED_brightness).margin(0.01) );
     }
 
     SECTION("if max > 1.0")
     {
-      sim().max_position_ = 1.1;
+      sim().max_position(1.1);
       Controller ctrl;
       // sanity checks
       CHECK( ctrl.context().setpoints_.min_pos_  <= ctrl.context().setpoints_.max_pos_  );
@@ -176,15 +178,15 @@ TEST_CASE("Controller's c-tor")
       CHECK( ctrl.context().setpoints_.LED_brightness_ == Approx(Utils::Config::default_LED_brightness).margin(0.01) );
       CHECK( ctrl.context().setpoints_.position_       == Approx(0.5) );
       // EEPROM
-      CHECK( sim().min_position_          == Approx(Utils::Config::servo_absolute_min) );
-      CHECK( sim().max_position_          == Approx(Utils::Config::servo_absolute_max) );
-      CHECK( sim().EEPROM_LED_brightness_ == Approx(Utils::Config::default_LED_brightness).margin(0.01) );
+      CHECK( sim().min_position()          == Approx(Utils::Config::servo_absolute_min) );
+      CHECK( sim().max_position()          == Approx(Utils::Config::servo_absolute_max) );
+      CHECK( sim().EEPROM_LED_brightness() == Approx(Utils::Config::default_LED_brightness).margin(0.01) );
     }
 
     SECTION("if max > min, but both within the range")
     {
-      sim().min_position_ = 0.7;
-      sim().max_position_ = 0.4;
+      sim().min_position(0.7);
+      sim().max_position(0.4);
       Controller ctrl;
       // sanity checks
       CHECK( ctrl.context().setpoints_.min_pos_  <= ctrl.context().setpoints_.max_pos_  );
@@ -196,15 +198,15 @@ TEST_CASE("Controller's c-tor")
       CHECK( ctrl.context().setpoints_.LED_brightness_ == Approx(Utils::Config::default_LED_brightness).margin(0.01) );
       CHECK( ctrl.context().setpoints_.position_       == Approx(0.5) );
       // EEPROM
-      CHECK( sim().min_position_          == Approx(Utils::Config::servo_absolute_min) );
-      CHECK( sim().max_position_          == Approx(Utils::Config::servo_absolute_max) );
-      CHECK( sim().EEPROM_LED_brightness_ == Approx(Utils::Config::default_LED_brightness).margin(0.01) );
+      CHECK( sim().min_position()          == Approx(Utils::Config::servo_absolute_min) );
+      CHECK( sim().max_position()          == Approx(Utils::Config::servo_absolute_max) );
+      CHECK( sim().EEPROM_LED_brightness() == Approx(Utils::Config::default_LED_brightness).margin(0.01) );
     }
 
 #if 0   // TODO re-enable after EEPROM rework
     SECTION("if LED brightness < 0.0")
     {
-      sim().EEPROM_LED_brightness_ = -0.1;
+      sim().EEPROM_LED_brightness(-0.1);
       Controller ctrl;
       // sanity checks
       CHECK( ctrl.context().setpoints_.min_pos_  <= ctrl.context().setpoints_.max_pos_  );
@@ -216,14 +218,14 @@ TEST_CASE("Controller's c-tor")
       CHECK( ctrl.context().setpoints_.LED_brightness_ == Approx(Utils::Config::default_LED_brightness).margin(0.01) );
       CHECK( ctrl.context().setpoints_.position_       == Approx(0.5) );
       // EEPROM
-      CHECK( sim().min_position_          == Approx(Utils::Config::servo_absolute_min) );
-      CHECK( sim().max_position_          == Approx(Utils::Config::servo_absolute_max) );
-      CHECK( sim().EEPROM_LED_brightness_ == Approx(Utils::Config::default_LED_brightness).margin(0.01) );
+      CHECK( sim().min_position()          == Approx(Utils::Config::servo_absolute_min) );
+      CHECK( sim().max_position()          == Approx(Utils::Config::servo_absolute_max) );
+      CHECK( sim().EEPROM_LED_brightness() == Approx(Utils::Config::default_LED_brightness).margin(0.01) );
     }
 
     SECTION("if LED brightness > 1.0")
     {
-      sim().EEPROM_LED_brightness_ = 1.1;
+      sim().EEPROM_LED_brightness(1.1);
       Controller ctrl;
       // sanity checks
       CHECK( ctrl.context().setpoints_.min_pos_  <= ctrl.context().setpoints_.max_pos_  );
@@ -235,16 +237,16 @@ TEST_CASE("Controller's c-tor")
       CHECK( ctrl.context().setpoints_.LED_brightness_ == Approx(Utils::Config::default_LED_brightness).margin(0.01) );
       CHECK( ctrl.context().setpoints_.position_       == Approx(0.5) );
       // EEPROM
-      CHECK( sim().min_position_          == Approx(Utils::Config::servo_absolute_min) );
-      CHECK( sim().max_position_          == Approx(Utils::Config::servo_absolute_max) );
-      CHECK( sim().EEPROM_LED_brightness_ == Approx(Utils::Config::default_LED_brightness).margin(0.01) );
+      CHECK( sim().min_position()          == Approx(Utils::Config::servo_absolute_min) );
+      CHECK( sim().max_position()          == Approx(Utils::Config::servo_absolute_max) );
+      CHECK( sim().EEPROM_LED_brightness() == Approx(Utils::Config::default_LED_brightness).margin(0.01) );
     }
 
     SECTION("nothing is changed, if all values are withing a range")
     {
-      sim().min_position_ = 0.4;
-      sim().max_position_ = 0.6;
-      sim().LED_brightness_ = 0.5;
+      sim().min_position(0.4);
+      sim().max_position(0.6);
+      sim().LED_brightness(0.5);
       sim().position_ = 0.55;
       // TODO
     }
@@ -270,7 +272,8 @@ TEST_CASE("Controller")
 {
   sim().reset();
   sim().update(0.0);
-  sim().EEPROM_LED_brightness_ = 0.75;
+  sim().EEPROM_LED_brightness(0.75);
+  sim().marker_set();
 
   Reader reader;
   Controller ctrl;
@@ -326,9 +329,10 @@ TEST_CASE("Controller")
     ctrl.update_and_apply();
     CHECK( reader.read_reply() == "+" );
 
-    REQUIRE( sim().min_position_   == Approx( 110.0f / 999.0f) );
-    REQUIRE( sim().max_position_   == Approx( 890.0f / 999.0f) );
-    REQUIRE( sim().LED_brightness_ == Approx(  81.0f /  99.0f).margin(0.05) );
+    REQUIRE( sim().min_position() == Approx( 110.0f / 999.0f) );
+    REQUIRE( sim().max_position() == Approx( 890.0f / 999.0f) );
+    REQUIRE( sim().EEPROM_LED_brightness() == Approx(  81.0f /  99.0f).margin(0.01)  );
+    REQUIRE( sim().LED_brightness_         == Approx(  81.0f /  99.0f).margin(0.01)  );
 
     enqueue_command("?");
     ctrl.update_and_apply();
@@ -360,8 +364,8 @@ TEST_CASE("Controller")
     enqueue_command("*82");
     ctrl.update_and_apply();
     CHECK( reader.read_reply() == "+" );
-    CHECK( sim().LED_brightness_ == Approx(0.82).margin(0.05)  );
-    CHECK( sim().EEPROM_LED_brightness_ == Approx(0.82).margin(0.05)  );
+    CHECK( sim().LED_brightness_         == Approx(0.82).margin(0.01) );
+    CHECK( sim().EEPROM_LED_brightness() == Approx(0.82).margin(0.01)  );
   }
 
 
@@ -382,7 +386,7 @@ TEST_CASE("Controller")
     ctrl.update_and_apply();
     CHECK( reader.read_reply() == "+" );
     CHECK( ctrl.context().setpoints_.max_pos_ == Approx(890.0/999.0) );
-    CHECK( sim().max_position_                == Approx(890.0/999.0) );
+    CHECK( sim().max_position()               == Approx(890.0/999.0) );
   }
 
 
@@ -392,7 +396,7 @@ TEST_CASE("Controller")
     ctrl.update_and_apply();
     CHECK( reader.read_reply() == "+" );
     CHECK( ctrl.context().setpoints_.min_pos_ == Approx(800.0/999.0) );
-    CHECK( sim().min_position_                == Approx(800.0/999.0) );
+    CHECK( sim().min_position()               == Approx(800.0/999.0) );
   }
 
 

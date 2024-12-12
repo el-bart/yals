@@ -1,5 +1,6 @@
 #pragma once
 #include "Hal/Impl/EEPROM.hpp"
+#include "Hal/detail/EEPROM.hpp"
 #include <optional>
 #include <algorithm>
 #include <limits>
@@ -13,49 +14,40 @@ struct EEPROM
 {
   EEPROM() = default;
 
-  bool                 min_position(float value) { return write_32(index_min_pos_, value); }
-  std::optional<float> min_position() const      { return read_32(index_min_pos_);         }
+  bool                 min_position(float const value) { return write_float(detail::EEPROM::address_min_pos, value); }
+  std::optional<float> min_position() const            { return read_float(detail::EEPROM::address_min_pos);         }
 
-  bool                 max_position(float value) { return write_32(index_max_pos_, value); }
-  std::optional<float> max_position() const      { return read_32(index_max_pos_);         }
+  bool                 max_position(float const value) { return write_float(detail::EEPROM::address_max_pos, value); }
+  std::optional<float> max_position() const            { return read_float(detail::EEPROM::address_max_pos);         }
 
-  bool                marker_write()       { return impl_.write(index_marker_, marker_); }
+  bool marker_write()
+  {
+    return impl_.write(detail::EEPROM::address_marker, &detail::EEPROM::marker_set_value, sizeof(uint8_t));
+  }
   std::optional<bool> marker_check() const
   {
-    auto const m = impl_.read(index_marker_);
-    if(not m)
+    uint8_t m;
+    if( not impl_.read(detail::EEPROM::address_marker, &m, sizeof(uint8_t)) )
       return {};
-    return *m == marker_;
+    return m == detail::EEPROM::marker_set_value;
   }
 
-  bool                 LED_brightness(float value) { return write_32(index_LED_, value); }
-  std::optional<float> LED_brightness() const      { return read_32(index_LED_);         }
+  bool                 LED_brightness(float const value) { return write_float(detail::EEPROM::address_LED, value); }
+  std::optional<float> LED_brightness() const            { return read_float(detail::EEPROM::address_LED);         }
 
 private:
-  static constexpr auto u32_max_i = std::numeric_limits<uint32_t>::max();
-  static constexpr auto u32_max_d = static_cast<double>(u32_max_i); // need double, as 2^32 is already adding too much of an error on floats
-
-  bool write_32(size_t slot, float value)
+  bool write_float(size_t const address, float const value)
   {
-    auto const n = static_cast<uint32_t>( std::clamp( round( value * u32_max_d ), 0.0, u32_max_d ) );
-    return impl_.write(slot, n);
+    return impl_.write(address, &value, sizeof(value));
   }
 
-  std::optional<float> read_32(size_t slot) const
+  std::optional<float> read_float(size_t const address) const
   {
-    auto const n = impl_.read(slot);
-    if(not n)
+    float value;
+    if( not impl_.read(address, &value, sizeof(value)) )
       return {};
-    return *n / u32_max_d;
+    return value;
   }
-
-  static constexpr uint32_t marker_{0x42};
-  static constexpr size_t index_marker_{0};
-
-  static constexpr size_t index_min_pos_{1};
-  static constexpr size_t index_max_pos_{2};
-
-  static constexpr size_t index_LED_{3};
 
   Impl::EEPROM impl_;
 };
