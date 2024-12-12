@@ -13,6 +13,9 @@ project to build a linear servo for RC models.
 * 12V power supply (directly from battery)
 * does not consume power when not moving, while still keeping position
 * possible magnetic coupling with element moved
+* programmable and persistent:
+  * min / max positions
+  * LED brightness
 
 
 ## building
