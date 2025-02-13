@@ -13,6 +13,7 @@
 * add 3.3V in next to SWD (for ease of programming w/o external power supply)
 * consider switching to hand-soldering pads for elements
 * add polymer fuse for power line
+* consider using JST XH2.5 for power and communication (1 plug, 4 pins?) and soldering engine wires directly
 
 ## software
 * native client library to use servo with demo using serial port
