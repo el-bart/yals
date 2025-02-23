@@ -60,3 +60,15 @@ generated stuff:
 * 3D printer for YALS' body
 * hex-key set
 * pico-probe or raspberry pi SBC to flash `rp2040` µC
+
+
+## FAQ
+
+### why no position-watchdog?
+µC has internal watchdog, that kicks in in case software gets stuck.
+
+however there's no application-level watchdog (e.g. a dedicated command that'd require a new command reception in a given time)
+as servo does not go bonkers when signal is lost (as typical, cheap, analog do).
+instead it keeps current position effortlessly.
+on start, current position is retained as well.
+therefor there's no need to perform any special actions, when no new command is received.
